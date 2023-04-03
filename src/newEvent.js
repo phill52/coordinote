@@ -52,6 +52,7 @@ return(<div>
         console.log(rangedate)
         let newDate=[...dates,rangedate];
         setDates(newDate)
+        console.log(newDate)
         console.log(dates)
         let inForm= document.getElementById('inputForm')
         inForm.value=newDate.toString();}} 
@@ -62,7 +63,9 @@ return(<div>
         console.log(dates)
     }}>Print dates</Button>
     <form>
-        <input type='text' id='inputForm' readOnly required></input> 
+        <input type='text' id='inputForm' readOnly required></input>
+        <br /> 
+        <button type='submit'>Submit</button>
     </form>
         
 </div>)
