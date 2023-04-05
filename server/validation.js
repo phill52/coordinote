@@ -1,0 +1,41 @@
+const xss=require('xss')
+const {ObjectId} = require('mongodb')
+
+function checkUsername(username,notCreating){
+    if(!username) throw "You must supply a username"
+    if(typeof username!=='string') throw new Error("Username must be a string")
+    username=username.trim().toLowerCase(); username=xss(username);
+    if(notCreating) { //done this way so that users can still log in if username requirements change
+        if(username.length<4) throw new Error("Username must be at least 4 characters long")
+    }
+    return username
+}
+
+function checkPassword(password,notCreating){       //2nd parameter differentiates between registering and logging in
+    if(!password) throw "You must supply a password"
+    if(typeof password!=='string') throw new Error("Password must be a string")
+    password=password.trim(); password=xss(password);
+    if(!notCreating) {          //done this way so that users can still log in if password requirements change
+        //password criteria
+        if(password.length<6) throw "Password must be at least 6 characters long"
+        if(password.toLowerCase()===password) throw "Password must include at least one uppercase character"
+        if(!(/[0-9]/).test(password)) throw ("Password must include at least one number")
+        if(!(/[^a-z0-9]/i).test(password)) throw "Password must include at least one special character"
+    }
+    return password
+}
+
+function checkId(id){
+    if(!id) throw new Error("id is not defined")
+    if(typeof id!=='string') throw new Error('id is not a string')
+    if(id.trim().length===0) throw new Error("id cannot be an empty string or just spaces")
+    id=id.trim(); id=xss(id);
+    if(!ObjectId.isValid(id)) throw new Error("Invalid object id")
+    return id
+}
+
+module.exports = {
+    checkUsername,
+    checkPassword,
+    checkId
+}
