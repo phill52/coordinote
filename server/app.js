@@ -5,6 +5,9 @@ const configRoutes=require('./routes')
 const connection=require('./config/mongoConnection')
 const validation=require('./validation')
 
+app.use(express.json())
+app.use(express.urlencoded({extended: true}))
+
 configRoutes(app)
 
 const main=async() => {
