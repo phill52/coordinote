@@ -14,3 +14,4 @@ const main=async() => {
 app.listen(3001, () => {
     console.log("Your routes are running on http://localhost:3001")
 })
+main()
