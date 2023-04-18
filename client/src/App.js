@@ -7,9 +7,9 @@ function App() {
   return (
     <Router className='router'>
     <div className="App">
-      <div className='App-header'>
+      <header className='App-header'>
         <p>Hello</p>
-      </div>
+      </header>
       <div className='App-body'>
           <Routes>
             <Route path='/newEvent' element={<NewEvent />}/>
