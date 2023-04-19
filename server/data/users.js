@@ -1,4 +1,4 @@
-const bcrypt=require('bcryptjs')
+const bcrypt=require('bcrypt')
 const saltRounds=11
 const mongoCollections = require('../config/mongoCollections');
 const users = mongoCollections.users
