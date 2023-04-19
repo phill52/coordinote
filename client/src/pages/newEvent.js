@@ -20,6 +20,8 @@ const NewEvent= ()=>{
     const [dates,setDates]=useState([]);
     const [rangedate,setDateRange] =useState([new Date(),new Date()]);
     const [error,setErr]=useState(false);
+    const [stDate,setStartDate]=useState(new Date());
+    const [endDate,setEndDate]=useState(new Date());
 /*useEffect(()=>{
     async function fetchData(){
     try{
@@ -37,6 +39,18 @@ catch(e){
     setErr(true);
 }}fetchData();
 },[dates,rangedate])*/
+useEffect(()=>{
+    async function fetchData(){
+        try{
+            setDateRange([stDate,endDate]);
+            console.log(rangedate);
+            setErr(false);
+        }
+        catch(e){
+            setErr(true);
+        }
+    }fetchData();
+},[stDate,endDate])
 if(error){
     return(<div>
         <p>Error</p>
@@ -46,8 +60,9 @@ else{
 return(<div>
     <div>
     <p>WHY DO I BREAK</p>
-    <DateRangePicker value={rangedate} onChange={setDateRange}/>
-    <DateTimePicker value={new Date()} />
+    <DateTimePicker value={stDate} onChange={setStartDate} />
+    <DateTimePicker value={endDate} onChange={setEndDate} />
+
     </div>
     <br />
     <Button onClick={()=>{
