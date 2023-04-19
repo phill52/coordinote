@@ -2,16 +2,12 @@ import logo from '../logo.svg';
 import '../App.css';
 import {BrowserRouter as Router, Route, Link, Routes} from 'react-router-dom';
 import React, {useState, useEffect} from 'react';
-import DateTimeRangePicker from '@wojtekmaj/react-datetimerange-picker'
 import DateTimePicker from 'react-datetime-picker'
-import DateRangePicker from '@wojtekmaj/react-daterange-picker'
-import '@wojtekmaj/react-daterange-picker/dist/DateRangePicker.css';
 import 'react-calendar/dist/Calendar.css';
 import 'react-clock/dist/Clock.css';
 import 'react-datetime-picker/dist/DateTimePicker.css';
 
 
-import Calendar from 'react-calendar'
 import { Button } from '@mui/material';
 
 
