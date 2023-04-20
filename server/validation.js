@@ -51,18 +51,21 @@ function checkEventName(name){
 function checkParticipants(participants){
     let index=0;
     for(index in participants){
-        if(!checkId(participants[i])){
-            throw `Invalid participant: ${participants[index]}`
-        }
+        // if(!checkId(participants[index])){
+        //     throw `Invalid participant: ${participants[index]}`
+        // }
     }
     return participants
 }
 
 function checkDate(date){
-    let d=new Date()
+    // let d=new Date()
     return date
 }
 
+function checkLocation(location){
+    return location
+}
 
 
 module.exports = {
@@ -72,5 +75,6 @@ module.exports = {
     checkEventName,
     checkDate,
     checkParticipants,
+    checkLocation,
     fn
 }
