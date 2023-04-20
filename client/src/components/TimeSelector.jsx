@@ -20,7 +20,7 @@ const TimeSelector = (props) => {
     const slots = [];
     while (startTime <= endTime) {
       const formattedTime = formatAMPM(startTime);
-      slots.push({ time: formattedTime, selected: false });
+      slots.push({ time: formattedTime, comparableTime: startTime, selected: false });
       startTime.setMinutes(startTime.getMinutes() + 30);
     }
     return slots;
