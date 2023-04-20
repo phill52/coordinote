@@ -93,3 +93,46 @@
   padding-left: 40px; /* small left padding */
   text-align:left;  
 }
+
+
+/* time selector css */
+.time-selector {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.time-range {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.time-label {
+  width: 50px;
+  text-align: right;
+  margin-right: 10px;
+  font-size: 8px;
+}
+
+.time-slot {
+  cursor: pointer;
+  padding: 8px;
+  border-right: 1px solid black;
+  border-left: 1px solid black;
+  border-bottom: 1px solid black;
+  width: 20rem;
+  height: 20px;
+  background-color:rgb(215, 215, 215);
+}
+.time-first {
+  border-top: 1px black;
+}
+.time-gray {
+  background-color: #c0c0c0;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+}

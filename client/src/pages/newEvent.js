@@ -6,7 +6,7 @@ import DateTimePicker from 'react-datetime-picker'
 import 'react-calendar/dist/Calendar.css';
 import 'react-clock/dist/Clock.css';
 import 'react-datetime-picker/dist/DateTimePicker.css';
-
+import TimeSelector from '../components/TimeSelector';
 
 import { Button } from '@mui/material';
 
@@ -80,6 +80,9 @@ return(<div>
         <br /> 
         <button type='submit'>Submit</button>
     </form>
+
+
+    <TimeSelector startTime={new Date(2023, 4, 15, 14, 0, 0, 0)} endTime={new Date(2023, 4, 15, 22, 0, 0, 0)}/>
         
 </div>);
 }}
