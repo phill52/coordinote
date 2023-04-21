@@ -1,5 +1,7 @@
 const userData=require('./users')
+const eventData=require('./events')
 
 module.exports = {
-    users: userData
+    users: userData,
+    events: eventData
 }
