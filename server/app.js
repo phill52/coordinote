@@ -105,7 +105,7 @@ app.use('/api/register',(req,res,next) => {
     }
 })
 
-// configRoutes(app)
+configRoutes(app)
 
 
 app.get('*', (req, res) => {
