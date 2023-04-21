@@ -2,13 +2,16 @@ const bcrypt=require('bcrypt')
 const saltRounds=11
 const mongoCollections = require('../config/mongoCollections');
 const users = mongoCollections.users
+const events=mongoCollections.events
+const eventFunctions=require('./events')
+const {ObjectId}=require('mongodb')
 const validation=require('../validation')
 
 const createUser = async(username,password) => {        //when a user registers
     username=validation.checkUsername(username)
     const userCollection=await users();
     if(await userCollection.findOne({username:username})) {
-        throw "That user already exists"
+        throw "Either the username or password is invalid"
     }
     password=validation.checkPassword(password,false)
     const hashed_pw=await bcrypt.hash(password,saltRounds)
@@ -31,11 +34,24 @@ const checkUser = async(username,password) => {         //when a user logs in
     if(!user) throw "Either the username or password is invalid"
     let user_hashed_password=user.password
     let comparison=await bcrypt.compare(password,user_hashed_password)
-    if(comparison) return {authenticatedUser: true}
+    if(comparison) return {authenticatedUser: true, userId:user._id}
     throw "Either the username or password is invalid"
+}
+
+const getUsersEvents = async(userId) => {
+    userId=validation.checkId(userId);
+    const userCollection=await users();
+    const user=await userCollection.findOne({_id: new ObjectId(userId)})
+    if(!user) throw "Could not find user with id "+userId
+    let eventsArray=[]
+    for(let i in user.events){
+        eventsArray.push(await eventFunctions.getEventById(user.events[i]))
+    }
+    return eventsArray
 }
 
 module.exports={
     createUser,
-    checkUser
+    checkUser,
+    getUsersEvents
 }
