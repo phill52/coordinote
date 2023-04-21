@@ -6,28 +6,28 @@ const validation=require('../validation')
 
 router
     .route('/')
-    .get(async(req,res) => {        //get events for a specific user
-        if(req.session && req.session.user){
-            let userEvents=undefined;
-            let userId=undefined;
-            try{
-                userId=validation.checkId(req.session.user.userId)
-                userEvents=await users.getUsersEvents(userId)
-            }
-            catch(e){
-                res.send(e)
-                return;
-            }
-            return res.json(userEvents)
-        }
-        res.json({Get: "/yourpage/events/"})
-    })
+    // .get(async(req,res) => {        //get events for a specific user
+    //     if(req.session && req.session.user){
+    //         let userEvents=undefined;
+    //         let userId=undefined;
+    //         try{
+    //             userId=validation.checkId(req.session.user.userId)
+    //             userEvents=await users.getUsersEvents(userId)
+    //         }
+    //         catch(e){
+    //             res.send(e)
+    //             return;
+    //         }
+    //         return res.json(userEvents)
+    //     }
+    //     res.json({Get: "/yourpage/events/"})
+    // })
 
 router
     .route('/createEvent')
-    .get(async(req,res) => {
-        res.json({Get: "/yourpage/events/createEvent"})
-    })
+    // .get(async(req,res) => {
+    //     res.json({Get: "/yourpage/events/createEvent"})
+    // })
     .post(async(req,res) => {           //events post route, when you make a new event
         if(!req.body) {res.sendStatus(400); return;}
         let name,location,dates,participants=undefined; 
