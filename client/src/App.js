@@ -9,6 +9,9 @@ function App() {
     <div className="App">
       <header className='App-header'>
         <p>Hello</p>
+        <Link to='/newEvent'>New Event</Link>
+        <Link to='/'>Home</Link>
+        <Link to='/login'>Login</Link>
       </header>
       <div className='App-body'>
           <Routes>

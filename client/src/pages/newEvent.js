@@ -7,7 +7,7 @@ import 'react-calendar/dist/Calendar.css';
 import 'react-clock/dist/Clock.css';
 import 'react-datetime-picker/dist/DateTimePicker.css';
 import TimeSelector from '../components/TimeSelector';
-
+import Calendar from 'react-calendar';
 import { Button } from '@mui/material';
 
 
@@ -18,6 +18,17 @@ const NewEvent= ()=>{
     const [error,setErr]=useState(false);
     const [stDate,setStartDate]=useState(new Date());
     const [endDate,setEndDate]=useState(new Date());
+    const [Tselect,setTselect]=useState(null);
+    useEffect(()=>{
+        async function fetchData(){
+            try{
+                setTselect(<TimeSelector startTime={new Date(2023, 4, 15, 14, 0, 0, 0)} endTime={new Date(2023, 4, 15, 22, 0, 0, 0)}/>)
+            }
+            catch(e){
+                console.log(e);
+            }
+        }fetchData()
+    },[])
 /*useEffect(()=>{
     async function fetchData(){
     try{
@@ -58,7 +69,8 @@ return(<div>
     <p>WHY DO I BREAK</p>
     <DateTimePicker value={stDate} onChange={setStartDate} />
     <DateTimePicker value={endDate} onChange={setEndDate} />
-
+    <Calendar selectRange={true} value={rangedate} onChange={setDateRange}></Calendar>
+    {console.log(rangedate)}
     </div>
     <br />
     <Button onClick={()=>{
@@ -80,8 +92,8 @@ return(<div>
         <br /> 
         <button type='submit'>Submit</button>
     </form>
-
-
+    {Tselect}
+    <br />
     <TimeSelector startTime={new Date(2023, 4, 15, 14, 0, 0, 0)} endTime={new Date(2023, 4, 15, 22, 0, 0, 0)}/>
         
 </div>);

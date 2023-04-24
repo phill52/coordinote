@@ -131,8 +131,14 @@
 .time-gray {
   background-color: #c0c0c0;
 }
-
+.selected {
+  background-color: orange;
+}
 .row {
   display: flex;
   align-items: center;
+}
+
+.anchorTIme {
+  background-color:green;
 }
