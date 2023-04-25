@@ -15,7 +15,7 @@ jobs:
         env:
             PRIVATE_KEY: ${{ secrets.EC2PRIVKEY }}
             HOSTNAME: ${{secrets.EC2DNS}}
-            USER_NAME: ${secrets.EC2USERNAME}
+            USER_NAME: ${{secrets.EC2USERNAME}}
       
         run: |
           echo "$coordinote.pem" > coordinote.pem && chmod 400 coordinote.pem
