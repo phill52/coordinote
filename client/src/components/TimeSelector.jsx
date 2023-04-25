@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from "react";
+import Draggable from "react-draggable";
 
 const TimeSelector = (props) => {
   const {startTime, endTime, onChange} = props;
 
   const [timeSlots, setTimeSlots] = useState([]);
   const [anchors, setAnchors] = useState([]);
+  const [draggedAnchor, setDraggedAnchor] = useState(null);
 
   function formatAMPM(date) {
       let hours = date.getHours();
@@ -21,43 +23,12 @@ const TimeSelector = (props) => {
     while (startTime <= endTime) {
       const formattedTime = formatAMPM(startTime);
       const insertedStartTime = new Date(startTime);
-      slots.push({ time: formattedTime, comparableTime: insertedStartTime, selected: false });
+      slots.push({ time: formattedTime, comparableTime: insertedStartTime});
       startTime.setMinutes(startTime.getMinutes() + 30);
     }
     console.log(slots);
     return slots;
   }
-// useEffect(()=>{
-//   console.log(anchors)
-//   async function formData(){
-//   if(anchors.length%2===0){
-//     let y=0;
-//     let open=false;
-// for(let x=0;x<timeSlots.length;x++){
-//   if(open===false){
-// if(anchors.indexOf(timeSlots[x].time)!==-1){
-//   open=true;
-//   y++;
-//   timeSlots[x].selected=true;
-// }
-// else{
-//   timeSlots[x].selected=false;
-
-// }
-//   }
-// else{
-//   if(anchors.indexOf(timeSlots[x].time)!==-1){
-//     open=false;
-//     y++
-//   }
-//   timeSlots[x].selected=true;
-// }
-// }
-//   }
-//   else{
-//     console.log("hi")
-//   }}formData()
-// },[anchors,timeSlots])
 
   useEffect(() => { //initialize time slots useEffect
     async function formData(){
@@ -81,17 +52,34 @@ return (
             <li className="row" key={slot.time}>
             <div className="time-label">{slot.time}</div>
             <div
-              className={`time-slot ${slot.selected ? "anchorTime" : ""} ${
-                index % 2 === 1 ? "time-gray" : ""
-              } ${index === 0 ? "time-first" : ""}
-              ${isBetweenAnchors(slot.comparableTime)? "selected" : ""  }`}
-              onClick={()=>{
-                let newAnchors =[...anchors,slot.comparableTime];
-                // newAnchors.sort((a,b)=>a-b)
-                slot.selected=true;
-                setAnchors(newAnchors)
-              console.log(anchors)}}
+              className={`time-slot   
+              ${index % 2 === 1 ? "time-gray" : ""}
+              ${isBetweenAnchors(slot.comparableTime)? "selected" : ""  }
+              ${index === 0 ? "top-slot" : ""}
+              ${(anchors.findIndex((element)=>(element==slot.comparableTime))==anchors.length-1 &&
+                anchors.length%2==1) ? "warning-slot" : 
+              (anchors.includes(slot.comparableTime) ? 
+                ((anchors.findIndex((element)=>(element==slot.comparableTime))%2==0) ? "topAnchorTime" : "bottomAnchorTime"):
+              "")}
+              `}
+              
+              onClick={() => {
+                if (anchors.includes(slot.comparableTime)) {
+                  let newAnchors = anchors.filter((anchor) => anchor !== slot.comparableTime);
+                  setAnchors(newAnchors);
+                } else {
+                  let newAnchors = [...anchors, slot.comparableTime];
+                  newAnchors.sort((a, b) => a - b);
+                  setAnchors(newAnchors);
+                }
+              }}
             />
+            {anchors.includes(slot.comparableTime) && (
+                <div className={`${(anchors.findIndex((element)=>(element==slot.comparableTime))==anchors.length-1 &&
+                  anchors.length%2==1) ? "warningAnchor" :
+                `anchor ${(anchors.findIndex((element)=>(element==slot.comparableTime))%2==0) ? "topAnchor" : "bottomAnchor" }`}`}/>  
+                // anchor ${(anchors.findIndex((element)=>(element==slot.comparableTime))%2==0 ? "topAnchor ": "bottomAnchor")}`    />
+              )}
         </li>
         ))}        
       </ul>
