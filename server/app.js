@@ -6,6 +6,10 @@ const connection=require('./config/mongoConnection')
 const validation=require('./validation');
 const events=require('./data/events');
 const users=require('./data/users')
+const path=require('path')
+
+
+app.use(express.static(path.join(__dirname, '..', 'client', 'build')));
 
 app.use(express.json())
 app.use(express.urlencoded({extended: true}))
@@ -20,7 +24,7 @@ app.use(            //authentication middleware
     })
 )
 
-app.use('/yourpage',(req,res,next) => {
+app.use('/api/yourpage',(req,res,next) => {
     if(!req.session.user){
         return res.redirect('/')
     }
@@ -29,11 +33,11 @@ app.use('/yourpage',(req,res,next) => {
     }
 })
 
-app.use('/yourpage/events/createEvent',async(req,res,next) => {
+app.use('/api/yourpage/events/createEvent',async(req,res,next) => {
     next();
 })
 
-app.use('/yourpage/events/:eventId',async(req,res,next) => {
+app.use('/api/yourpage/events/:eventId',async(req,res,next) => {
     // if(!req.session.user){
     //     return res.redirect('/')
     // }
@@ -69,7 +73,7 @@ app.use('/yourpage/events/:eventId',async(req,res,next) => {
     next();
 })
 
-app.use('/yourpage/events',(req,res,next) => {
+app.use('/api/yourpage/events',(req,res,next) => {
     // if(!req.session.user){
     //     return res.redirect('/')
     // }
@@ -83,7 +87,7 @@ app.use('/yourpage/events',(req,res,next) => {
     next()
 })
 
-app.use('/login',(req,res,next) => {
+app.use('/api/login',(req,res,next) => {
     if(req.session.user){
         return res.redirect('/yourpage')
     }
@@ -92,7 +96,7 @@ app.use('/login',(req,res,next) => {
     }
 })
 
-app.use('/register',(req,res,next) => {
+app.use('/api/register',(req,res,next) => {
     if(req.session.user){
         return res.redirect('/yourpage')
     }
@@ -102,6 +106,11 @@ app.use('/register',(req,res,next) => {
 })
 
 configRoutes(app)
+
+
+app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, '..', 'client', 'build', 'index.html'));
+});
 
 const main=async() => {
     const db = await connection.dbConnection();
