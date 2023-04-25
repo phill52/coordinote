@@ -19,6 +19,7 @@ const NewEvent= ()=>{
     const [stDate,setStartDate]=useState(new Date());
     const [endDate,setEndDate]=useState(new Date());
     const [Tselect,setTselect]=useState(null);
+    const [allDates,setAllDates]= useState([]);
     useEffect(()=>{
         async function fetchData(){
             try{
@@ -50,7 +51,7 @@ useEffect(()=>{
     async function fetchData(){
         try{
             setDateRange([stDate,endDate]);
-            console.log(rangedate);
+           // console.log(rangedate);
             setErr(false);
         }
         catch(e){
@@ -58,6 +59,26 @@ useEffect(()=>{
         }
     }fetchData();
 },[stDate,endDate])
+useEffect(()=>{
+    async function fetchData(){
+        let curr=new Date(rangedate[0]);
+        let end=new Date(rangedate[1]);
+        let newDates=[];
+        try{
+            while(curr < end){
+                newDates=[...newDates,new Date(curr)];
+                curr.setDate(curr.getDate()+1)
+                console.log(rangedate[0]);
+                console.log(curr)
+            }
+            setAllDates(newDates);
+        }
+        catch(e){
+            console.log(e);
+        }
+    }fetchData()
+    //console.log(allDates)
+},[rangedate])
 if(error){
     return(<div>
         <p>Error</p>
@@ -70,7 +91,7 @@ return(<div>
     <DateTimePicker value={stDate} onChange={setStartDate} />
     <DateTimePicker value={endDate} onChange={setEndDate} />
     <Calendar selectRange={true} value={rangedate} onChange={setDateRange}></Calendar>
-    {console.log(rangedate)}
+    {console.log(allDates)}
     </div>
     <br />
     <Button onClick={()=>{
