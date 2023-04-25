@@ -18,7 +18,7 @@ jobs:
             USER_NAME: ${secrets.EC2USERNAME}
       
         run: |
-          echo "$PRIVATE_KEY" > coordinote.pem && chmod 400 coordinote.pem
+          echo "$coordinote.pem" > coordinote.pem && chmod 400 coordinote.pem
           ssh -i coordinote ${USER_NAME}@${HOSTNAME} '
 
               # Now we have got the access of EC2 and we will start the deploy .
