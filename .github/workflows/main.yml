@@ -19,7 +19,7 @@ jobs:
       
         run: |
           echo "$coordinote.pem" > coordinote.pem && chmod 400 coordinote.pem
-          ssh -i coordinote ${USER_NAME}@${HOSTNAME} '
+          ssh -i coordinote.pem ${USER_NAME}@${HOSTNAME} '
 
               # Now we have got the access of EC2 and we will start the deploy .
               cd /~/coordinote &&
