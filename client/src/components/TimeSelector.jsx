@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from "react";
-import Draggable from "react-draggable";
 
 const TimeSelector = (props) => {
-  const {startTime, endTime, onChange} = props;
+  const {startTime, endTime, change,value,date} = props;
 
   const [timeSlots, setTimeSlots] = useState([]);
   const [anchors, setAnchors] = useState([]);
@@ -29,7 +28,12 @@ const TimeSelector = (props) => {
     console.log(slots);
     return slots;
   }
-
+  useEffect(()=>{
+    async function formData(){
+      setAnchors(value);
+      console.log(value);
+    }formData()
+  },[value])
   useEffect(() => { //initialize time slots useEffect
     async function formData(){
     setTimeSlots(generateTimeSlots());
@@ -67,11 +71,14 @@ return (
                 if (anchors.includes(slot.comparableTime)) {
                   let newAnchors = anchors.filter((anchor) => anchor !== slot.comparableTime);
                   setAnchors(newAnchors);
+                  change({date:date,time:newAnchors})
                 } else {
                   let newAnchors = [...anchors, slot.comparableTime];
                   newAnchors.sort((a, b) => a - b);
                   setAnchors(newAnchors);
+                  change({date:date,time:newAnchors})
                 }
+                console.log(value)
               }}
             />
             {anchors.includes(slot.comparableTime) && (

@@ -20,16 +20,34 @@ const NewEvent= ()=>{
     const [endDate,setEndDate]=useState(new Date());
     const [Tselect,setTselect]=useState(null);
     const [allDates,setAllDates]= useState([]);
+    const [dateLock,SetDateLock] = useState(false);
+    const [curDate,setCurDate] = useState(new Date);
+    const [curTimes,setCurTimes] = useState({date:new Date(),time:[]})
+    const arr={anchors:[]};
     useEffect(()=>{
         async function fetchData(){
             try{
-                setTselect(<TimeSelector startTime={new Date(2023, 4, 15, 14, 0, 0, 0)} endTime={new Date(2023, 4, 15, 22, 0, 0, 0)}/>)
+                setTselect(<TimeSelector startTime={new Date(curDate.getFullYear(), curDate.getMonth(), curDate.getDate(), 14, 0, 0, 0)} endTime={new Date(curDate.getFullYear(), curDate.getMonth(), curDate.getDate(), 22, 0, 0, 0)} value = {curTimes.time} date= {curDate} change={setCurTimes}/>)
+                console.log(curTimes)
             }
             catch(e){
                 console.log(e);
             }
         }fetchData()
-    },[])
+    },[curDate])
+    useEffect(()=>{
+        async function fetchData(){
+            try{
+                setCurDate(rangedate[0]);
+            }
+            catch(e){
+                console.log(e);
+            }
+        }fetchData()
+    },[dateLock])
+    useEffect(()=>{
+        console.log(curTimes)
+    },[curTimes])
 /*useEffect(()=>{
     async function fetchData(){
     try{
@@ -85,38 +103,88 @@ if(error){
     </div>);
 }
 else{
+    if(dateLock){
+        let tmpDte=new Date(rangedate[1]);
+        tmpDte.setDate(tmpDte.getDate()-1);
+        if(curDate<=rangedate[0]){
 return(<div>
     <div>
     <p>WHY DO I BREAK</p>
-    <DateTimePicker value={stDate} onChange={setStartDate} />
-    <DateTimePicker value={endDate} onChange={setEndDate} />
     <Calendar selectRange={true} value={rangedate} onChange={setDateRange}></Calendar>
     {console.log(allDates)}
     </div>
     <br />
-    <Button onClick={()=>{
-        console.log(rangedate)
-        let newDate=[...dates,rangedate];
-        setDates(newDate)
-        console.log(newDate)
-        console.log(dates)
-        let inForm= document.getElementById('inputForm')
-        inForm.value=newDate.toString();}} 
-        >
-            Add new date
-        </Button>
-    <Button onClick={()=>{
-        console.log(dates)
-    }}>Print dates</Button>
-    <form>
-        <input type='text' id='inputForm' readOnly required></input>
-        <br /> 
-        <button type='submit'>Submit</button>
-    </form>
+    <button onClick={
+        ()=>{
+            let tempDate=new Date(curDate)
+            tempDate.setDate(tempDate.getDate()+1);
+            console.log(tempDate)
+            setCurDate(tempDate)}}>Next</button>
     {Tselect}
     <br />
-    <TimeSelector startTime={new Date(2023, 4, 15, 14, 0, 0, 0)} endTime={new Date(2023, 4, 15, 22, 0, 0, 0)}/>
+    {console.log(curDate)}
         
-</div>);
+</div>);}
+else if(curDate<tmpDte){
+    return(<div>
+        <div>
+        <p>WHY DO I BREAK</p>
+        <Calendar selectRange={true} value={rangedate} onChange={setDateRange}></Calendar>
+        {console.log(allDates)}
+        </div>
+        <br />
+        <button onClick={
+            ()=>{
+                let tempDate=new Date(curDate)
+                tempDate.setDate(tempDate.getDate()-1);
+                console.log(tempDate)
+                setCurDate(tempDate)}}>Previous</button>
+
+        <button onClick={
+            ()=>{
+                let tempDate=new Date(curDate)
+                tempDate.setDate(tempDate.getDate()+1);
+    
+                setCurDate(tempDate)}}>Next</button>
+        {Tselect}
+        <br />
+        {console.log(curDate)}
+            
+    </div>);
+}
+else{
+    return(<div>
+        <div>
+        <p>WHY DO I BREAK</p>
+        <Calendar selectRange={true} value={rangedate} onChange={setDateRange}></Calendar>
+        {console.log(allDates)}
+        </div>
+        <br />
+        <button onClick={
+            ()=>{
+                let tempDate=new Date(curDate)
+                tempDate.setDate(tempDate.getDate()-1);
+                console.log(tempDate)
+                setCurDate(tempDate)}}>previous</button>
+        {Tselect}
+        <br />
+        {console.log(curDate)}
+            
+    </div>);
+}
+}
+else{
+    return(<div>
+        <div>
+        <p>WHY DO I BREAK</p>
+        <Calendar selectRange={true} value={rangedate} onChange={setDateRange}></Calendar>
+        {console.log(allDates)}
+        </div>
+        <br />
+        <button onClick={()=>{SetDateLock(true)}}> Lock Dates</button>
+
+                    
+    </div>);
+}
 }}
 export default NewEvent;
