@@ -47,10 +47,13 @@ const NewEvent= ()=>{
                     tempArr.splice(x,1);
                 }
             }
+            tempArr.sort((a, b) => a - b)
             setClickedDay([...tempArr])
         }
         else{
-        setClickedDay([...tempArr,dates]);
+            tempArr=[...tempArr,dates];
+            tempArr.sort((a, b) => a - b)
+        setClickedDay([...tempArr]);
         }}
         else{
             setFirstLoad(false)
@@ -200,7 +203,7 @@ else{
 return(<div>
     <div>
     <p>WHY DO I BREAK</p>
-    <Calendar selectRange={true} value={rangedate} onChange={setDateRange}></Calendar>
+    <Calendar value = {new Date()} tileClassName={tileClass} ></Calendar>
     {console.log(allDates)}
     </div>
     <br />
@@ -218,7 +221,7 @@ else if(arrIndex===(clickedDay.length-1)){
     return(<div>
         <div>
         <p>WHY DO I BREAK</p>
-        <Calendar selectRange={true} value={rangedate} onChange={setDateRange}></Calendar>
+        <Calendar value = {new Date()} tileClassName={tileClass} ></Calendar>
         {console.log(allDates)}
         </div>
         <br />
@@ -237,7 +240,7 @@ else{
     return(<div>
         <div>
         <p>WHY DO I BREAK</p>
-        <Calendar selectRange={true} value={rangedate} onChange={setDateRange}></Calendar>
+        <Calendar value = {new Date()} tileClassName={tileClass} ></Calendar>
         {console.log(allDates)}
         </div>
         <br />
