@@ -4,9 +4,24 @@ const TimeSelector = (props) => {
   const {startTime, endTime, change,value,date} = props;
 
   const [timeSlots, setTimeSlots] = useState([]);
-  const [anchors, setAnchors] = useState([]);
+  const [anchors, setAnchors] = useState(value);
   const [draggedAnchor, setDraggedAnchor] = useState(null);
-
+  const datesEqual = (dte1,dte2) =>{
+    if(!(dte1<dte2)){
+        if(!(dte1>dte2)){
+            return true
+        }
+    }
+    return false;
+}
+  const arrayIncludes = (arr,element) =>{
+    for(let x=0;x<arr.length;x++){
+      if(datesEqual(arr[x],element)){
+        return true;
+      }
+    }
+    return false;
+  }
   function formatAMPM(date) {
       let hours = date.getHours();
       let minutes = date.getMinutes();
@@ -60,15 +75,15 @@ return (
               ${index % 2 === 1 ? "time-gray" : ""}
               ${isBetweenAnchors(slot.comparableTime)? "selected" : ""  }
               ${index === 0 ? "top-slot" : ""}
-              ${(anchors.findIndex((element)=>(element==slot.comparableTime))==anchors.length-1 &&
+              ${(anchors.findIndex((element)=>(datesEqual(element,slot.comparableTime)))==anchors.length-1 &&
                 anchors.length%2==1) ? "warning-slot" : 
-              (anchors.includes(slot.comparableTime) ? 
-                ((anchors.findIndex((element)=>(element==slot.comparableTime))%2==0) ? "topAnchorTime" : "bottomAnchorTime"):
+              (arrayIncludes(anchors,slot.comparableTime) ? 
+                ((anchors.findIndex((element)=>(datesEqual(element,slot.comparableTime)))%2==0) ? "topAnchorTime" : "bottomAnchorTime"):
               "")}
               `}
               
               onClick={() => {
-                if (anchors.includes(slot.comparableTime)) {
+                if (arrayIncludes(anchors,slot.comparableTime)) {
                   let newAnchors = anchors.filter((anchor) => anchor !== slot.comparableTime);
                   setAnchors(newAnchors);
                   change({date:date,time:newAnchors})
@@ -81,15 +96,16 @@ return (
                 console.log(value)
               }}
             />
-            {anchors.includes(slot.comparableTime) && (
-                <div className={`${(anchors.findIndex((element)=>(element==slot.comparableTime))==anchors.length-1 &&
+            {arrayIncludes(anchors,slot.comparableTime) && (
+                <div className={`${(anchors.findIndex((element)=>(datesEqual(element,slot.comparableTime)))==anchors.length-1 &&
                   anchors.length%2==1) ? "warningAnchor" :
-                `anchor ${(anchors.findIndex((element)=>(element==slot.comparableTime))%2==0) ? "topAnchor" : "bottomAnchor" }`}`}/>  
+                `anchor ${(anchors.findIndex((element)=>(datesEqual(element,slot.comparableTime)))%2==0) ? "topAnchor" : "bottomAnchor" }`}`}/>  
                 // anchor ${(anchors.findIndex((element)=>(element==slot.comparableTime))%2==0 ? "topAnchor ": "bottomAnchor")}`    />
               )}
         </li>
         ))}        
       </ul>
+      {console.log(anchors)}
     </div>
   );
 }; 

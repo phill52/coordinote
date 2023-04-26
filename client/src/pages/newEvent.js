@@ -23,11 +23,40 @@ const NewEvent= ()=>{
     const [dateLock,SetDateLock] = useState(false);
     const [curDate,setCurDate] = useState(new Date);
     const [curTimes,setCurTimes] = useState({date:new Date(),time:[]})
+    const [datesAndTimes,setDatesAndTimes] = useState([]);
     const arr={anchors:[]};
+    const datesEqual = (dte1,dte2) =>{
+        if(!(dte1<dte2)){
+            if(!(dte1>dte2)){
+                return true
+            }
+        }
+        return false;
+    }
     useEffect(()=>{
         async function fetchData(){
             try{
-                setTselect(<TimeSelector startTime={new Date(curDate.getFullYear(), curDate.getMonth(), curDate.getDate(), 14, 0, 0, 0)} endTime={new Date(curDate.getFullYear(), curDate.getMonth(), curDate.getDate(), 22, 0, 0, 0)} value = {curTimes.time} date= {curDate} change={setCurTimes}/>)
+                let index=-1;
+                for(let x=0;x<allDates.length;x++){
+                 if(datesEqual(curDate,allDates[x])){
+                    index=x;
+                 }
+                    
+                    console.log(allDates[x])
+                    console.log(curDate)
+                }
+                let times = [];
+                if((datesAndTimes.length)<=index){
+                    let curObj = {date:curDate,time:[]};
+                    times =[];
+                    //setCurTimes(curObj);
+                }
+                else{
+                  //  setCurTimes(datesAndTimes[index])
+                    times=datesAndTimes[index].time;
+                }
+                console.log(index);
+                setTselect(<TimeSelector startTime={new Date(curDate.getFullYear(), curDate.getMonth(), curDate.getDate(), 14, 0, 0, 0)} endTime={new Date(curDate.getFullYear(), curDate.getMonth(), curDate.getDate(), 22, 0, 0, 0)} value = {times} date= {curDate} change={setCurTimes}/>)
                 console.log(curTimes)
             }
             catch(e){
@@ -46,8 +75,27 @@ const NewEvent= ()=>{
         }fetchData()
     },[dateLock])
     useEffect(()=>{
+        async function fetchData(){
         console.log(curTimes)
+        let index=-1;
+                for(let x=0;x<allDates.length;x++){
+                    if(!(allDates[x]<curDate)){
+                        if(!(allDates[x]>curDate)){
+                        index=x;
+                        }
+                    }
+                    console.log(allDates[x])
+                    console.log(curDate)
+                }
+                let tempArr=[...datesAndTimes];
+                tempArr[index]=curTimes;
+                setDatesAndTimes(tempArr)
+        
+        }fetchData()
     },[curTimes])
+    useEffect(()=>{
+        console.log(datesAndTimes);
+    },[datesAndTimes])
 /*useEffect(()=>{
     async function fetchData(){
     try{
