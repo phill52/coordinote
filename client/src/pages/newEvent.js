@@ -46,7 +46,7 @@ const NewEvent= ()=>{
                     console.log(curDate)
                 }
                 let times = [];
-                if((datesAndTimes.length)<=index){
+                if(((datesAndTimes.length)<=index)&&(index!==-1)){
                     let curObj = {date:curDate,time:[]};
                     times =[];
                     //setCurTimes(curObj);
@@ -162,6 +162,7 @@ return(<div>
     {console.log(allDates)}
     </div>
     <br />
+    <h1>{curDate.toDateString()}</h1>
     <button onClick={
         ()=>{
             let tempDate=new Date(curDate)
@@ -181,6 +182,7 @@ else if(curDate<tmpDte){
         {console.log(allDates)}
         </div>
         <br />
+        <h1>{curDate.toDateString()}</h1>
         <button onClick={
             ()=>{
                 let tempDate=new Date(curDate)
@@ -208,6 +210,7 @@ else{
         {console.log(allDates)}
         </div>
         <br />
+        <h1>{curDate.toDateString()}</h1>
         <button onClick={
             ()=>{
                 let tempDate=new Date(curDate)
