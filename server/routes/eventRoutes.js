@@ -30,7 +30,6 @@ router
     // })
     .post(async(req,res) => {           //events post route, when you make a new event
         if(!req.body) {res.sendStatus(400); return;}
-        let name,location,dates,participants=undefined; 
         let newEvent=undefined; let userId=undefined;
         try{
             userId=validation.checkId(req.session.user.userId)
@@ -40,7 +39,7 @@ router
             return;
         }
         try{
-            newEvent=await events.createEvent(req.body.name,req.body.location,req.body.participants,req.body.date,req.body.timeRange,userId)
+            newEvent=await events.createEvent(req.body.name,req.body.domainDates,req.body.location,req.body.description,req.body.attendees,req.body.image,userId)
         }
         catch(e){
             console.log(e)
@@ -90,9 +89,11 @@ router
         try{
             updatedEvent=await events.updateEvent(eventId,
                 req.body.name,
+                req.body.domainDates,
                 req.body.location,
-                req.body.participants,
-                req.body.date,
+                req.body.description,
+                req.body.attendees,
+                req.body.image,
                 userId
             )
         }

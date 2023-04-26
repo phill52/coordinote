@@ -5,19 +5,19 @@ const validation=require('../validation')
 const {ObjectId}=require('mongodb')
 const fn=validation.fn;
 
-const createEvent = async(eventName,description,eventLocation,eventDate,userId) => {
+const createEvent = async(eventName,domainDates,location,description,attendees,image,userId) => {
     eventName=validation.checkEventName(eventName);
-    eventLocation=validation.checkLocation(eventLocation)
-    eventDate=validation.checkDate(eventDate)
+    location=validation.checkLocation(location)
+    domainDates=validation.checkDate(domainDates)
     userId=validation.checkId(userId);
     const eventCollection=await events();
     let newEvent = {
         name:eventName,
-        description:description,
-        location:eventLocation,
-        domainDates:[],
-        attendeed:[],
-        image:"https://streamsentials.com/wp-content/uploads/pogchamp-transparent.png",
+        domainDates:domainDates,
+        location:location,
+        description,description,
+        attendees:attendees,
+        image:image,
         creatorID:userId
     }
     const insertEvent=await eventCollection.insertOne(newEvent);
@@ -34,13 +34,13 @@ const createEvent = async(eventName,description,eventLocation,eventDate,userId) 
     return await getEventById(insertEvent.insertedId)
 }
 //replaces fields in event document with the ones pass in as parameters
-const updateEvent = async(eventId,newName,newLocation,newDomainDates,newAttendees,newImage,newDescription) => {
+const updateEvent = async(eventId,newName,newDomainDates,newLocation,newDescription,newAttendees,newImage,creatorId) => {
     eventId=validation.checkId(eventId)
-    userId=validation.checkId(userId)
+    // creatorId=validation.checkId(creatorId)
     if(newName) newName=validation.checkEventName(newName)
     if(newLocation) newLocation=validation.checkLocation(newLocation)
-    if(newParticipants) newParticipants=validation.checkParticipants(newParticipants)
-    if(newDate) newDate=validation.checkDate(newDate)
+    if(newAttendees) newAttendees=validation.checkAttendees(newAttendees)
+    if(newDomainDates) newDomainDates=validation.checkDate(newDomainDates)
     const eventCollection=await events();
     const oldEvent=await eventCollection.findOne({_id:new ObjectId(eventId)})
     const editedEvent=await eventCollection.updateOne(
