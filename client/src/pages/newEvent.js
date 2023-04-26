@@ -3,17 +3,18 @@ import '../App.css';
 import {BrowserRouter as Router, Route, Link, Routes} from 'react-router-dom';
 import React, {useState, useEffect} from 'react';
 import DateTimePicker from 'react-datetime-picker'
-import 'react-calendar/dist/Calendar.css';
+//import 'react-calendar/dist/Calendar.css';
 import 'react-clock/dist/Clock.css';
 import 'react-datetime-picker/dist/DateTimePicker.css';
 import TimeSelector from '../components/TimeSelector';
 import Calendar from 'react-calendar';
 import { Button } from '@mui/material';
+import { formatDate } from 'react-calendar/dist/cjs/shared/dateFormatter';
 
 
 
 const NewEvent= ()=>{
-    const [dates,setDates]=useState([]);
+    const [dates,setDates]=useState(new Date());
     const [rangedate,setDateRange] =useState([new Date(),new Date()]);
     const [error,setErr]=useState(false);
     const [stDate,setStartDate]=useState(new Date());
@@ -24,7 +25,10 @@ const NewEvent= ()=>{
     const [curDate,setCurDate] = useState(new Date);
     const [curTimes,setCurTimes] = useState({date:new Date(),time:[]})
     const [datesAndTimes,setDatesAndTimes] = useState([]);
+    const [clickedDay,setClickedDay] = useState([]);
+    const [arrIndex,setArrIndex]=useState(0);
     const arr={anchors:[]};
+    const [firstLoad,setFirstLoad] = useState(true);
     const datesEqual = (dte1,dte2) =>{
         if(!(dte1<dte2)){
             if(!(dte1>dte2)){
@@ -34,29 +38,50 @@ const NewEvent= ()=>{
         return false;
     }
     useEffect(()=>{
+        console.log(curDate)
+        let tempArr=[...clickedDay];
+        if(!firstLoad){
+        if(arrayIncludes(tempArr,dates)){
+            for(let x=0;x<tempArr.length;x++){
+                if(datesEqual(tempArr[x],dates)){
+                    tempArr.splice(x,1);
+                }
+            }
+            setClickedDay([...tempArr])
+        }
+        else{
+        setClickedDay([...tempArr,dates]);
+        }}
+        else{
+            setFirstLoad(false)
+        }
+    },[dates])
+    useEffect(()=>{
         async function fetchData(){
             try{
                 let index=-1;
-                for(let x=0;x<allDates.length;x++){
-                 if(datesEqual(curDate,allDates[x])){
+                for(let x=0;x<clickedDay.length;x++){
+                 if(datesEqual(curDate,clickedDay[x])){
                     index=x;
                  }
                     
-                    console.log(allDates[x])
+                    console.log(clickedDay[x])
                     console.log(curDate)
                 }
                 let times = [];
-                if(((datesAndTimes.length)<=index)&&(index!==-1)){
+                if(((datesAndTimes.length)<=index)||(index===-1)){
                     let curObj = {date:curDate,time:[]};
                     times =[];
                     //setCurTimes(curObj);
                 }
                 else{
                   //  setCurTimes(datesAndTimes[index])
+                  
                     times=datesAndTimes[index].time;
+                    console.log(times)
                 }
                 console.log(index);
-                setTselect(<TimeSelector startTime={new Date(curDate.getFullYear(), curDate.getMonth(), curDate.getDate(), 14, 0, 0, 0)} endTime={new Date(curDate.getFullYear(), curDate.getMonth(), curDate.getDate(), 22, 0, 0, 0)} value = {times} date= {curDate} change={setCurTimes}/>)
+                setTselect(<TimeSelector startTime={new Date(curDate.getFullYear(), curDate.getMonth(), curDate.getDate(), 14, 0, 0, 0)} endTime={new Date(curDate.getFullYear(), curDate.getMonth(), curDate.getDate(), 22, 0, 0, 0)} value = {times} date= {clickedDay[arrIndex]} change={setCurTimes}/>)
                 console.log(curTimes)
             }
             catch(e){
@@ -64,10 +89,27 @@ const NewEvent= ()=>{
             }
         }fetchData()
     },[curDate])
+    const arrayIncludes = (arr,element) =>{
+        for(let x=0;x<arr.length;x++){
+          if(datesEqual(arr[x],element)){
+            return true;
+          }
+        }
+        return false;
+      }
+    function tileClass({date}){
+        if(arrayIncludes(clickedDay,date)){
+            return 'workpls'
+        }
+        else {
+            return ''
+        }
+        
+    }
     useEffect(()=>{
         async function fetchData(){
             try{
-                setCurDate(rangedate[0]);
+                setCurDate(clickedDay[0]);
             }
             catch(e){
                 console.log(e);
@@ -78,13 +120,13 @@ const NewEvent= ()=>{
         async function fetchData(){
         console.log(curTimes)
         let index=-1;
-                for(let x=0;x<allDates.length;x++){
-                    if(!(allDates[x]<curDate)){
-                        if(!(allDates[x]>curDate)){
+                for(let x=0;x<clickedDay.length;x++){
+                    if(!(clickedDay[x]<curDate)){
+                        if(!(clickedDay[x]>curDate)){
                         index=x;
                         }
                     }
-                    console.log(allDates[x])
+                    console.log(clickedDay[x])
                     console.log(curDate)
                 }
                 let tempArr=[...datesAndTimes];
@@ -154,7 +196,7 @@ else{
     if(dateLock){
         let tmpDte=new Date(rangedate[1]);
         tmpDte.setDate(tmpDte.getDate()-1);
-        if(curDate<=rangedate[0]){
+        if(arrIndex===0){
 return(<div>
     <div>
     <p>WHY DO I BREAK</p>
@@ -162,19 +204,17 @@ return(<div>
     {console.log(allDates)}
     </div>
     <br />
-    <h1>{curDate.toDateString()}</h1>
+    <h1>{clickedDay[arrIndex].toDateString()}</h1>
     <button onClick={
         ()=>{
-            let tempDate=new Date(curDate)
-            tempDate.setDate(tempDate.getDate()+1);
-            console.log(tempDate)
-            setCurDate(tempDate)}}>Next</button>
+            setArrIndex(arrIndex+1)
+            setCurDate(clickedDay[arrIndex+1])}}>Next</button>
     {Tselect}
     <br />
     {console.log(curDate)}
         
 </div>);}
-else if(curDate<tmpDte){
+else if(arrIndex===(clickedDay.length-1)){
     return(<div>
         <div>
         <p>WHY DO I BREAK</p>
@@ -182,41 +222,35 @@ else if(curDate<tmpDte){
         {console.log(allDates)}
         </div>
         <br />
-        <h1>{curDate.toDateString()}</h1>
+        <h1>{clickedDay[arrIndex].toDateString()}</h1>
         <button onClick={
             ()=>{
-                let tempDate=new Date(curDate)
-                tempDate.setDate(tempDate.getDate()-1);
-                console.log(tempDate)
-                setCurDate(tempDate)}}>Previous</button>
+                setArrIndex(arrIndex-1)
+                setCurDate(clickedDay[arrIndex-1])}}>previous</button>
+        {Tselect}
+        <br />
+        {console.log(curDate)}
+            
+    </div>);
+}
+else{
+    return(<div>
+        <div>
+        <p>WHY DO I BREAK</p>
+        <Calendar selectRange={true} value={rangedate} onChange={setDateRange}></Calendar>
+        {console.log(allDates)}
+        </div>
+        <br />
+        <h1>{clickedDay[arrIndex].toDateString()}</h1>
+        <button onClick={
+            ()=>{
+                setArrIndex(arrIndex-1)
+                setCurDate(clickedDay[arrIndex-1])}}>previous</button>
 
-        <button onClick={
-            ()=>{
-                let tempDate=new Date(curDate)
-                tempDate.setDate(tempDate.getDate()+1);
-    
-                setCurDate(tempDate)}}>Next</button>
-        {Tselect}
-        <br />
-        {console.log(curDate)}
-            
-    </div>);
-}
-else{
-    return(<div>
-        <div>
-        <p>WHY DO I BREAK</p>
-        <Calendar selectRange={true} value={rangedate} onChange={setDateRange}></Calendar>
-        {console.log(allDates)}
-        </div>
-        <br />
-        <h1>{curDate.toDateString()}</h1>
-        <button onClick={
-            ()=>{
-                let tempDate=new Date(curDate)
-                tempDate.setDate(tempDate.getDate()-1);
-                console.log(tempDate)
-                setCurDate(tempDate)}}>previous</button>
+<button onClick={
+        ()=>{
+            setArrIndex(arrIndex+1)
+            setCurDate(clickedDay[arrIndex+1])}}>Next</button>
         {Tselect}
         <br />
         {console.log(curDate)}
@@ -228,11 +262,12 @@ else{
     return(<div>
         <div>
         <p>WHY DO I BREAK</p>
-        <Calendar selectRange={true} value={rangedate} onChange={setDateRange}></Calendar>
-        {console.log(allDates)}
+        <Calendar value = {new Date()} onChange={setDates} tileClassName={tileClass} ></Calendar>
+        {console.log(clickedDay)}
         </div>
         <br />
-        <button onClick={()=>{SetDateLock(true)}}> Lock Dates</button>
+        <button onClick={()=>{
+            SetDateLock(true)}}> Lock Dates</button>
 
                     
     </div>);
