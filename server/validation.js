@@ -48,7 +48,7 @@ function checkEventName(name){
     
 }
 
-function checkParticipants(participants){
+function checkAttendees(participants){
     let index=0;
     for(index in participants){
         // if(!checkId(participants[index])){
@@ -74,7 +74,7 @@ module.exports = {
     checkId, //this bad boy is gonna be used a lot
     checkEventName,
     checkDate,
-    checkParticipants,
+    checkAttendees,
     checkLocation,
     fn
 }
