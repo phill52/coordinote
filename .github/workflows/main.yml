@@ -10,27 +10,22 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
-      - uses: actions/checkout@v2 
-      - name: Build & Deploy
-        env:
-            PRIVATE_KEY: ${{ secrets.EC2PRIVKEY }}
-            HOSTNAME: ${{secrets.EC2DNS}}
-            USER_NAME: ${{secrets.EC2USERNAME}}
-      
-        run: |
-          echo "$coordinote.pem" > coordinote.pem && chmod 400 coordinote.pem
-          ssh -o StrictHostKeyChecking=no -i coordinote.pem ${USER_NAME}@${HOSTNAME} '
-
-              # Now we have got the access of EC2 and we will start the deploy .
-              cd /~/coordinote &&
-              git checkout dev &&
-              git fetch --all &&
-              git reset --hard origin/dev &&
-              git pull origin dev &&
-              sudo npm i &&
-              sudo npm run install:client &&
-              sudo npm run install:server &&
-              sudo npm run build:client &&
-              sudo pm2 stop ./server/app.js &&
-              sudo pm2 start ./server/app.js
-              '
+      - name: SSH and deploy
+        uses: appleboy/ssh-action@v0.1.4
+        with:
+          host: ${{secrets.EC2DNS}}
+          port: 22
+          username: ${{secrets.EC2USERNAME}}
+          key: ${{secrets.EC2PRIVKEY}}
+          script: |
+            cd /~/coordinote &&
+            git checkout dev &&
+            git fetch --all &&
+            git reset --hard origin/dev &&
+            git pull origin dev &&
+            sudo npm i &&
+            sudo npm run install:client &&
+            sudo npm run install:server &&
+            sudo npm run build:client &&
+            sudo pm2 stop ./server/app.js &&
+            sudo pm2 start ./server/app.js
