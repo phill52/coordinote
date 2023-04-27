@@ -93,3 +93,152 @@
   padding-left: 40px; /* small left padding */
   text-align:left;  
 }
+
+
+/* time selector css */
+.time-selector {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.time-range {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.time-label {
+  width: 50px;
+  text-align: right;
+  margin-right: 10px;
+  font-size: 8px;
+}
+
+.time-slot {
+  cursor: pointer;
+  padding: 8px;
+  border-right: 1px solid black;
+  border-left: 1px solid black;
+  border-bottom: 1px solid black;
+  width: 20rem;
+  height: 20px;
+  background-color:rgb(215, 215, 215);
+}
+.top-slot{
+  border-top: 1px solid black;
+}
+.warning-slot{
+  background-color: red !important;
+  border: 2px solid darkred !important;
+}
+.workpls{
+  background: orange;
+}
+.react-calendar__month-view__weekdays {
+  text-align: center;
+  text-transform: uppercase;
+  font-weight: bold;
+  font-size: 0.75em;
+}
+
+.react-calendar__month-view__weekdays__weekday {
+  padding: 0.5em;
+}
+
+.react-calendar__month-view__weekNumbers .react-calendar__tile {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75em;
+  font-weight: bold;
+}
+.react-calendar__tile {
+  max-width: 100%;
+  padding: 10px 6.6667px;
+  text-align: center;
+  line-height: 16px;
+}
+.react-calendar {
+  width: 350px;
+  max-width: 100%;
+  background: white;
+  border: 1px solid #a0a096;
+  font-family: Arial, Helvetica, sans-serif;
+  line-height: 1.125em;
+}
+.react-calendar__tile--hasActive {
+  background: #76baff;
+}
+
+.react-calendar__tile--hasActive:enabled:hover,
+.react-calendar__tile--hasActive:enabled:focus {
+  background: #a9d4ff;
+}
+
+.react-calendar__tile--active {
+
+  color: blue;
+}
+
+.react-calendar__month-view__days__day--weekend {
+  color: #d10000;
+}
+
+.react-calendar__month-view__days__day--neighboringMonth {
+  color: #757575;
+}
+.react-calendar__tile:enabled:hover,
+.react-calendar__tile:enabled:focus {
+  background-color: #e6e6e6;
+}
+.time-gray{
+  background-color: #c0c0c0;
+  
+}
+.selected {
+  background-color: orange;
+}
+.row {
+  display: flex;
+  align-items: center;
+}
+
+.topAnchorTime{
+  background-color:orange;
+  border-top: 2px solid #452103;
+} 
+.bottomAnchorTime{
+  background-color:orange;
+  border-bottom: 2px solid #452103;
+}
+
+.anchor {
+  left: -10px;
+  top: -10px;
+  width: 10px;
+  height: 10px;
+  background-color: #333;
+  border-radius: 50%;
+  transform: translateY(100%);
+}
+
+.warningAnchor{
+  left: -10px;
+  top: -10px;
+  width: 10px;
+  height: 10px;
+  background-color: red;
+  border-radius: 50%;
+  transform: translateY(0%);
+}
+
+.topAnchor{
+  transform: translateY(-100%);
+}
+.bottomAnchor{
+  transform: translateY(100%);
+}
+
+
+
