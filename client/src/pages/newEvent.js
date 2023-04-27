@@ -2,8 +2,7 @@ import logo from '../logo.svg';
 import '../App.css';
 import {BrowserRouter as Router, Route, Link, Routes} from 'react-router-dom';
 import React, {useState, useEffect} from 'react';
-import DateTimePicker from 'react-datetime-picker'
-//import 'react-calendar/dist/Calendar.css';
+import DateTimePicker from 'react-datetime-picker'//import 'react-calendar/dist/Calendar.css';
 import 'react-clock/dist/Clock.css';
 import 'react-datetime-picker/dist/DateTimePicker.css';
 import TimeSelector from '../components/TimeSelector';

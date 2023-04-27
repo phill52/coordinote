@@ -5,9 +5,10 @@
 /client/.pnp
 /client/.pnp.js
 /server/node_modules
-/server/package-lock.json
 
 node_modules
+events.json
+users.json
 
 # testing
 /client/coverage
@@ -25,3 +26,9 @@ node_modules
 /client/npm-debug.log*
 /client/yarn-debug.log*
 /client/yarn-error.log*
+events.json
+
+#environment variables
+.env
+/server/.env
+/client/.env
