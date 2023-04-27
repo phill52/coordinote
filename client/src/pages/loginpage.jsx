@@ -7,6 +7,7 @@ const LoginPage = () => {
   const [password, setPassword] = useState('');
   const [emailError, setEmailError] = useState('');
   const [passwordError, setPasswordError] = useState('');
+  const [isBadLogin, setIsBadLogin] = useState(false);
 
   const handleEmailChange = async (value) => {
     setEmail(value);
@@ -34,20 +35,29 @@ const LoginPage = () => {
     }
     
     // Backend people now send email and password to server for authentication and do something.
+    firebase.auth().signInWithEmailAndPassword(email, password).catch((error)=>{
+      var errorCode = error.code;
+      var errorMessage = error.message;
+      console.log(errorCode, errorMessage);
+    })
     console.log('logged in i guess?');
   };
 
   return (
     <div className='Login-page'>
       <form onSubmit={handleSubmit} className="login-form">
-        <label htmlFor="email" className={`login-label ${emailError.length>0 ? 'error' : ''}`}>Email:</label>
+        <label htmlFor="email" className={`login-label ${emailError.length>0 ? 'error' : ''}
+        ${isBadLogin ? 'error' : ''}
+        `}>Email:</label>
           <LoginInput for="email" onChange={handleEmailChange} value={email}/>
           <p className="input-error-message">{emailError}</p>
-        <label htmlFor="password" className="login-label">Password:</label>
+        <label htmlFor="password" className={`login-label
+        ${isBadLogin ? 'error' : ''}`}>Password:</label>
           <LoginInput for="password" onChange={handlePasswordChange} value={password}/>
         <div className="flex justify-center">
           <button type="submit" onClick={handleSubmit}>Log in</button>
         </div>
+        {isBadLogin && <p className="input-error-message">Incorrect email or password.</p>}
       </form>
     </div>
   );
