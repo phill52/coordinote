@@ -7,6 +7,8 @@
 /server/node_modules
 
 node_modules
+events.json
+users.json
 
 # testing
 /client/coverage
@@ -24,6 +26,7 @@ node_modules
 /client/npm-debug.log*
 /client/yarn-debug.log*
 /client/yarn-error.log*
+events.json
 
 #environment variables
 .env
