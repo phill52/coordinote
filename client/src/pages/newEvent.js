@@ -7,6 +7,7 @@ import DateTimePicker from 'react-datetime-picker'
 import 'react-clock/dist/Clock.css';
 import 'react-datetime-picker/dist/DateTimePicker.css';
 import TimeSelector from '../components/TimeSelector';
+import TimeSelectorTwoAnchors from '../components/TimeSelectorTwoAnchors';
 import Calendar from 'react-calendar';
 import { Button } from '@mui/material';
 import { formatDate } from 'react-calendar/dist/cjs/shared/dateFormatter';
@@ -27,6 +28,12 @@ const NewEvent= ()=>{
     const [datesAndTimes,setDatesAndTimes] = useState([]);
     const [clickedDay,setClickedDay] = useState([]);
     const [arrIndex,setArrIndex]=useState(0);
+    const [eventName,setEventName] = useState('');
+    const [eventDescription,setDescription] = useState('');
+    const [nameSet,setNameSet]= useState(false);
+    const [descriptionSet,setEventDescription]= useState(false);
+    const [location,setLocation] = useState('');
+    const [locationSet,locationIsSet] = useState(false);
     const arr={anchors:[]};
     const [firstLoad,setFirstLoad] = useState(true);
     const datesEqual = (dte1,dte2) =>{
@@ -84,7 +91,7 @@ const NewEvent= ()=>{
                     console.log(times)
                 }
                 console.log(index);
-                setTselect(<TimeSelector startTime={new Date(curDate.getFullYear(), curDate.getMonth(), curDate.getDate(), 14, 0, 0, 0)} endTime={new Date(curDate.getFullYear(), curDate.getMonth(), curDate.getDate(), 22, 0, 0, 0)} value = {times} date= {clickedDay[arrIndex]} change={setCurTimes}/>)
+                setTselect(<TimeSelectorTwoAnchors startTime={new Date(curDate.getFullYear(), curDate.getMonth(), curDate.getDate(), 14, 0, 0, 0)} endTime={new Date(curDate.getFullYear(), curDate.getMonth(), curDate.getDate(), 22, 0, 0, 0)} value = {times} date= {clickedDay[arrIndex]} change={setCurTimes}/>)
                 console.log(curTimes)
             }
             catch(e){
@@ -196,13 +203,65 @@ if(error){
     </div>);
 }
 else{
+    if(!nameSet){
+        if((eventName!=='')&&(eventDescription!=='')&&(location!=='')){
+        return(
+            <div>
+                <label>
+                    {'Event Input: '}
+                <input id='eventInput' onChange={(e)=>{setEventName(e.target.value)
+                console.log(e)}} placeholder='event name' />
+                </label>
+                <br />
+                <label>
+                    {'Event Description: '}
+                    <input id='descriptionInput' onChange={(e)=>{setDescription(e.target.value)}} placeholder='Enter Description' />
+                </label>
+                <br />
+                <label>
+                    {'Location Input: '}
+                    <input id='locationInput' onChange={(e)=>{setLocation(e.target.value)}} placeholder='Enter Location' />
+                </label>
+                <br />
+                <button onClick={()=>{setNameSet(true)
+                let inputval=document.getElementById('eventInput');                
+                console.log(inputval)}}>Lock Event Info</button>
+            </div>
+        )}
+        else{
+            return(
+                <div>
+                    <label>
+                        {'Event Input: '}
+                    <input id='eventInput' onChange={(e)=>{setEventName(e.target.value)
+                    console.log(e)}} placeholder='event name' />
+                    </label>
+                    <br />
+                    <label>
+                        {'Event Description: '}
+                        <input id='descriptionInput' onChange={(e)=>{setDescription(e.target.value)}} placeholder='Enter Description' />
+                    </label>
+                    <br />
+                    <label>
+                        {'Location Input: '}
+                        <input id='locationInput' onChange={(e)=>{setLocation(e.target.value)}} placeholder='Enter Location' />
+                    </label>
+                    <br />
+
+                </div>
+            )
+        }
+    }
+    else{
     if(dateLock){
         let tmpDte=new Date(rangedate[1]);
         tmpDte.setDate(tmpDte.getDate()-1);
         if(arrIndex===0){
 return(<div>
     <div>
-    <p>WHY DO I BREAK</p>
+    <p>{eventName}</p>
+    <p>{eventDescription}</p>
+    <p>{location}</p>
     <Calendar value = {new Date()} tileClassName={tileClass} ></Calendar>
     {console.log(allDates)}
     </div>
@@ -220,7 +279,9 @@ return(<div>
 else if(arrIndex===(clickedDay.length-1)){
     return(<div>
         <div>
-        <p>WHY DO I BREAK</p>
+        <p>{eventName}</p>
+        <p>{eventDescription}</p>
+        <p>{location}</p>
         <Calendar value = {new Date()} tileClassName={tileClass} ></Calendar>
         {console.log(allDates)}
         </div>
@@ -239,7 +300,9 @@ else if(arrIndex===(clickedDay.length-1)){
 else{
     return(<div>
         <div>
-        <p>WHY DO I BREAK</p>
+        <p>{eventName}</p>
+        <p>{eventDescription}</p>
+        <p>{location}</p>
         <Calendar value = {new Date()} tileClassName={tileClass} ></Calendar>
         {console.log(allDates)}
         </div>
@@ -264,7 +327,9 @@ else{
 else{
     return(<div>
         <div>
-        <p>WHY DO I BREAK</p>
+        <p>{eventName}</p>
+        <p>{eventDescription}</p>
+        <p>{location}</p>
         <Calendar value = {new Date()} onChange={setDates} tileClassName={tileClass} ></Calendar>
         {console.log(clickedDay)}
         </div>
@@ -274,6 +339,6 @@ else{
 
                     
     </div>);
-}
+}}
 }}
 export default NewEvent;

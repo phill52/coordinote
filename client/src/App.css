@@ -177,8 +177,8 @@
 }
 
 .react-calendar__tile--active {
-  background: #006edc;
-  color: white;
+
+  color: blue;
 }
 
 .react-calendar__month-view__days__day--weekend {
