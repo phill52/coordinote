@@ -31,11 +31,11 @@ const NewEvent= ()=>{
     const [eventName,setEventName] = useState('');
     const [eventDescription,setDescription] = useState('');
     const [nameSet,setNameSet]= useState(false);
-    const [descriptionSet,setEventDescription]= useState(false);
     const [location,setLocation] = useState('');
-    const [locationSet,locationIsSet] = useState(false);
     const arr={anchors:[]};
     const [firstLoad,setFirstLoad] = useState(true);
+    const [dateTimeLock, lockDateTime] = useState(false);
+    const [output,setOutput] = useState({name:'', location:'',domainDates:[],description:''})
     const datesEqual = (dte1,dte2) =>{
         if(!(dte1<dte2)){
             if(!(dte1>dte2)){
@@ -197,12 +197,27 @@ useEffect(()=>{
     }fetchData()
     //console.log(allDates)
 },[rangedate])
+useEffect(()=>{
+    async function fetchData(){
+        setOutput({name:eventName,location:location,domainDates:datesAndTimes,description:eventDescription});
+
+    }fetchData()
+},[dateTimeLock])
 if(error){
     return(<div>
         <p>Error</p>
     </div>);
 }
 else{
+    if(dateTimeLock){
+        return(
+            <div>
+                <h1>All Done!</h1>
+                {console.log(output)}
+            </div>
+        )
+    }
+    else{
     if(!nameSet){
         if((eventName!=='')&&(eventDescription!=='')&&(location!=='')){
         return(
@@ -256,6 +271,7 @@ else{
     if(dateLock){
         let tmpDte=new Date(rangedate[1]);
         tmpDte.setDate(tmpDte.getDate()-1);
+        if(clickedDay.length>datesAndTimes.length){
         if(arrIndex===0){
 return(<div>
     <div>
@@ -325,6 +341,84 @@ else{
 }
 }
 else{
+           if(arrIndex===0){
+return(<div>
+    <div>
+    <p>{eventName}</p>
+    <p>{eventDescription}</p>
+    <p>{location}</p>
+    <Calendar value = {new Date()} tileClassName={tileClass} ></Calendar>
+    {console.log(allDates)}
+    </div>
+    <br />
+    <h1>{clickedDay[arrIndex].toDateString()}</h1>
+    <button onClick={
+        ()=>{
+            setArrIndex(arrIndex+1)
+            setCurDate(clickedDay[arrIndex+1])}}>Next</button>
+    {Tselect}
+    <br />
+        <br />
+        <button onClick={()=>{lockDateTime(true)}}>Lock dates and times</button>
+    <br />
+    {console.log(curDate)}
+        
+</div>);}
+else if(arrIndex===(clickedDay.length-1)){
+    return(<div>
+        <div>
+        <p>{eventName}</p>
+        <p>{eventDescription}</p>
+        <p>{location}</p>
+        <Calendar value = {new Date()} tileClassName={tileClass} ></Calendar>
+        {console.log(allDates)}
+        </div>
+        <br />
+        <h1>{clickedDay[arrIndex].toDateString()}</h1>
+        <button onClick={
+            ()=>{
+                setArrIndex(arrIndex-1)
+                setCurDate(clickedDay[arrIndex-1])}}>previous</button>
+        {Tselect}
+        <br />
+        <br />
+        <button onClick={()=>{lockDateTime(true)}}>Lock dates and times</button>
+        <br />
+        {console.log(curDate)}
+            
+    </div>);
+}
+else{
+    return(<div>
+        <div>
+        <p>{eventName}</p>
+        <p>{eventDescription}</p>
+        <p>{location}</p>
+        <Calendar value = {new Date()} tileClassName={tileClass} ></Calendar>
+        {console.log(allDates)}
+        </div>
+        <br />
+        <h1>{clickedDay[arrIndex].toDateString()}</h1>
+        <button onClick={
+            ()=>{
+                setArrIndex(arrIndex-1)
+                setCurDate(clickedDay[arrIndex-1])}}>previous</button>
+
+<button onClick={
+        ()=>{
+            setArrIndex(arrIndex+1)
+            setCurDate(clickedDay[arrIndex+1])}}>Next</button>
+        {Tselect}
+        <br />
+        <br />
+        <button onClick={()=>{lockDateTime(true)}}>Lock dates and times</button>
+        {console.log(curDate)}
+            
+    </div>);
+}
+}
+}
+else{
     return(<div>
         <div>
         <p>{eventName}</p>
@@ -339,6 +433,6 @@ else{
 
                     
     </div>);
-}}
+}}}
 }}
 export default NewEvent;
