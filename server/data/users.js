@@ -30,7 +30,6 @@ const createUser = async (username, password) => {
     return {insertedUser: true, userId: insertUser.insertedId}
 }
 
-<<<<<<< HEAD
 const checkUser = async (username, password) => {
     username = validation.checkUsername(username)
     password = validation.checkPassword(password,true)
@@ -42,16 +41,6 @@ const checkUser = async (username, password) => {
     let user_hashed_password = user.password
     let comparison = await bcrypt.compare(password, user_hashed_password)
 
-=======
-const checkUser = async(username,password) => {         //when a user logs in
-    username=validation.checkUsername(username)
-    password=validation.checkPassword(password,true)
-    const userCollection=await users();
-    const user=await userCollection.findOne({username:username})
-    if(!user) throw "Either1 the username or password is invalid"
-    let user_hashed_password=user.password
-    let comparison=await bcrypt.compare(password,user_hashed_password)
->>>>>>> 3f9d0631e4b9cbca8bd78df3eed76e994b8a94c2
     if(comparison) return {authenticatedUser: true, userId:user._id}
     throw "Either the username or password is invalid"
 }

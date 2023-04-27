@@ -16,9 +16,9 @@ router
     })
 
 router
-    .route('/register')
+    .route('/signup')
     .get(async(req,res) => {
-        res.json({Get: "/register"})
+        res.json({Get: "/signup"})
     })
     .post(async(req,res) => {
         let createdUser=false;
