@@ -90,7 +90,7 @@ const NewEvent= ()=>{
                     console.log(times)
                 }
                 console.log(index);
-                setTselect(<TimeSelectorTwoAnchors startTime={new Date(curDate.getFullYear(), curDate.getMonth(), curDate.getDate(), 14, 0, 0, 0)} endTime={new Date(curDate.getFullYear(), curDate.getMonth(), curDate.getDate(), 22, 0, 0, 0)} value = {times} date= {clickedDay[arrIndex]} change={setCurTimes}/>)
+                setTselect(<TimeSelectorTwoAnchors className='centered' startTime={new Date(curDate.getFullYear(), curDate.getMonth(), curDate.getDate(), 14, 0, 0, 0)} endTime={new Date(curDate.getFullYear(), curDate.getMonth(), curDate.getDate(), 22, 0, 0, 0)} value = {times} date= {clickedDay[arrIndex]} change={setCurTimes}/>)
                 console.log(curTimes)
             }
             catch(e){
@@ -164,6 +164,10 @@ catch(e){
     setErr(true);
 }}fetchData();
 },[dates,rangedate])*/
+const handleSubmit = (event) =>{
+    event.preventDefault();
+    setNameSet(true)
+}
 useEffect(()=>{
     async function fetchData(){
         try{
@@ -211,60 +215,39 @@ else{
     if(dateTimeLock){
         return(
             <div>
-                <h1>All Done!</h1>
+                <h1 className='currentDay'>All Done!</h1>
                 {console.log(output)}
             </div>
         )
     }
     else{
     if(!nameSet){
-        if((eventName!=='')&&(eventDescription!=='')&&(location!=='')){
-        return(
-            <div>
-                <label>
+                return(
+            <div className='Login-page'>
+                <form className='login-form' onSubmit={handleSubmit}>
+                <label className='login-label'>
                     {'Event Input: '}
-                <input id='eventInput' onChange={(e)=>{setEventName(e.target.value)
-                console.log(e)}} placeholder='event name' />
+                <input className="login-input" id='eventInput' onChange={(e)=>{setEventName(e.target.value)
+                console.log(e)}} placeholder='event name' required />
                 </label>
                 <br />
-                <label>
+                <label className='login-label'>
                     {'Event Description: '}
-                    <input id='descriptionInput' onChange={(e)=>{setDescription(e.target.value)}} placeholder='Enter Description' />
+                    <input className="login-input" id='descriptionInput' onChange={(e)=>{setDescription(e.target.value)}} placeholder='Enter Description' required />
                 </label>
                 <br />
-                <label>
+                <label className='login-label'>
                     {'Location Input: '}
-                    <input id='locationInput' onChange={(e)=>{setLocation(e.target.value)}} placeholder='Enter Location' />
+                    <input className="login-input" id='locationInput' onChange={(e)=>{setLocation(e.target.value)}} placeholder='Enter Location' required/>
                 </label>
                 <br />
-                <button onClick={()=>{setNameSet(true)
-                let inputval=document.getElementById('eventInput');                
-                console.log(inputval)}}>Lock Event Info</button>
-            </div>
-        )}
-        else{
-            return(
-                <div>
-                    <label>
-                        {'Event Input: '}
-                    <input id='eventInput' onChange={(e)=>{setEventName(e.target.value)
-                    console.log(e)}} placeholder='event name' />
-                    </label>
-                    <br />
-                    <label>
-                        {'Event Description: '}
-                        <input id='descriptionInput' onChange={(e)=>{setDescription(e.target.value)}} placeholder='Enter Description' />
-                    </label>
-                    <br />
-                    <label>
-                        {'Location Input: '}
-                        <input id='locationInput' onChange={(e)=>{setLocation(e.target.value)}} placeholder='Enter Location' />
-                    </label>
-                    <br />
-
+                <div className='flex justify-center'>
+                <button type='submit' onClick={handleSubmit}>Lock Event Info</button>
                 </div>
-            )
-        }
+                </form>
+            </div>
+        )
+        
     }
     else{
     if(dateLock){
@@ -274,14 +257,19 @@ else{
         if(arrIndex===0){
 return(<div>
     <div>
-    <p>{eventName}</p>
-    <p>{eventDescription}</p>
-    <p>{location}</p>
-    <Calendar value = {new Date()} tileClassName={tileClass} ></Calendar>
+    <div className='login-form'>
+            <h2 className='login-label'>Event Name</h2>
+        <p className='left'>{eventName}</p>
+        <h2 className='login-label'>Event Description</h2>
+        <p className='left'>{eventDescription}</p>
+        <h2 className='login-label'>Event Location</h2>
+        <p className='left'>{location}</p>
+        </div>
+    <Calendar className='smallCal' value = {new Date()} tileClassName={tileClass} ></Calendar>
     {console.log(allDates)}
     </div>
     <br />
-    <h1>{clickedDay[arrIndex].toDateString()}</h1>
+    <h1 className='currentDay'>{clickedDay[arrIndex].toDateString()}</h1>
     <button onClick={
         ()=>{
             setArrIndex(arrIndex+1)
@@ -294,14 +282,19 @@ return(<div>
 else if(arrIndex===(clickedDay.length-1)){
     return(<div>
         <div>
-        <p>{eventName}</p>
-        <p>{eventDescription}</p>
-        <p>{location}</p>
-        <Calendar value = {new Date()} tileClassName={tileClass} ></Calendar>
+        <div className='login-form'>
+            <h2 className='login-label'>Event Name</h2>
+        <p className='left'>{eventName}</p>
+        <h2 className='login-label'>Event Description</h2>
+        <p className='left'>{eventDescription}</p>
+        <h2 className='login-label'>Event Location</h2>
+        <p className='left'>{location}</p>
+        </div>
+        <Calendar className='smallCal' value = {new Date()} tileClassName={tileClass} ></Calendar>
         {console.log(allDates)}
         </div>
         <br />
-        <h1>{clickedDay[arrIndex].toDateString()}</h1>
+        <h1 className='currentDay'>{clickedDay[arrIndex].toDateString()}</h1>
         <button onClick={
             ()=>{
                 setArrIndex(arrIndex-1)
@@ -315,14 +308,19 @@ else if(arrIndex===(clickedDay.length-1)){
 else{
     return(<div>
         <div>
-        <p>{eventName}</p>
-        <p>{eventDescription}</p>
-        <p>{location}</p>
-        <Calendar value = {new Date()} tileClassName={tileClass} ></Calendar>
+        <div className='login-form'>
+            <h2 className='login-label'>Event Name</h2>
+        <p className='left'>{eventName}</p>
+        <h2 className='login-label'>Event Description</h2>
+        <p className='left'>{eventDescription}</p>
+        <h2 className='login-label'>Event Location</h2>
+        <p className='left'>{location}</p>
+        </div>
+        <Calendar className='smallCal' value = {new Date()} tileClassName={tileClass} ></Calendar>
         {console.log(allDates)}
         </div>
         <br />
-        <h1>{clickedDay[arrIndex].toDateString()}</h1>
+        <h1 className='currentDay'>{clickedDay[arrIndex].toDateString()}</h1>
         <button onClick={
             ()=>{
                 setArrIndex(arrIndex-1)
@@ -343,14 +341,19 @@ else{
            if(arrIndex===0){
 return(<div>
     <div>
-    <p>{eventName}</p>
-    <p>{eventDescription}</p>
-    <p>{location}</p>
-    <Calendar value = {new Date()} tileClassName={tileClass} ></Calendar>
+    <div className='login-form'>
+            <h2 className='login-label'>Event Name</h2>
+        <p className='left'>{eventName}</p>
+        <h2 className='login-label'>Event Description</h2>
+        <p className='left'>{eventDescription}</p>
+        <h2 className='login-label'>Event Location</h2>
+        <p className='left'>{location}</p>
+        </div>
+    <Calendar className='smallCal' value = {new Date()} tileClassName={tileClass} ></Calendar>
     {console.log(allDates)}
     </div>
     <br />
-    <h1>{clickedDay[arrIndex].toDateString()}</h1>
+    <h1 className='currentDay'>{clickedDay[arrIndex].toDateString()}</h1>
     <button onClick={
         ()=>{
             setArrIndex(arrIndex+1)
@@ -366,14 +369,19 @@ return(<div>
 else if(arrIndex===(clickedDay.length-1)){
     return(<div>
         <div>
-        <p>{eventName}</p>
-        <p>{eventDescription}</p>
-        <p>{location}</p>
-        <Calendar value = {new Date()} tileClassName={tileClass} ></Calendar>
+        <div className='login-form'>
+            <h2 className='login-label'>Event Name</h2>
+        <p className='left'>{eventName}</p>
+        <h2 className='login-label'>Event Description</h2>
+        <p className='left'>{eventDescription}</p>
+        <h2 className='login-label'>Event Location</h2>
+        <p className='left'>{location}</p>
+        </div>
+        <Calendar className='smallCal' value = {new Date()} tileClassName={tileClass} ></Calendar>
         {console.log(allDates)}
         </div>
         <br />
-        <h1>{clickedDay[arrIndex].toDateString()}</h1>
+        <h1 className='currentDay'>{clickedDay[arrIndex].toDateString()}</h1>
         <button onClick={
             ()=>{
                 setArrIndex(arrIndex-1)
@@ -390,14 +398,19 @@ else if(arrIndex===(clickedDay.length-1)){
 else{
     return(<div>
         <div>
-        <p>{eventName}</p>
-        <p>{eventDescription}</p>
-        <p>{location}</p>
-        <Calendar value = {new Date()} tileClassName={tileClass} ></Calendar>
+        <div className='login-form'>
+            <h2 className='login-label'>Event Name</h2>
+        <p className='left'>{eventName}</p>
+        <h2 className='login-label'>Event Description</h2>
+        <p className='left'>{eventDescription}</p>
+        <h2 className='login-label'>Event Location</h2>
+        <p className='left'>{location}</p>
+        </div>
+        <Calendar className='smallCal' value = {new Date()} tileClassName={tileClass} ></Calendar>
         {console.log(allDates)}
         </div>
         <br />
-        <h1>{clickedDay[arrIndex].toDateString()}</h1>
+        <h1 className='currentDay'>{clickedDay[arrIndex].toDateString()}</h1>
         <button onClick={
             ()=>{
                 setArrIndex(arrIndex-1)
@@ -418,20 +431,49 @@ else{
 }
 }
 else{
+    if(clickedDay.length>0){
     return(<div>
-        <div>
-        <p>{eventName}</p>
-        <p>{eventDescription}</p>
-        <p>{location}</p>
-        <Calendar value = {new Date()} onChange={setDates} tileClassName={tileClass} ></Calendar>
-        {console.log(clickedDay)}
+        <div className='login-form'>
+            <h2 className='login-label'>Event Name</h2>
+        <p className='left'>{eventName}</p>
+        <h2 className='login-label'>Event Description</h2>
+        <p className='left'>{eventDescription}</p>
+        <h2 className='login-label'>Event Location</h2>
+        <p className='left'>{location}</p>
         </div>
+        <div>
+        <Calendar className='smallCal' value = {new Date()} onChange={setDates} tileClassName={tileClass} ></Calendar>
+        </div>
+        {console.log(clickedDay)}
+        
         <br />
         <button onClick={()=>{
             SetDateLock(true)}}> Lock Dates</button>
 
                     
     </div>);
+}
+else{
+    return(<div>
+        <div>
+        <div className='login-form'>
+            <h2 className='login-label'>Event Name</h2>
+        <p className='left'>{eventName}</p>
+        <h2 className='login-label'>Event Description</h2>
+        <p className='left'>{eventDescription}</p>
+        <h2 className='login-label'>Event Location</h2>
+        <p className='left'>{location}</p>
+        </div><div>
+        <Calendar className='smallCal' value = {new Date()} onChange={setDates} tileClassName={tileClass} ></Calendar>
+        </div>
+        {console.log(clickedDay)}
+        </div>
+        <br />
+        
+
+                    
+    </div>);
+}
 }}}
 }}
 export default NewEvent;
