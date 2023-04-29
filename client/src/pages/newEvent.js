@@ -34,7 +34,10 @@ const NewEvent= ()=>{
     const arr={anchors:[]};
     const [firstLoad,setFirstLoad] = useState(true);
     const [dateTimeLock, lockDateTime] = useState(false);
-    const [output,setOutput] = useState({name:'', location:'',domainDates:[],description:''})
+    const [output,setOutput] = useState({name:'', location:'',domainDates:[],description:'',image:new FormData()})
+    const [fileInput,setFileInput] = useState(new FormData());
+    const [fileIsIn, setFileIsIn] = useState(false);
+    const [errMsg,setErrMsg] = useState('');
     const datesEqual = (dte1,dte2) =>{
         if(!(dte1<dte2)){
             if(!(dte1>dte2)){
@@ -166,7 +169,13 @@ catch(e){
 },[dates,rangedate])*/
 const handleSubmit = (event) =>{
     event.preventDefault();
+    if((eventName!=='')&&(eventDescription!=='')&&(location!=='')&&(fileIsIn)){
+        setErrMsg('');
     setNameSet(true)
+    }
+    else{
+        setErrMsg('Error: all input parameters must be filled out');
+    }
 }
 useEffect(()=>{
     async function fetchData(){
@@ -202,10 +211,18 @@ useEffect(()=>{
 },[rangedate])
 useEffect(()=>{
     async function fetchData(){
-        setOutput({name:eventName,location:location,domainDates:datesAndTimes,description:eventDescription});
+        setOutput({name:eventName,location:location,domainDates:datesAndTimes,description:eventDescription,image:fileInput});
 
     }fetchData()
 },[dateTimeLock])
+const handleFileInput = (event) =>{
+const formData = new FormData();
+console.log(event.target.files[0])
+formData.append("myImage",event.target.files[0],event.target.files[0].name)
+setFileInput(formData);
+setFileIsIn(true);
+console.log(formData.getAll('myImage'));
+}
 if(error){
     return(<div>
         <p>Error</p>
@@ -241,10 +258,18 @@ else{
                     <input className="login-input" id='locationInput' onChange={(e)=>{setLocation(e.target.value)}} placeholder='Enter Location' required/>
                 </label>
                 <br />
+                <label className='login-label'>
+                        {'Event Image: '}
+                        <input type='file' accept='image/png, image/jpeg, image/jpg' required className='login-input' id='imageInput' onChange={(e)=>{
+                            console.log(e)
+                            handleFileInput(e)}} />
+                    </label>
+                    <br />
                 <div className='flex justify-center'>
                 <button type='submit' onClick={handleSubmit}>Lock Event Info</button>
                 </div>
                 </form>
+                <p>{errMsg}</p>
             </div>
         )
         
