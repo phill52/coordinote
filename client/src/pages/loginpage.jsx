@@ -2,6 +2,10 @@ import React from 'react';
 import { useState } from 'react';
 import LoginInput from '../components/logininput';
 import { validateEmail } from '../validate';
+import { auth } from '../fire';
+import { signInWithEmailAndPassword } from 'firebase/auth';
+
+
 const LoginPage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -17,29 +21,40 @@ const LoginPage = () => {
   };
 
   const handleSubmit = (event) => {
+    let validation=true;
     event.preventDefault();
     if (email==='') {
       setEmailError('Email is required');
+      validation=false;
     } else {
       setEmailError('');
     }
     if (password==='') {
       setPasswordError('Password is required');
+      validation=false;
     } else {
       setPasswordError('');
     }
     if (!validateEmail(email)) {
       setEmailError('Must be email format.');
+      validation=false;
+
     } else {
       setEmailError('');
     }
-    
+    if (!validation) return;
     // Backend people now send email and password to server for authentication and do something.
-    firebase.auth().signInWithEmailAndPassword(email, password).catch((error)=>{
-      var errorCode = error.code;
-      var errorMessage = error.message;
-      console.log(errorCode, errorMessage);
-    })
+    signInWithEmailAndPassword(auth, email, password).
+      then(()=> {
+        console.log('logged in');
+        setIsBadLogin(false);
+      }).
+      catch((error)=>{
+        var errorCode = error.code;
+        var errorMessage = error.message;
+        setIsBadLogin(true);
+        console.log(errorCode, errorMessage);
+      })
     console.log('logged in i guess?');
   };
 
@@ -54,6 +69,7 @@ const LoginPage = () => {
         <label htmlFor="password" className={`login-label
         ${isBadLogin ? 'error' : ''}`}>Password:</label>
           <LoginInput for="password" onChange={handlePasswordChange} value={password}/>
+          <p className="input-error-message">{passwordError}</p>
         <div className="flex justify-center">
           <button type="submit" onClick={handleSubmit}>Log in</button>
         </div>

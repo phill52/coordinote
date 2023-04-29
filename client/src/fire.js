@@ -1,7 +1,6 @@
 //credit to https://javascript.plainenglish.io/lets-create-react-app-with-firebase-auth-express-backend-and-mongodb-database-805c83e4dadd
-import firebase from 'firebase';
-import dotenv from 'dotenv';
-dotenv.config();
+import { initializeApp } from 'firebase/app';
+import { getAuth } from 'firebase/auth';
 
 const firebaseConfig = {
   apiKey: process.env.REACT_APP_FIREBASEapiKey,
@@ -12,12 +11,7 @@ const firebaseConfig = {
   appId: process.env.REACT_APP_FIREBASEappId,
 };
 
-try {
-  firebase.initializeApp(firebaseConfig);
-} catch (err) {
-  if (!/already exists/.test(err.message)) {
-    console.error('Firebase initialization error', err.stack);
-  }
-}
-const fire = firebase;
-export default fire;
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+
+export { app, auth };
