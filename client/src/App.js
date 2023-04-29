@@ -5,6 +5,7 @@ import NewEvent from './pages/newEvent';
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import React, { useState, useEffect } from 'react';
 import { auth } from './fire';
+import SignupPage from './pages/signuppage';
 
 function App() {
   const [loggedIn, setLoggedIn] = useState(false);
@@ -56,6 +57,7 @@ function App() {
             <Routes>
               <Route path='/newEvent' element={<LoginPage />}/>
               <Route path='/login' element={<LoginPage />} />
+              <Route path='/signup' element={<SignupPage />} />
             </Routes>
           </div>
       </> : 
