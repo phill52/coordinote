@@ -1,14 +1,32 @@
-const express=require('express');
+import express from 'express';
 const app=express();
-const session=require('express-session')
-const configRoutes=require('./routes')
-const connection=require('./config/mongoConnection')
-const validation=require('./validation');
-const events=require('./data/events');
-const users=require('./data/users')
-const path=require('path')
-const cors=require('cors');
+import session from 'express-session'
+import configRoutes from './routes/index.js'
+import connection from './config/mongoConnection.js'
+import validation from './validation.js';
+import events from './data/events.js';
+import path from 'path'
+import {fileURLToPath} from 'url';
+const __filename = fileURLToPath(import.meta.url);
+import {initializeApp} from 'firebase/app';
+import { getAnalytics } from "firebase/analytics";
+import {getAuth} from 'firebase/auth';
+import {getFirestore} from 'firebase/firestore';
 
+const firebaseConfig = {
+    apiKey: "AIzaSyBvQFCYXieHigezCeHgi9wSHSir05uSiIE",
+    authDomain: "coordinote-5ff91.firebaseapp.com",
+    projectId: "coordinote-5ff91",
+    storageBucket: "coordinote-5ff91.appspot.com",
+    messagingSenderId: "571076300379",
+    appId: "1:571076300379:web:a30a91a731e83a7f0e797e",
+    measurementId: "G-WRRBZPTJG5"
+};
+  
+// Initialize Firebase
+// const app = initializeApp(firebaseConfig);
+// const analytics = getAnalytics(app);
+const __dirname=path.dirname(__filename)
 app.use(express.static(path.join(__dirname, '..', 'client', 'build')));
 
 app.use(express.json())
