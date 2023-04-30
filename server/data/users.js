@@ -1,5 +1,3 @@
-import bcrypt from 'bcrypt'
-const saltRounds=11
 import mongoCollections from '../config/mongoCollections.js';
 const users = mongoCollections.users
 const events = mongoCollections.events
@@ -13,13 +11,9 @@ const createUser = async (username, password) => {
     if(await userCollection.findOne({username: username})) {
         throw "Either the username or password is invalid"
     }
-    
-    password = validation.checkPassword(password,false)
-    const hashed_pw = await bcrypt.hash(password,saltRounds)
 
     let newUser = {
         username: username,
-        password: hashed_pw,
         events: []
     }
 
