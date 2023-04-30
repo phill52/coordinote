@@ -8,6 +8,7 @@ import { auth } from './fire';
 import SignupPage from './pages/signuppage';
 import EmailVerificationLanding from './pages/emailVerification';
 import ResponseToInvite from './pages/responseToInvite';
+import Homepage from './pages/homepage';
 function App() {
   const [loggedIn, setLoggedIn] = useState(false);
   const [loadingUser, setLoadingUser] = useState(true);
@@ -73,6 +74,7 @@ function App() {
           <Route path='/signup' element={<UnloggedRoute Component={<SignupPage/>}/>} />
           <Route path='/email-verification' element={<EmailVerificationLanding/>} />
           <Route path='/event/:id' element={<ResponseToInvite />} />
+          <Route path='/' element={<Homepage />} />
         </Routes>
       </div>
     </div>
