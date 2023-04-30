@@ -17,6 +17,7 @@
   "dependencies": {
     "bcrypt": "^5.1.0",
     "concurrently": "^8.0.1",
-    "dotenv": "^16.0.3"
+    "dotenv": "^16.0.3",
+    "firebase": "^9.21.0"
   }
 }

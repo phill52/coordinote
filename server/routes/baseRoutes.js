@@ -1,9 +1,8 @@
-const express=require('express')
+import express from 'express'
 const router=express.Router()
-const path=require('path')
-const users=require('../data/users')
+import users from '../data/users.js'
 
-const validation=require('../validation')
+import validation from '../validation.js'
 
 router
     .route('/')
@@ -16,9 +15,9 @@ router
     })
 
 router
-    .route('/register')
+    .route('/signup')
     .get(async(req,res) => {
-        res.json({Get: "/register"})
+        res.json({Get: "/signup"})
     })
     .post(async(req,res) => {
         let createdUser=false;
@@ -91,4 +90,4 @@ router
         res.redirect('/')
     })
 
-module.exports=router;
+export default router;

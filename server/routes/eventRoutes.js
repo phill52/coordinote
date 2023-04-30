@@ -1,8 +1,8 @@
-const express=require('express')
+import express from 'express'
 const router=express.Router()
-const users=require('../data/users')
-const events=require('../data/events')
-const validation=require('../validation')
+import users from '../data/users.js'
+import events from '../data/events.js'
+import validation from '../validation.js'
 
 router
     .route('/')
@@ -127,4 +127,4 @@ router
         return
     })
 
-module.exports = router;
+export default router;

@@ -1,7 +1,7 @@
-const userData=require('./users')
-const eventData=require('./events')
+import userData from './users'
+import eventData from './events'
 
-module.exports = {
+export default {
     users: userData,
     events: eventData
 }
