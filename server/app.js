@@ -7,6 +7,7 @@ const validation=require('./validation');
 const events=require('./data/events');
 const users=require('./data/users')
 const path=require('path')
+const cors=require('cors');
 
 app.use(express.static(path.join(__dirname, '..', 'client', 'build')));
 
@@ -103,7 +104,7 @@ app.use('/api/register',(req,res,next) => {
         next();
     }
 })
-
+app.use(cors)
 configRoutes(app)
 
 

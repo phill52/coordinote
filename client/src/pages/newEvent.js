@@ -10,7 +10,7 @@ import TimeSelectorTwoAnchors from '../components/TimeSelectorTwoAnchors';
 import Calendar from 'react-calendar';
 import { Button } from '@mui/material';
 import { formatDate } from 'react-calendar/dist/cjs/shared/dateFormatter';
-
+import axios from 'axios'
 
 
 const NewEvent= ()=>{
@@ -34,7 +34,7 @@ const NewEvent= ()=>{
     const arr={anchors:[]};
     const [firstLoad,setFirstLoad] = useState(true);
     const [dateTimeLock, lockDateTime] = useState(false);
-    const [output,setOutput] = useState({name:'', location:'',domainDates:[],description:'',image:new FormData()})
+    const [output,setOutput] = useState({name:'', location:'',domainDates:[],description:'',image:new FormData(),attendees:[]})
     const [fileInput,setFileInput] = useState(new FormData());
     const [fileIsIn, setFileIsIn] = useState(false);
     const [errMsg,setErrMsg] = useState('');
@@ -211,7 +211,9 @@ useEffect(()=>{
 },[rangedate])
 useEffect(()=>{
     async function fetchData(){
+        let tempObj={...output};
         setOutput({name:eventName,location:location,domainDates:datesAndTimes,description:eventDescription,image:fileInput});
+        await axios.post('/createEvent',{name:eventName,location:location,domainDates:datesAndTimes,description:eventDescription,image:fileInput,attendees:[]});
 
     }fetchData()
 },[dateTimeLock])
@@ -386,7 +388,9 @@ return(<div>
     {Tselect}
     <br />
         <br />
+        <form action=''>
         <button onClick={()=>{lockDateTime(true)}}>Lock dates and times</button>
+        </form>
     <br />
     {console.log(curDate)}
         
