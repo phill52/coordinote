@@ -13,7 +13,7 @@ function App() {
         <Link to='/newEvent'>New Event</Link>
         <Link to='/'>Home</Link>
         <Link to='/login'>Login</Link>
-        <Link to='/event/644de169c0db45afd6c99705'>event</Link>
+        <Link to='/event/644ddc19c0db45afd6c996ed'>event</Link>
       </header>
       <div className='App-body'>
           <Routes>

@@ -55,6 +55,7 @@ router
 router
     .route('/:id')
     .get(async(req,res) => {       //   get     /yourpage/events/:id
+        console.log('im here')
         let eventId=undefined;
         try{
             eventId=validation.checkId(req.params.id)
