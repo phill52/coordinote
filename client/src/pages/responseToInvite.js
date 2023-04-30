@@ -7,17 +7,20 @@ import axios from 'axios'
 import {Link, useParams} from 'react-router-dom';
 
 
-const ResponseToInvite = () => {
-    let {id} = useParams(); 
+const ResponseToInvite = (props) => {
+    const {id} = useParams(); 
+    const {uid}=props;
 const [eventData,setEventData]=useState(null);
 const [curDate,setCurDate] = useState(new Date());
 const [loading,setLoading] = useState(true);
 const [error,setError]= useState(false);
-const [output, setOutput] = useState({domainDates:[]});
+const [output, setOutput] = useState({eventId:'',attendeeId:'',domainDates:[]});
 const [tSelect,setTSelect]= useState(null);
 const [datesAndTimes,setDatesAndTimes] = useState([]);
 const [arrIndex,setArrIndex] = useState(0);
 const [curTimes,setCurTimes] = useState({date:new Date(),time:[]});
+const [finish,setFinished] = useState(false);
+const [daysSet,setDaysSet] = useState(0);
 useEffect(()=>{
     async function formData(){
         try{
@@ -80,7 +83,44 @@ const arrayIncludes = (arr,element) =>{
     }
     return false;
 }
-
+const buildAnchorObjectArray = (arr) =>{
+    let outArr=[];
+    if(arr.length===0){
+        return [];
+    }
+    else{
+        let y=0;
+        for(let x=0;x<arr.length;x=x+2){
+            outArr[y]={start:arr[x],end:arr[x+1]};
+        }
+    }
+}
+useEffect(()=>{
+    async function formData(){
+        if(finish){
+        let availability = [];
+        for(let x=0;x<datesAndTimes.length;x++){
+            availability=[...availability,{date:datesAndTimes[x].date,time:buildAnchorObjectArray(datesAndTimes[x].time)}];
+        }
+        let oput={eventId:id,attendeeId:'6449858e039651db9d8beed2',availability:availability};
+        //change the attendee id to uid later 
+        console.log(oput)
+        try{
+            await axios.post('http://localhost:3001/api/updateAvailability',oput)
+            .then(function (response){
+                console.log(response);
+            })
+            .catch(function (error){
+                console.log(error);
+            });
+            }
+            catch(e){
+                console.log(e);
+            }
+        console.log(datesAndTimes);
+    }
+}formData()
+},[finish])
 const setClass = ({date})=>{
     
         if(datesEqual(curDate,date)){
@@ -116,8 +156,61 @@ return(
          <Calendar className='smallCal' value = {new Date()} tileClassName={setClass} tileDisabled={disableDates} ></Calendar>
          {console.log(curDate)}
          {tSelect}
+         <button onClick={()=>{setFinished(true)}}>Done</button>
     </div>
 )
+}
+else{
+    if(daysSet<(eventData.domainDates.length)){
+    if(arrIndex===0){
+        return(
+    <div>
+
+         <Calendar className='smallCal' value = {new Date()} tileClassName={setClass} tileDisabled={disableDates} ></Calendar>
+         {console.log(curDate)}
+         <h1>{curDate.toDateString()}</h1>
+         <button onClick={()=>{setArrIndex(arrIndex+1)
+        setCurDate(new Date(eventData.domainDates[arrIndex+1].date))
+        setDaysSet(daysSet+1)
+        }}>Next</button>
+         {console.log(curDate)}
+         {tSelect}
+         
+    </div>)
+    }
+    else if((arrIndex+1)===eventData.domainDates.length){
+        return(
+            <div>
+        
+         <Calendar className='smallCal' value = {new Date()} tileClassName={setClass} tileDisabled={disableDates} ></Calendar>
+         <h1>{curDate.toDateString()}</h1>
+         <button onClick={()=>{setArrIndex(arrIndex-1)
+        setCurDate(new Date(eventData.domainDates[arrIndex-1].date))
+        }}>Previous</button>
+         {console.log(curDate)}
+         {tSelect}
+         <button onClick={()=>{setFinished(true)}}>Done</button>
+    </div>
+        )
+    }
+    else{
+        return(
+            <div>
+        
+         <Calendar className='smallCal' value = {new Date()} tileClassName={setClass} tileDisabled={disableDates} ></Calendar>
+         <h1>{curDate.toDateString()}</h1>
+         <button onClick={()=>{setArrIndex(arrIndex-1)
+        setCurDate(new Date(eventData.domainDates[arrIndex-1].date))
+        }}>Previous</button>
+        <button onClick={()=>{setArrIndex(arrIndex+1)
+                setDaysSet(daysSet+1)
+        setCurDate(new Date(eventData.domainDates[arrIndex+1].date))}}>Next</button>
+         {console.log(curDate)}
+         {tSelect}
+         <button onClick={()=>{setFinished(true)}}>Done</button>
+    </div>
+        )
+    }
 }
 else{
     if(arrIndex===0){
@@ -132,6 +225,7 @@ else{
         }}>Next</button>
          {console.log(curDate)}
          {tSelect}
+         <button onClick={()=>{setFinished(true)}}>Done</button>
     </div>)
     }
     else if((arrIndex+1)===eventData.domainDates.length){
@@ -145,6 +239,7 @@ else{
         }}>Previous</button>
          {console.log(curDate)}
          {tSelect}
+         <button onClick={()=>{setFinished(true)}}>Done</button>
     </div>
         )
     }
@@ -161,9 +256,11 @@ else{
         setCurDate(new Date(eventData.domainDates[arrIndex+1].date))}}>Next</button>
          {console.log(curDate)}
          {tSelect}
+         <button onClick={()=>{setFinished(true)}}>Done</button>
     </div>
         )
     }
+}
 }
 }
 }

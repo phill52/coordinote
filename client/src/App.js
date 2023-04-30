@@ -63,7 +63,7 @@ function App() {
         <Link to='/'>Home</Link>
         <Link to='/login'>Login</Link>
         <Link to='/signup'>Sign Up</Link>
-        <Link to='/event/644ddc19c0db45afd6c996ed'>Event (temporary)</Link>
+        <Link to='/event/644ddc19c0db45afd6c996ed' uid={currentUser.uid}>Event (temporary)</Link>
         <button onClick={signOut}>Sign Out</button>
       </header>
       <div className='App-body'>

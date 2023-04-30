@@ -2,6 +2,9 @@
   "name": "coordinote",
   "version": "0.1.0",
   "private": true,
+  "options": {
+    "allowedHosts": ["localhost", ".localhost"]
+    },
   "dependencies": {
     "@emotion/react": "^11.10.6",
     "@emotion/styled": "^11.10.6",

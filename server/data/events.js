@@ -166,7 +166,7 @@ const updateAttendeeAvailability=async(eventId,attendeeId,newAvailability) => {
     if(updatedEvent.matchedCount<=0 && updatedEvent.modifiedCount<=0){
         throw `Unable to update event ${eventId} with attendee ${attendeeId} with availability ${newAvailability}`
     }
-    return getEventById(eventId);
+    return await getEventById(eventId);
 }
 
 //POSSIBLY REDUNDANT FUNCTIONS:
