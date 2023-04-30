@@ -3,7 +3,7 @@ import { useState } from 'react';
 import LoginInput from '../components/logininput';
 import { validateEmail, validatePassword } from '../validate';
 import { auth } from '../fire';
-import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { createUserWithEmailAndPassword, sendEmailVerification } from 'firebase/auth';
 
 const SignupPage = () => {
   const [email, setEmail] = useState('');
@@ -71,6 +71,8 @@ const SignupPage = () => {
         console.log('User signed up:', userCredential.user);
         sendEmailVerification(userCredential.user).then(() => {
           console.log('Email sent');
+        }).catch((error) => {
+          console.error('Error sending email verification:', error);
         });
 
       })
