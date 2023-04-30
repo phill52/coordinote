@@ -13,6 +13,7 @@ const SignupPage = () => {
   const [passwordError, setPasswordError] = useState('');
   const [usernameError, setUsernameError] = useState('');
   const [isBadSignup, setIsBadSignup] = useState(false);
+  const [badSignupMessage, setBadSignupMessage] = useState('');
 
   const handleEmailChange = (value) => {
     setEmail(value);
@@ -68,13 +69,25 @@ const SignupPage = () => {
       .then((userCredential) => {
         setIsBadSignup(false);
         console.log('User signed up:', userCredential.user);
+        sendEmailVerification(userCredential.user).then(() => {
+          console.log('Email sent');
+        });
+
       })
       .catch((error) => {
         var errorCode = error.code;
         var errorMessage = error.message;
         setIsBadSignup(true);
+        switch (errorCode) {
+          case 'auth/email-already-in-use':
+            setBadSignupMessage('Email already in use.');
+        }
         console.log(errorCode, errorMessage);
       });
+
+      
+
+
     };
 
     return (
@@ -98,7 +111,7 @@ const SignupPage = () => {
           <div className="flex justify-center">
             <button type="submit" onClick={handleSubmit}>Sign up</button>
           </div>
-          {isBadSignup && <p className="input-error-message">Failed to sign up. Please try again.</p>}
+          {isBadSignup && <p className="input-error-message">{badSignupMessage}</p>}
         </form>
       </div>
     );
