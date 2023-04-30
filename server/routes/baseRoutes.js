@@ -1,6 +1,7 @@
 import express from 'express'
 const router=express.Router()
 import users from '../data/users.js'
+import events from '../data/events.js';
 
 import validation from '../validation.js'
 
@@ -80,6 +81,29 @@ router
             return
         }
         return res.json({User:"This is your page"})
+    })
+
+router
+    .route('/updateAvailability')
+    .post(async(req,res) => {
+        let eventId=undefined; let attendeeId=undefined;
+        try{
+            eventId=validation.checkId(req.body.eventId)
+            attendeeId=validation.checkId(req.body.attendeeId)
+        }
+        catch(e){
+            console.log(e)
+            res.status(400).send(e)
+            return;
+        }
+        try {
+            await events.updateAttendeeAvailability(eventId,attendeeId,req.body.availability)
+        }
+        catch(e){
+            console.log(e)
+            res.status(500).send(e)
+        }
+        return res.json(await events.getEventById(eventId))
     })
 
 router
