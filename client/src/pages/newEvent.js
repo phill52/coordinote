@@ -35,7 +35,7 @@ const NewEvent= ()=>{
     const [firstLoad,setFirstLoad] = useState(true);
     const [dateTimeLock, lockDateTime] = useState(false);
     const [output,setOutput] = useState({name:'', location:'',domainDates:[],description:'',image:new FormData(),attendees:[]})
-    const [fileInput,setFileInput] = useState(new FormData());
+    const [fileInput,setFileInput] = useState(null);
     const [fileIsIn, setFileIsIn] = useState(false);
     const [errMsg,setErrMsg] = useState('');
     const datesEqual = (dte1,dte2) =>{
@@ -213,17 +213,35 @@ useEffect(()=>{
     async function fetchData(){
         let tempObj={...output};
         setOutput({name:eventName,location:location,domainDates:datesAndTimes,description:eventDescription,image:fileInput});
-        await axios.post('/createEvent',{name:eventName,location:location,domainDates:datesAndTimes,description:eventDescription,image:fileInput,attendees:[]});
+        try{
+        await axios.post('http://localhost:3001/api/yourpage/events/createEvent',{name:eventName,location:location,domainDates:datesAndTimes,description:eventDescription,image:fileInput,attendees:[]})
+        .then(function (response){
+            console.log(response);
+        })
+        .catch(function (error){
+            console.log(error);
+        });
+        }
+        catch(e){
+            console.log(e);
+        }
 
     }fetchData()
 },[dateTimeLock])
 const handleFileInput = (event) =>{
+    if(event.target.value!==''){
 const formData = new FormData();
 console.log(event.target.files[0])
 formData.append("myImage",event.target.files[0],event.target.files[0].name)
-setFileInput(formData);
+setFileInput(formData.getAll('myImage')[0]);
 setFileIsIn(true);
+console.log(formData)
 console.log(formData.getAll('myImage'));
+    }
+    else{
+        setErrMsg("Error, incorrect upload of image");
+        setFileIsIn(false);
+    }
 }
 if(error){
     return(<div>

@@ -12,6 +12,7 @@ import {initializeApp} from 'firebase/app';
 import { getAnalytics } from "firebase/analytics";
 import {getAuth} from 'firebase/auth';
 import {getFirestore} from 'firebase/firestore';
+import cors from 'cors'
 
 
   
@@ -34,14 +35,14 @@ app.use(            //authentication middleware
     })
 )
 
-app.use('/api/yourpage',(req,res,next) => {
+/*app.use('/api/yourpage',(req,res,next) => {
     if(!req.session.user){
         return res.redirect('/')
     }
     else{
         next()
     }
-})
+})*/
 
 app.use('/api/yourpage/events/createEvent',async(req,res,next) => {
     next();
@@ -52,9 +53,9 @@ app.use('/api/yourpage/events/:eventId',async(req,res,next) => {
     //     return res.redirect('/')
     // }
     let eventId=req.params.eventId
-    let userId=req.session.user.userId
+    //let userId=req.session.user.userId
     try{        //user and event id need to be checked separately
-        userId=validation.checkId(userId)
+      //  userId=validation.checkId(userId)
     }
     catch(e){
         console.log(e)
@@ -75,27 +76,27 @@ app.use('/api/yourpage/events/:eventId',async(req,res,next) => {
             console.log(e)
             return res.json(e)
         }
-        if(event.creatorID.toString()!=userId.toString()){
-            console.log("You do not own that event")
-            return res.redirect('/yourpage/events')
-        }
+       // if(event.creatorID.toString()!=userId.toString()){
+        //    console.log("You do not own that event")
+          //  return res.redirect('/yourpage/events')
+      //  }
     }
     next();
 })
 
-app.use('/api/yourpage/events',(req,res,next) => {
-    // if(!req.session.user){
-    //     return res.redirect('/')
-    // }
-    let userId=req.session.user.userId
-    try{
-        userId=validation.checkId(userId)
-    }
-    catch(e){
-        console.log(e)
-    }
-    next()
-})
+// app.use('/api/yourpage/events',(req,res,next) => {
+//     // if(!req.session.user){
+//     //     return res.redirect('/')
+//     // }
+//     let userId=req.session.user.userId
+//     try{
+//         userId=validation.checkId(userId)
+//     }
+//     catch(e){
+//         console.log(e)
+//     }
+//     next()
+// })
 
 app.use('/api/login',(req,res,next) => {
     if(req.session.user){
