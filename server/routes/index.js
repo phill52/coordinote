@@ -1,12 +1,13 @@
-const baseRoutes=require('./baseRoutes')
-const eventRoutes=require('./eventRoutes')
+import baseRoutes from './baseRoutes.js'
+import eventRoutes from './eventRoutes.js'
+// const userRoutes = require('./users');
 
 const constructorMethod = (app) => {
-    app.use('/api/yourpage/events',eventRoutes)
-    app.use('/api',baseRoutes)
-    // app.use('*',(req,res) => {
-    //     res.status(404).json({error: "Not Found!"})
-    // })
+    app.use('/api/yourpage/events', eventRoutes);
+    app.use('/api', baseRoutes);
+    app.use('*',(req,res) => {
+        res.status(404).json({error: "Not Found!"})
+    })
 }
 
-module.exports=constructorMethod;
+export default constructorMethod;
