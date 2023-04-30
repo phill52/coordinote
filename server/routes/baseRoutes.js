@@ -84,12 +84,11 @@ router
     })
 
 router
-    .route('/updateAvailability')
+    .route('/api/updateAvailability')
     .post(async(req,res) => {
-        let eventId=undefined; let attendeeId=undefined;
+        let eventId=undefined; let updatedEvent=undefined;
         try{
             eventId=validation.checkId(req.body.eventId)
-            attendeeId=validation.checkId(req.body.attendeeId)
         }
         catch(e){
             console.log(e)
@@ -97,13 +96,14 @@ router
             return;
         }
         try {
-            await events.updateAttendeeAvailability(eventId,attendeeId,req.body.availability)
+            updatedEvent=await events.upsertAttendee(eventId,req.body.attendee)
         }
         catch(e){
             console.log(e)
             res.status(500).send(e)
+            return;
         }
-        return res.json(await events.getEventById(eventId))
+        return res.json(updatedEvent);
     })
 
 router

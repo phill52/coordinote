@@ -121,6 +121,25 @@ const addAttendee=async(eventId,newAttendee) => {
     }
     return await getEventById(eventId);
 }
+//if the attendee does not currently exist for that event, add it. If it does, update its availability
+const upsertAttendee=async(eventId,newAttendee) => {
+    let attendee=undefined; let action=undefined;
+    try{
+        attendee=await getAttendeeById(eventId,newAttendee._id)
+    }
+    catch(e){
+        if(e.toString().includes("Unable to find attendee")){       //add attendee with availability
+            action='addAttendee'
+        }
+    }
+    if(action=='addAttendee'){
+        return await addAttendee(eventId,newAttendee)
+    }
+    else{   //just change the attendee's availability
+        return await updateAttendeeAvailability(eventId,attendee._id,attendee.availability);
+    }
+
+}
 //removes attendee with a certain id from an event
 const removeAttendee=async(eventId,attendeeId) => {
     eventId=validation.checkId(eventId);
@@ -161,12 +180,12 @@ const updateAttendeeAvailability=async(eventId,attendeeId,newAvailability) => {
     const eventCollection=await events();
     const updatedEvent=await eventCollection.updateOne(
         {_id:new ObjectId(eventId)},
-        {$set:{"attendees.$.availability":newAvailability}}
+        {$set:{"attendees":{'_id':new ObjectId(attendeeId),availability:newAvailability}}}
     )
     if(updatedEvent.matchedCount<=0 && updatedEvent.modifiedCount<=0){
         throw `Unable to update event ${eventId} with attendee ${attendeeId} with availability ${newAvailability}`
     }
-    return getEventById(eventId);
+    return await getEventById(eventId);
 }
 
 //POSSIBLY REDUNDANT FUNCTIONS:
@@ -233,6 +252,7 @@ export default {
     getAttendees,
     getAttendeeById,
     addAttendee,
+    upsertAttendee,
     removeAttendee,
     getEventDates,
     updateEventDates,
