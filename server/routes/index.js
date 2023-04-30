@@ -1,6 +1,6 @@
-const baseRoutes = require('./baseRoutes');
-const eventRoutes = require('./eventRoutes');
-const userRoutes = require('./users');
+import baseRoutes from './baseRoutes.js'
+import eventRoutes from './eventRoutes.js'
+// const userRoutes = require('./users');
 
 const constructorMethod = (app) => {
     app.use('/api/yourpage/events', eventRoutes);
@@ -10,4 +10,4 @@ const constructorMethod = (app) => {
     })
 }
 
-module.exports=constructorMethod;
+export default constructorMethod;

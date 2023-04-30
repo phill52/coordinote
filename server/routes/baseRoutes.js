@@ -1,9 +1,8 @@
-const express=require('express')
+import express from 'express'
 const router=express.Router()
-const path=require('path')
-const users=require('../data/users')
+import users from '../data/users.js'
 
-const validation=require('../validation')
+import validation from '../validation.js'
 
 router
     .route('/')
@@ -91,4 +90,4 @@ router
         res.redirect('/')
     })
 
-module.exports=router;
+export default router;

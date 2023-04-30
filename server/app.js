@@ -1,12 +1,13 @@
-const express=require('express');
+import express from 'express';
 const app=express();
-const session=require('express-session')
-const configRoutes=require('./routes')
-const connection=require('./config/mongoConnection')
-const validation=require('./validation');
-const events=require('./data/events');
-const users=require('./data/users')
-const path=require('path')
+import session from 'express-session'
+import configRoutes from './routes/index.js'
+import connection from './config/mongoConnection.js'
+import validation from './validation.js';
+import events from './data/events.js';
+import path from 'path'
+import {fileURLToPath} from 'url';
+const __filename = fileURLToPath(import.meta.url);
 import {initializeApp} from 'firebase/app';
 import { getAnalytics } from "firebase/analytics";
 import {getAuth} from 'firebase/auth';
@@ -25,7 +26,7 @@ const firebaseConfig = {
 // Initialize Firebase
 // const app = initializeApp(firebaseConfig);
 // const analytics = getAnalytics(app);
-
+const __dirname=path.dirname(__filename)
 app.use(express.static(path.join(__dirname, '..', 'client', 'build')));
 
 app.use(express.json())

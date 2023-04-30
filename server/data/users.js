@@ -1,11 +1,11 @@
-const bcrypt=require('bcrypt')
+import bcrypt from 'bcrypt'
 const saltRounds=11
-const mongoCollections = require('../config/mongoCollections');
+import mongoCollections from '../config/mongoCollections.js';
 const users = mongoCollections.users
 const events = mongoCollections.events
-const eventFunctions=require('./events')
-const {ObjectId}=require('mongodb')
-const validation=require('../validation')
+import eventFunctions from './events.js'
+import {ObjectId} from 'mongodb'
+import validation from'../validation.js'
 
 const createUser = async (username, password) => {
     username = validation.checkUsername(username)
@@ -76,7 +76,7 @@ const getUsersEvents = async (userId) => {
     return eventsArray;
 }
 
-module.exports={
+export default {
     createUser,
     checkUser,
     addUserPicture,
