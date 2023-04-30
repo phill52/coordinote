@@ -122,7 +122,7 @@ app.use('/api/register',(req,res,next) => {
         next();
     }
 })
-
+app.use(cors)
 configRoutes(app)
 
 
