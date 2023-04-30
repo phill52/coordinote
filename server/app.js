@@ -125,7 +125,6 @@ app.use('/api/register',(req,res,next) => {
 app.use(cors)
 configRoutes(app)
 
-
 app.get('*', (req, res) => {
     res.sendFile(path.join(__dirname, '..', 'client', 'build', 'index.html'));
 });
