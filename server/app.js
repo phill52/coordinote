@@ -13,15 +13,7 @@ import { getAnalytics } from "firebase/analytics";
 import {getAuth} from 'firebase/auth';
 import {getFirestore} from 'firebase/firestore';
 
-const firebaseConfig = {
-    apiKey: "AIzaSyBvQFCYXieHigezCeHgi9wSHSir05uSiIE",
-    authDomain: "coordinote-5ff91.firebaseapp.com",
-    projectId: "coordinote-5ff91",
-    storageBucket: "coordinote-5ff91.appspot.com",
-    messagingSenderId: "571076300379",
-    appId: "1:571076300379:web:a30a91a731e83a7f0e797e",
-    measurementId: "G-WRRBZPTJG5"
-};
+
   
 // Initialize Firebase
 // const app = initializeApp(firebaseConfig);
@@ -122,7 +114,7 @@ app.use('/api/register',(req,res,next) => {
         next();
     }
 })
-app.use(cors)
+
 configRoutes(app)
 
 app.get('*', (req, res) => {
