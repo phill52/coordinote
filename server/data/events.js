@@ -9,7 +9,7 @@ const createEvent = async(eventName,domainDates,location,description,attendees,i
     eventName=validation.checkEventName(eventName);
     location=validation.checkLocation(location)
     domainDates=validation.checkDate(domainDates)
-    userId=validation.checkId(userId);
+    //userId=validation.checkId(userId);
     const eventCollection=await events();
     let newEvent = {
         name:eventName,
