@@ -9,7 +9,8 @@ import {Link, useParams} from 'react-router-dom';
 
 const ResponseToInvite = (props) => {
     const {id} = useParams(); 
-    const {uid}=props;
+
+    const uid='6449858e039651db9d8beed2';
 const [eventData,setEventData]=useState(null);
 const [curDate,setCurDate] = useState(new Date());
 const [loading,setLoading] = useState(true);
@@ -91,8 +92,10 @@ const buildAnchorObjectArray = (arr) =>{
     else{
         let y=0;
         for(let x=0;x<arr.length;x=x+2){
-            outArr[y]={start:arr[x],end:arr[x+1]};
+            outArr[y]={start:arr[x].toLocaleString("en-US",{timeZone: "America/New_York"}).split(', ')[1],end:arr[x+1].toLocaleString("en-US",{timeZone: "America/New_York"}).split(', ')[1]};
+            y++;
         }
+        return outArr;
     }
 }
 useEffect(()=>{
@@ -100,13 +103,14 @@ useEffect(()=>{
         if(finish){
         let availability = [];
         for(let x=0;x<datesAndTimes.length;x++){
-            availability=[...availability,{date:datesAndTimes[x].date,time:buildAnchorObjectArray(datesAndTimes[x].time)}];
+            availability=[...availability,{date:datesAndTimes[x].date.toLocaleString("en-US",{timeZone: "America/New_York"}).split(', ')[0],time:buildAnchorObjectArray(datesAndTimes[x].time)}];
         }
-        let oput={eventId:id,attendeeId:'6449858e039651db9d8beed2',availability:availability};
+        console.log(availability);
+        let oput={eventId:id,attendee:{_id:uid,availability:availability}};
         //change the attendee id to uid later 
         console.log(oput)
         try{
-            await axios.post('http://localhost:3001/api/updateAvailability',oput)
+            await axios.post('http://localhost:3001/api/api/updateAvailability',oput)
             .then(function (response){
                 console.log(response);
             })
@@ -173,7 +177,7 @@ else{
         setCurDate(new Date(eventData.domainDates[arrIndex+1].date))
         setDaysSet(daysSet+1)
         }}>Next</button>
-         {console.log(curDate)}
+         {console.log(curDate.toLocaleString("en-US", {timeZone: "America/New_York"}).split('T'))}
          {tSelect}
          
     </div>)

@@ -105,6 +105,8 @@ const getAttendeeById=async(eventId,attendeeId) => {
         {'attendees':{$elemMatch:{_id:new ObjectId(attendeeId)}},
          _id:0}
     )
+    console.log(attendee)
+    console.log('hi')
     if(!attendee) throw `Unable to find attendee ${attendeeId} in event ${eventId}`
     return attendee.attendees[0];
 }
@@ -133,10 +135,12 @@ const upsertAttendee=async(eventId,newAttendee) => {
         }
     }
     if(action=='addAttendee'){
+        attendee=newAttendee;
         return await addAttendee(eventId,newAttendee)
     }
     else{   //just change the attendee's availability
-        return await updateAttendeeAvailability(eventId,attendee._id,attendee.availability);
+        console.dir(newAttendee,{depth:null})
+        return await updateAttendeeAvailability(eventId,newAttendee._id,newAttendee.availability);
     }
 
 }
