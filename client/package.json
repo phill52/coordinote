@@ -2,6 +2,7 @@
   "name": "coordinote",
   "version": "0.1.0",
   "private": true,
+  "proxy": "http://localhost:3001/api",
   "dependencies": {
     "@emotion/react": "^11.10.6",
     "@emotion/styled": "^11.10.6",
@@ -12,6 +13,7 @@
     "dotenv": "^16.0.3",
     "firebase": "^9.21.0",
     "firebase-admin": "^11.7.0",
+    "axios": "^1.4.0",
     "react": "^18.2.0",
     "react-calendar": "^4.2.1",
     "react-datetime-picker": "^5.0.3",

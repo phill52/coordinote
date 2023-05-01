@@ -1,8 +1,8 @@
-const mongoCollections = require('../config/mongoCollections');
+import mongoCollections from '../config/mongoCollections.js';
 const users = mongoCollections.users;
 const events= mongoCollections.events;
-const validation=require('../validation')
-const {ObjectId}=require('mongodb')
+import validation from '../validation.js'
+import {ObjectId} from 'mongodb'
 const fn=validation.fn;
 
 const createEvent = async(eventName,domainDates,location,description,attendees,image,userId) => {
@@ -225,7 +225,7 @@ const removeEventDate=async(eventId,dateToRemove) => {
     }
     return await getEventById(eventId);
 }
-module.exports={
+export default {
     createEvent,
     getEventById,
     deleteEvent,

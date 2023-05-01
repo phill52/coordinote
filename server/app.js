@@ -1,14 +1,20 @@
-const express = require('express');
-const cors = require('cors');
-const configRoutes = require('./routes');
-const connection = require('./config/mongoConnection');
-const path = require('path');
-const admin = require('firebase-admin');
-const serviceAccount = require('./serviceAccountKey.json');
-const decodeIDToken = require('./authenticateToken');
-const dotenv = require('dotenv').config({path:'.env'}).parsed;
-
-const app = express();
+import express from 'express';
+const app=express();
+import session from 'express-session'
+import configRoutes from './routes/index.js'
+import connection from './config/mongoConnection.js'
+import validation from './validation.js';
+import events from './data/events.js';
+import path from 'path'
+import {fileURLToPath} from 'url';
+const __filename = fileURLToPath(import.meta.url);
+import {initializeApp} from 'firebase/app';
+import { getAnalytics } from "firebase/analytics";
+import {getAuth} from 'firebase/auth';
+import {getFirestore} from 'firebase/firestore';
+  
+const __dirname=path.dirname(__filename)
+app.use(express.static(path.join(__dirname, '..', 'client', 'build')));
 
 const main = async() => {
     const db = await connection.dbConnection();
@@ -23,7 +29,27 @@ main()
 
 app.use(cors());
 app.use(express.json());
-  
+
+configRoutes(app);
+
+app.use('/api/login',(req,res,next) => {
+    if(req.session.user){
+        return res.redirect('/yourpage')
+    }
+    else{
+        next()
+    }
+})
+
+app.use('/api/register',(req,res,next) => {
+    if(req.session.user){
+        return res.redirect('/yourpage')
+    }
+    else{
+        next();
+    }
+})
+
 // Initialize Firebase
 app.use(decodeIDToken);
 
@@ -83,8 +109,9 @@ app.get('/user', checkIfAuthenticated, async (req, res) => {
     }
 });
 
-
-configRoutes(app);
+app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, '..', 'client', 'build', 'index.html'));
+});
 
 app.listen(3000, () => {
     console.log("We've now got a server!");

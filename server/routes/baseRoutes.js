@@ -1,9 +1,8 @@
-const express=require('express')
+import express from 'express'
 const router=express.Router()
-const path=require('path')
-const users=require('../data/users')
+import users from '../data/users.js'
 
-const validation=require('../validation')
+import validation from '../validation.js'
 
 router
     .route('/')
@@ -13,6 +12,59 @@ router
             return
         }
         res.json({Get: "/"})
+    })
+
+router
+    .route('/signup')
+    .get(async(req,res) => {
+        res.json({Get: "/signup"})
+    })
+    .post(async(req,res) => {
+        let createdUser=false;
+        try{
+            let username=validation.checkUsername(req.body.username);
+            let password=validation.checkPassword(req.body.password,false);
+            createdUser=await users.createUser(username,password)
+        }
+        catch(e){
+            res.status(400).send(e)
+            console.log(e);
+            return;
+        }
+        if(!createdUser){
+            res.status(500).send("Internal server error (POST /register");
+            return
+        }
+        res.send("Account created")
+    })
+
+router
+    .route('/login')
+    .get(async(req,res) => {
+        res.json({Get: "/login"})
+        return
+    })
+    .post(async (req,res) => {          //  logging in
+        let check=false
+        let username=false; let password=false;
+        try{
+            username=validation.checkUsername(req.body.username)
+            password=validation.checkPassword(req.body.password,true)
+            check=await users.checkUser(username,password)
+        }
+        catch(e){     //if the user puts in bad data
+            res.status(400).send(e)
+            console.log(e)
+            return
+        }
+        if(!check.authenticatedUser){
+            res.status(500).send("Internal Server Error (POST /login)")
+            return
+        }
+        if(check.authenticatedUser){
+            req.session.user={username:username, userId:check.userId}
+            res.redirect('/yourpage')
+        }
     })
 
 router
@@ -38,4 +90,4 @@ router
         res.redirect('/')
     })
 
-module.exports=router;
+export default router;

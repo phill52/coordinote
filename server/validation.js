@@ -1,5 +1,5 @@
-const xss=require('xss')
-const {ObjectId} = require('mongodb')
+import xss from 'xss'
+import {ObjectId} from 'mongodb'
 
 function fn(str){       //adds leading 0 to 1 digit time numbers
     if(str.toString().length===1) str='0'+str.toString();
@@ -68,7 +68,7 @@ function checkLocation(location){
 }
 
 
-module.exports = {
+export default {
     checkUsername,
     checkPassword,
     checkId, //this bad boy is gonna be used a lot
