@@ -1,121 +1,92 @@
-const express=require('express');
-const app=express();
-const session=require('express-session')
-const configRoutes=require('./routes')
-const connection=require('./config/mongoConnection')
-const validation=require('./validation');
-const events=require('./data/events');
-const users=require('./data/users')
-const path=require('path')
+const express = require('express');
+const cors = require('cors');
+const configRoutes = require('./routes');
+const connection = require('./config/mongoConnection');
+const path = require('path');
+const admin = require('firebase-admin');
+const serviceAccount = require('./serviceAccountKey.json');
+const decodeIDToken = require('./authenticateToken');
+const dotenv = require('dotenv').config({path:'.env'}).parsed;
 
-app.use(express.static(path.join(__dirname, '..', 'client', 'build')));
+const app = express();
 
-app.use(express.json())
-app.use(express.urlencoded({extended: true}))
+const main = async() => {
+    const db = await connection.dbConnection();
+    if (db === null) {
+        console.log("Error: Cannot connect to database.");
+        return;
+    } else {
+        console.log("Connected to database.");
+    }
+}
+main()
 
-app.use(            //authentication middleware
-    session({
-        name:'AuthCookie',
-        secret: "Oh the middleware, everybody wants to be my checkId",
-        resave: false,
-        saveUninitialized: true,
-        cookie: {maxAge: 1800000}
-    })
-)
+app.use(cors());
+app.use(express.json());
+  
+// Initialize Firebase
+app.use(decodeIDToken);
 
-app.use('/api/yourpage',(req,res,next) => {
-    if(!req.session.user){
-        return res.redirect('/')
-    }
-    else{
-        next()
-    }
-})
-
-app.use('/api/yourpage/events/createEvent',async(req,res,next) => {
-    next();
-})
-
-app.use('/api/yourpage/events/:eventId',async(req,res,next) => {
-    // if(!req.session.user){
-    //     return res.redirect('/')
-    // }
-    let eventId=req.params.eventId
-    let userId=req.session.user.userId
-    try{        //user and event id need to be checked separately
-        userId=validation.checkId(userId)
-    }
-    catch(e){
-        console.log(e)
-    }
-    try{
-        eventId=validation.checkId(eventId)
-    }
-    catch(e){
-        next()
-        return
-    }
-    let event=undefined;
-    if(req.method!='GET'){      //if not just a get request, we need to check who owns the event
-        try{
-            event=await events.getEventById(eventId)
-        }
-        catch(e){
-            console.log(e)
-            return res.json(e)
-        }
-        if(event.creatorID.toString()!=userId.toString()){
-            console.log("You do not own that event")
-            return res.redirect('/yourpage/events')
-        }
+const getAuthToken = (req, res, next) => {
+    if (req.headers.authorization &&
+        req.headers.authorization.split(' ')[0] === 'Bearer') {
+        req.authToken = req.headers.authorization.split(' ')[1];
+    } else {
+        req.authToken = null;
     }
     next();
-})
+};
 
-app.use('/api/yourpage/events',(req,res,next) => {
-    // if(!req.session.user){
-    //     return res.redirect('/')
-    // }
-    let userId=req.session.user.userId
-    try{
-        userId=validation.checkId(userId)
+const createUser = async (req, res) => {
+    const { email, password } = req.body;
+    try {
+        const user = await admin.auth().createUser({
+            email: email,
+            password: password,
+        });
+        console.log(user);
+        return res.status(200).send(user);
+    } catch (error) {
+        console.log(error);
+        return res.status(500).send({ error: error });
     }
-    catch(e){
-        console.log(e)
-    }
-    next()
-})
+};
 
-app.use('/api/login',(req,res,next) => {
-    if(req.session.user){
-        return res.redirect('/yourpage')
-    }
-    else{
-        next()
-    }
-})
+const checkIfAuthenticated = (req, res, next) => {
+    getAuthToken(req, res, async () => {
+        try {
+        const { authToken } = req;
+        const userInfo = await app
+            .auth()
+            .verifyIdToken(authToken);
+        req.authId = userInfo.uid;
+        return next();
+        } catch (e) {
+        return res
+            .status(401)
+            .send({ error: 'You are not authorized to make this request' });
+        }
+    });
+};
 
-app.use('/api/register',(req,res,next) => {
-    if(req.session.user){
-        return res.redirect('/yourpage')
+// create a new user
+app.post('/user', createUser);
+
+// protected route
+app.get('/user', checkIfAuthenticated, async (req, res) => {
+    try {
+        const users = await admin.auth().listUsers();
+        return res.status(200).send(users.users);
+    } catch (error) {
+        console.log(error);
+        return res.status(500).send({ error: error });
     }
-    else{
-        next();
-    }
-})
-
-configRoutes(app)
-
-
-app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, '..', 'client', 'build', 'index.html'));
 });
 
-const main=async() => {
-    const db = await connection.dbConnection();
-}
 
-app.listen(3001, () => {
-    console.log("Your routes are running on http://localhost:3001")
-})
-main()
+configRoutes(app);
+
+app.listen(3000, () => {
+    console.log("We've now got a server!");
+    console.log('Your routes will be running on http://localhost:3000');
+});

@@ -1,7 +1,8 @@
 const MongoClient = require('mongodb').MongoClient;
 const settings = require('./settings');
 const mongoConfig = settings.mongoConfig;
-const dotenv=require('dotenv').config({path:'../.env'})
+const path=require('path')
+const dotenv=require('dotenv').config({path:path.resolve(__dirname,'../.env')})
 const uri = dotenv.parsed.DB_URL
 
 let _connection = undefined;

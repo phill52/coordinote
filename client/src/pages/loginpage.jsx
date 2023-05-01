@@ -44,8 +44,16 @@ const LoginPage = () => {
     }
     if (!validation) return;
     // Backend people now send email and password to server for authentication and do something.
-    signInWithEmailAndPassword(auth, email, password).
-      then(()=> {
+    signInWithEmailAndPassword(auth, email, password)
+      .then((userCredentials)=> {
+        console.log(userCredentials.user.accessToken);
+        fetch('/login', {
+          method: 'POST',
+          headers: {
+            'Authorization': 'Bearer ' + userCredentials.user.accessToken,
+            'Content-Type': 'application/json'
+          }
+        })
         console.log('logged in');
         setIsBadLogin(false);
       }).
