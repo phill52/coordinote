@@ -137,7 +137,7 @@ const upsertAttendee=async(eventId,newAttendee) => {
         return await addAttendee(eventId,newAttendee)
     }
     else{   //just change the attendee's availability
-        return await updateAttendeeAvailability(eventId,attendee._id,attendee.availability);
+        return await updateAttendeeAvailability(eventId,newAttendee._id,newAttendee.availability);
     }
 
 }
