@@ -8,10 +8,10 @@ import events from './data/events.js';
 import path from 'path'
 import {fileURLToPath} from 'url';
 const __filename = fileURLToPath(import.meta.url);
-import {initializeApp} from 'firebase/app';
-import { getAnalytics } from "firebase/analytics";
-import {getAuth} from 'firebase/auth';
-import {getFirestore} from 'firebase/firestore';
+// import {initializeApp} from 'firebase/app';
+// import { getAnalytics } from "firebase/analytics";
+// import {getAuth} from 'firebase/auth';
+// import {getFirestore} from 'firebase/firestore';
 import cors from 'cors'
 
 
@@ -125,6 +125,7 @@ app.get('*', (req, res) => {
 const main=async() => {
     const db = await connection.dbConnection();
 }
+
 
 app.listen(3001, () => {
     console.log("Your routes are running on http://localhost:3001")
