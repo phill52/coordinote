@@ -9,6 +9,7 @@
 node_modules
 events.json
 users.json
+serviceAccountKey.json
 
 # testing
 /client/coverage
