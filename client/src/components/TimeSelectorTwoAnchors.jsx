@@ -24,11 +24,11 @@ const TimeSelectorTwoAnchors = (props) => {
   }
   const closerAnchor = (arr,element) =>{
     if(Math.abs(element.getTime()-arr[0].getTime())<Math.abs(element.getTime()-arr[1].getTime())){
-      console.log((element.getTime()-arr[0].getTime()))
+      // console.log((element.getTime()-arr[0].getTime()))
       return 0;
     }
     else{
-      console.log((element.getTime()-arr[1].getTime()))
+      // console.log((element.getTime()-arr[1].getTime()))
       return 1;
     }
   }

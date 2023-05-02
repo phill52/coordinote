@@ -4,7 +4,7 @@ import LoginInput from '../components/logininput';
 import { validateEmail } from '../validate';
 import { auth } from '../fire';
 import { signInWithEmailAndPassword } from 'firebase/auth';
-
+import axios from 'axios';
 
 const LoginPage = () => {
   const [email, setEmail] = useState('');
@@ -63,6 +63,8 @@ const LoginPage = () => {
         setIsBadLogin(true);
         console.log(errorCode, errorMessage);
       })
+
+    
     console.log('logged in i guess?');
   };
 
