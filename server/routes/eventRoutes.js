@@ -6,22 +6,19 @@ import validation from '../validation.js'
 
 router
     .route('/')
-    // .get(async(req,res) => {        //get events for a specific user
-    //     if(req.session && req.session.user){
-    //         let userEvents=undefined;
-    //         let userId=undefined;
-    //         try{
-    //             userId=validation.checkId(req.session.user.userId)
-    //             userEvents=await users.getUsersEvents(userId)
-    //         }
-    //         catch(e){
-    //             res.send(e)
-    //             return;
-    //         }
-    //         return res.json(userEvents)
-    //     }
-    //     res.json({Get: "/yourpage/events/"})
-    // })
+    .get(async(req,res) => {        //get events for a specific user
+        let userEvents=undefined;
+        let userId=undefined;
+        try{
+            userId=validation.checkId(req.body.userId)
+            userEvents=await users.getUsersEvents(userId)
+        }
+        catch(e){
+            res.status(400).json(e)
+            return;
+        }
+        return res.json(userEvents)
+    })
 
 router
     .route('/createEvent')
