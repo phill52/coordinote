@@ -66,6 +66,9 @@ const SignupPage = () => {
     }
     if (!validation) return;
     let userId;
+
+    //check if username is valid
+
     createUserWithEmailAndPassword(auth, email, password)
       .then((userCredential) => {
         setIsBadSignup(false);
@@ -95,7 +98,7 @@ const SignupPage = () => {
           uid: userId
         };
         try {
-          const response = await axios.post('http://localhost:3001/api/users', body, header);
+          const response = await axios.post('/api/users', body, header);
           return response;
         } catch {
           console.log("error with server");
