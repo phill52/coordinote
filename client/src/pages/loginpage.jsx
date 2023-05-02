@@ -4,7 +4,8 @@ import LoginInput from '../components/logininput';
 import { validateEmail } from '../validate';
 import { auth } from '../fire';
 import { signInWithEmailAndPassword } from 'firebase/auth';
-
+import axios from 'axios';
+import { AuthContext } from '../AuthContext';
 
 const LoginPage = () => {
   const [email, setEmail] = useState('');
@@ -12,6 +13,7 @@ const LoginPage = () => {
   const [emailError, setEmailError] = useState('');
   const [passwordError, setPasswordError] = useState('');
   const [isBadLogin, setIsBadLogin] = useState(false);
+  const { currentUser, setCurrentUser } = React.useContext(AuthContext);
 
   const handleEmailChange = async (value) => {
     setEmail(value);
@@ -44,9 +46,18 @@ const LoginPage = () => {
     }
     if (!validation) return;
     // Backend people now send email and password to server for authentication and do something.
-    signInWithEmailAndPassword(auth, email, password).
-      then(()=> {
+    signInWithEmailAndPassword(auth, email, password)
+      .then((userCredentials)=> {
+        console.log(userCredentials.user.accessToken);
+        fetch('/login', {
+          method: 'POST',
+          headers: {
+            'Authorization': 'Bearer ' + userCredentials.user.accessToken,
+            'Content-Type': 'application/json'
+          }
+        })
         console.log('logged in');
+        setCurrentUser(userCredentials.user);
         setIsBadLogin(false);
       }).
       catch((error)=>{
@@ -55,6 +66,8 @@ const LoginPage = () => {
         setIsBadLogin(true);
         console.log(errorCode, errorMessage);
       })
+
+    
     console.log('logged in i guess?');
   };
 

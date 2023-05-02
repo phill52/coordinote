@@ -170,7 +170,7 @@ function unwindStartToEnd(start,end){       //given a starting date and ending d
     return dateArr;
 }
 //Takes array of attendees. Returns array of date objects when the most attendees can meet
-function findCommonDates(attendees){        //This is, what, O(n^5)? 
+function findCommonDates(attendees){        
     let datesObj={}
     for(let attendee of attendees){     //for each attendee
         for(let availableDate of attendee.availability){       //get their availability
