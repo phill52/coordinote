@@ -96,9 +96,20 @@ body{
   border-radius: 5px;
   margin-bottom: 20px;
 }
-
+.inputPage{
+  display: flex;
+  height:100%;
+  width: 700px;
+  max-width: 200%;
+  justify-content: right;
+}
 .login-label {
   display: block;
+  margin-bottom: 10px;
+  font-weight: bold;
+  color: green;
+}
+.homepageLabel{
   margin-bottom: 10px;
   font-weight: bold;
   color: green;
@@ -112,6 +123,16 @@ body{
   font-weight: bold;
   transition: background-color 0.2s;
   margin-bottom: 10px;
+}
+.homepageInput{
+  background-color: #f0f0f0c4;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background-color 0.2s;
+  margin-bottom: 10px;
+  color:black;
 }
 .login-input error {
   border-color: #ff0000;
@@ -266,6 +287,26 @@ body{
 .bottomAnchor{
   transform: translateY(100%);
 }
+.right{
+  justify-content: right;
+  font-size: large;
+  align-items: end;
+  top: '100%';
+}
+.howItWorks{
+  font-size: larger;
+  font-weight: bold;
+}
+.titleText{
+  font-size: xx-large;
+  font-weight:bolder;
+}
 
-
-
+.calContain{
+  justify-content: left;
+  align-items: start;
+  height:100%;
+  width: 700px;
+  max-width: 200%;
+  display: flex;
+}

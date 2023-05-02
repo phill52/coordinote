@@ -9,7 +9,7 @@ const createEvent = async(eventName,domainDates,location,description,attendees,i
     eventName=validation.checkEventName(eventName);
     location=validation.checkLocation(location)
     domainDates=validation.checkDate(domainDates)
-    userId=validation.checkId(userId);
+    //userId=validation.checkId(userId);
     const eventCollection=await events();
     let newEvent = {
         name:eventName,
@@ -133,10 +133,11 @@ const upsertAttendee=async(eventId,newAttendee) => {
         }
     }
     if(action=='addAttendee'){
+        attendee=newAttendee;
         return await addAttendee(eventId,newAttendee)
     }
     else{   //just change the attendee's availability
-        return await updateAttendeeAvailability(eventId,attendee._id,attendee.availability);
+        return await updateAttendeeAvailability(eventId,newAttendee._id,newAttendee.availability);
     }
 
 }
@@ -180,7 +181,8 @@ const updateAttendeeAvailability=async(eventId,attendeeId,newAvailability) => {
     const eventCollection=await events();
     const updatedEvent=await eventCollection.updateOne(
         {_id:new ObjectId(eventId)},
-        {$set:{"attendees":{'_id':new ObjectId(attendeeId),availability:newAvailability}}}
+        {"$set":{"attendees.$[attendee].availability":newAvailability}},
+        {"arrayFilters":[{"attendee._id":new ObjectId(attendeeId)}]}
     )
     if(updatedEvent.matchedCount<=0 && updatedEvent.modifiedCount<=0){
         throw `Unable to update event ${eventId} with attendee ${attendeeId} with availability ${newAvailability}`
