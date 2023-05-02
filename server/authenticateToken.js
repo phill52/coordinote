@@ -1,9 +1,10 @@
 import admin from 'firebase-admin';
+import { initializeApp } from 'firebase-admin/app';
 import serviceAccount from './serviceAccountKey.json' assert {type: 'json'};
 import dotenv from 'dotenv';
 dotenv.config({path:'../.env'}).parsed;
 
-admin.initializeApp({
+initializeApp({
     credential: admin.credential.cert(serviceAccount),
     databaseURL: dotenv.DB_URL,
     apiKey: dotenv.REACT_APP_FIREBASEapiKey,

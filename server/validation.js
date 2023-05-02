@@ -6,6 +6,11 @@ function fn(str){       //adds leading 0 to 1 digit time numbers
     return str
 }
 
+function checkNotNull(obj){
+    if(obj === null) throw new Error("Object is null");
+    return obj;
+}
+
 function checkUsername(username,notCreating){
     if(!username) throw "You must supply a username"
     if(typeof username!=='string') throw new Error("Username must be a string")
@@ -69,6 +74,7 @@ function checkLocation(location){
 
 
 export default {
+    checkNotNull,
     checkUsername,
     checkPassword,
     checkId, //this bad boy is gonna be used a lot
