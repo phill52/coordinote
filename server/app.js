@@ -1,18 +1,20 @@
 import express from 'express';
 const app=express();
+import cors from 'cors';
 import session from 'express-session'
 import configRoutes from './routes/index.js'
 import connection from './config/mongoConnection.js'
 import validation from './validation.js';
 import events from './data/events.js';
 import path from 'path'
+import decodeIDToken from './authenticateToken.js';
 import {fileURLToPath} from 'url';
 const __filename = fileURLToPath(import.meta.url);
 import {initializeApp} from 'firebase/app';
 import { getAnalytics } from "firebase/analytics";
 import {getAuth} from 'firebase/auth';
 import {getFirestore} from 'firebase/firestore';
-  
+
 const __dirname=path.dirname(__filename)
 app.use(express.static(path.join(__dirname, '..', 'client', 'build')));
 
@@ -25,12 +27,10 @@ const main = async() => {
         console.log("Connected to database.");
     }
 }
-main()
 
 app.use(cors());
 app.use(express.json());
 
-configRoutes(app);
 
 app.use('/api/login',(req,res,next) => {
     if(req.session.user){
@@ -96,10 +96,10 @@ const checkIfAuthenticated = (req, res, next) => {
 };
 
 // create a new user
-app.post('/user', createUser);
+app.post('/api/user', createUser);
 
 // protected route
-app.get('/user', checkIfAuthenticated, async (req, res) => {
+app.get('/api/user', checkIfAuthenticated, async (req, res) => {
     try {
         const users = await admin.auth().listUsers();
         return res.status(200).send(users.users);
@@ -109,11 +109,15 @@ app.get('/user', checkIfAuthenticated, async (req, res) => {
     }
 });
 
+configRoutes(app);
+
 app.get('*', (req, res) => {
     res.sendFile(path.join(__dirname, '..', 'client', 'build', 'index.html'));
 });
 
-app.listen(3000, () => {
+app.listen(3001, () => {
     console.log("We've now got a server!");
-    console.log('Your routes will be running on http://localhost:3000');
+    console.log('Your routes will be running on http://localhost:3001');
 });
+
+main()

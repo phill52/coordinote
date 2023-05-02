@@ -7,19 +7,17 @@ import eventFunctions from './events.js'
 import {ObjectId} from 'mongodb'
 import validation from'../validation.js'
 
-const createUser = async (username, password) => {
-    username = validation.checkUsername(username)
+const createUser = async (username, email, image) => {
+    username = validation.checkUsername(username);
+    email = validation.checkEmail(email);
     const userCollection = await users();
     if(await userCollection.findOne({username: username})) {
         throw "Either the username or password is invalid"
     }
     
-    password = validation.checkPassword(password,false)
-    const hashed_pw = await bcrypt.hash(password,saltRounds)
-
     let newUser = {
         username: username,
-        password: hashed_pw,
+        email: email,
         events: []
     }
 

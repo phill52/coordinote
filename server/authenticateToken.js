@@ -1,6 +1,7 @@
-const admin = require('firebase-admin');
-const serviceAccount = require('./serviceAccountKey.json');
-const dotenv = require('dotenv').config({path:'.env'}).parsed;
+import admin from 'firebase-admin';
+import serviceAccount from './serviceAccountKey.json' assert {type: 'json'};
+import dotenv from 'dotenv';
+dotenv.config({path:'../.env'}).parsed;
 
 admin.initializeApp({
     credential: admin.credential.cert(serviceAccount),
@@ -28,4 +29,4 @@ async function decodeIDToken(req, res, next) {
     next();
 }
 
-module.exports = decodeIDToken;
+export default decodeIDToken;
