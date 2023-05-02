@@ -3,6 +3,29 @@ const router=express.Router()
 import users from '../data/users.js'
 import events from '../data/events.js'
 import validation from '../validation.js'
+import multer from 'multer'
+import multerS3 from 'multer-s3'    
+import AWS from 'aws-sdk'
+
+const s3 = new AWS.S3({
+    accessKeyId: process.env.AWS_keyid,
+    secretAccessKey: process.env.AWS_secretkey,
+})
+
+const upload = multer({
+    storage: multerS3({
+        s3: s3,
+        bucket: 'coordinote',
+        acl:'public-read',
+        metadata: function (req, file, cb) {
+            cb(null, {fieldName: file.fieldname});
+        },
+        key: function (req, file, cb) {
+            cb(null, `${Date.now().toString()}-${file.originalname}`)
+        }
+    })
+})
+
 
 router
     .route('/')
