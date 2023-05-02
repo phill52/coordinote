@@ -64,7 +64,7 @@ function App() {
         <Link to='/'>Home</Link>
         <Link to='/login'>Login</Link>
         <Link to='/signup'>Sign Up</Link>
-        <Link to='/event/64503cec4683aec458e3755a' uid={currentUser}>Event (temporary)</Link>
+        {/* <Link to='/event/644ddc19c0db45afd6c996ed' uid={currentUser.uid}>Event (temporary)</Link> */}
         <button onClick={signOut}>Sign Out</button>
       </header>
       <div className='App-body'>
@@ -75,6 +75,7 @@ function App() {
           <Route path='/email-verification' element={<EmailVerificationLanding/>} />
           <Route path='/event/:id' element={<ResponseToInvite />} />
           <Route path='/' element={<Homepage />} />
+          <Route path='/*' element={<p>404 not found</p>}></Route> {/* TODO: make a 404 page */}
         </Routes>
       </div>
     </div>
