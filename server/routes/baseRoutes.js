@@ -1,76 +1,48 @@
 import express from 'express'
-const router=express.Router()
+const router = express.Router()
 import users from '../data/users.js'
 import events from '../data/events.js';
 
 import validation from '../validation.js'
 
+// might not be needed
 router
     .route('/')
-    .get(async(req,res) => {
+    .get(async (req, res) => {
         if(req.session && req.session.user){
-            res.json(req.session)
-            return
+            return res.status(200).json(req.session);
         }
         res.json({Get: "/"})
     })
 
-router
-    .route('/signup')
-    .get(async(req,res) => {
+router.route('/signup')
+    .get(async (req, res) => {
         res.json({Get: "/signup"})
     })
-    .post(async(req,res) => {
-        let createdUser=false;
-        try{
-            let username=validation.checkUsername(req.body.username);
-            let password=validation.checkPassword(req.body.password,false);
-            createdUser=await users.createUser(username,password)
+    .post(async (req, res) => {
+        let {username, uid} = req.body;
+        let createdUser = false;
+        // Validation
+        try {
+            username = validation.checkUsername(username);
+            uid = validation.checkNotNull(uid);
+        } catch(error) {
+            console.log(error);
+            return res.status(400).send(error)
         }
-        catch(e){
-            res.status(400).send(e)
-            console.log(e);
-            return;
+        // Create user
+        try {
+            createdUser = await users.createUser(username,uid)
+            return res.status(200).send(createdUser);
+        } catch(error) {
+            console.log(error);
+            return res.status(500).send(error)
         }
-        if(!createdUser){
-            res.status(500).send("Internal server error (POST /register");
-            return
-        }
-        res.send("Account created")
-    })
-
-router
-    .route('/login')
-    .get(async(req,res) => {
-        res.json({Get: "/login"})
-        return
-    })
-    .post(async (req,res) => {          //  logging in
-        let check=false
-        let username=false; let password=false;
-        try{
-            username=validation.checkUsername(req.body.username)
-            password=validation.checkPassword(req.body.password,true)
-            check=await users.checkUser(username,password)
-        }
-        catch(e){     //if the user puts in bad data
-            res.status(400).send(e)
-            console.log(e)
-            return
-        }
-        if(!check.authenticatedUser){
-            res.status(500).send("Internal Server Error (POST /login)")
-            return
-        }
-        if(check.authenticatedUser){
-            req.session.user={username:username, userId:check.userId}
-            res.redirect('/yourpage')
-        }
-    })
+    });
 
 router
     .route('/yourpage')
-    .get(async(req,res) => {
+    .get(async (req, res) => {
         let u=undefined;
         try{
             u=validation.checkId(req.session.user.userId)
@@ -81,7 +53,8 @@ router
             return
         }
         return res.json({User:"This is your page"})
-    })
+    });
+
 
 router
     .route('/api/updateAvailability')
@@ -112,6 +85,6 @@ router
         if(!req.session.user) res.redirect ('/')
         req.session.destroy()
         res.redirect('/')
-    })
+    });
 
 export default router;

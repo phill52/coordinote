@@ -2,8 +2,9 @@ import React from 'react';
 import { useState } from 'react';
 import LoginInput from '../components/logininput';
 import { validateEmail, validatePassword } from '../validate';
-import { auth } from '../fire';
+import { auth, createToken } from '../fire';
 import { createUserWithEmailAndPassword, sendEmailVerification } from 'firebase/auth';
+import axios from 'axios';
 
 const SignupPage = () => {
   const [email, setEmail] = useState('');
@@ -64,17 +65,20 @@ const SignupPage = () => {
       setPasswordError('');
     }
     if (!validation) return;
+    let userId;
+
+    //check if username is valid
 
     createUserWithEmailAndPassword(auth, email, password)
       .then((userCredential) => {
         setIsBadSignup(false);
         console.log('User signed up:', userCredential.user);
+        userId = userCredential.user.uid;
         sendEmailVerification(userCredential.user).then(() => {
           console.log('Email sent');
         }).catch((error) => {
           console.error('Error sending email verification:', error);
         });
-
       })
       .catch((error) => {
         var errorCode = error.code;
@@ -86,10 +90,20 @@ const SignupPage = () => {
         }
         console.log(errorCode, errorMessage);
       });
-
       
-
-
+      const serverSubmit= async () => {
+        const header = await createToken();
+        const body = {
+          username: username,
+          uid: userId
+        };
+        try {
+          const response = await axios.post('/api/users', body, header);
+          return response;
+        } catch {
+          console.log("error with server");
+        }
+      }
     };
 
     return (
