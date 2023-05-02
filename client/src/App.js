@@ -64,7 +64,7 @@ function App() {
         <Link to='/'>Home</Link>
         <Link to='/login'>Login</Link>
         <Link to='/signup'>Sign Up</Link>
-        <Link to='/event/644ddc19c0db45afd6c996f2' uid={currentUser}>Event (temporary)</Link>
+        <Link to='/event/64503cec4683aec458e3755a' uid={currentUser}>Event (temporary)</Link>
         <button onClick={signOut}>Sign Out</button>
       </header>
       <div className='App-body'>

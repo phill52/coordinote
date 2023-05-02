@@ -209,12 +209,32 @@ useEffect(()=>{
     }fetchData()
     //console.log(allDates)
 },[rangedate])
+const buildAnchorObjectArray = (arr) =>{
+    let outArr=[];
+    if(arr.length===0){
+        return [];
+    }
+    else{
+        let y=0;
+        for(let x=0;x<arr.length;x=x+2){
+            outArr[y]={start:arr[x],end:arr[x+1]};
+            y++;
+        }
+        return outArr;
+    }
+}
+
 useEffect(()=>{
     async function fetchData(){
         let tempObj={...output};
         setOutput({name:eventName,location:location,domainDates:datesAndTimes,description:eventDescription,image:fileInput});
         try{
-        await axios.post('http://localhost:3001/api/yourpage/events/createEvent',{name:eventName,location:location,domainDates:datesAndTimes,description:eventDescription,image:fileInput,attendees:[]})
+            let domDates = [];
+        for(let x=0;x<datesAndTimes.length;x++){
+            domDates=[...domDates,{date:datesAndTimes[x].date,time:{start:datesAndTimes[x].time[0],end:datesAndTimes[x].time[1]}}];
+        }
+            let oput={name:eventName,location:location,domainDates:domDates,description:eventDescription,image:fileInput,attendees:[]}
+        await axios.post('http://localhost:3001/api/yourpage/events/createEvent',{name:eventName,location:location,domainDates:domDates,description:eventDescription,image:fileInput,attendees:[]})
         .then(function (response){
             console.log(response);
         })

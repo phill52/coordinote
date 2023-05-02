@@ -102,12 +102,10 @@ const getAttendeeById=async(eventId,attendeeId) => {
     const eventCollection=await events();
     const attendee=await eventCollection.findOne(
         {_id:new ObjectId(eventId)},
-        {'attendees':{$elemMatch:{_id:new ObjectId(attendeeId)}},
-         _id:0}
+        {'attendees':{$elemMatch:{_id:new ObjectId(attendeeId)}}}
     )
-    console.log(attendee)
-    console.log('hi')
-    if(!attendee) throw `Unable to find attendee ${attendeeId} in event ${eventId}`
+    console.log(attendee.attendees[0]);
+    if(!(attendee.attendees[0])) throw `Unable to find attendee ${attendeeId} in event ${eventId}`
     return attendee.attendees[0];
 }
 //needs an entire attendee object (with attendee id and new availability)
@@ -116,7 +114,7 @@ const addAttendee=async(eventId,newAttendee) => {
     const eventCollection=await events();
     const updatedEvent=await eventCollection.updateOne(
         {_id:new ObjectId(eventId)},
-        {$push:{"attendees":newAttendee}}
+        {$push:{"attendees":{_id:new ObjectId(newAttendee._id),availability:newAttendee.availability}}}
     )
     if(!updatedEvent.modifiedCount){
         throw `Unable to add attendee ${newAttendee} to event ${eventId}`
@@ -130,6 +128,7 @@ const upsertAttendee=async(eventId,newAttendee) => {
         attendee=await getAttendeeById(eventId,newAttendee._id)
     }
     catch(e){
+        console.log(e);
         if(e.toString().includes("Unable to find attendee")){       //add attendee with availability
             action='addAttendee'
         }
@@ -139,7 +138,6 @@ const upsertAttendee=async(eventId,newAttendee) => {
         return await addAttendee(eventId,newAttendee)
     }
     else{   //just change the attendee's availability
-        console.dir(newAttendee,{depth:null})
         return await updateAttendeeAvailability(eventId,newAttendee._id,newAttendee.availability);
     }
 
@@ -184,8 +182,10 @@ const updateAttendeeAvailability=async(eventId,attendeeId,newAvailability) => {
     const eventCollection=await events();
     const updatedEvent=await eventCollection.updateOne(
         {_id:new ObjectId(eventId)},
-        {$set:{"attendees":{'_id':new ObjectId(attendeeId),availability:newAvailability}}}
+        {"$set":{"attendees.$[attendee].availability":newAvailability}},
+        {arrayFilters:[{"attendee._id":new ObjectId(attendeeId)}]}
     )
+    //BREAKS RIGHT ABOVE HERE, IS BEING ADDED AS A STRING NOT AN OBJECT ID
     if(updatedEvent.matchedCount<=0 && updatedEvent.modifiedCount<=0){
         throw `Unable to update event ${eventId} with attendee ${attendeeId} with availability ${newAvailability}`
     }

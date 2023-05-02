@@ -35,6 +35,7 @@ useEffect(()=>{
         for(let x=0;x<data.domainDates.length;x++){
             temparr=[...temparr,{date:new Date(data.domainDates[x].date),time:[]}]
         }
+        setTSelect(<TimeSelector className='centered' value={[]} startTime={new Date(data.domainDates[0].time["start"])} endTime={new Date(data.domainDates[0].time["end"])} date={new Date(data.domainDates[0].date)} change={setCurTimes} />)
         setDatesAndTimes(temparr);
 
 
@@ -49,6 +50,7 @@ useEffect(()=>{
 
 useEffect(()=>{
     async function formData(){
+        if(!error){
         let times;
         if(datesAndTimes[arrIndex].time.length===0){
             times=[];
@@ -56,7 +58,8 @@ useEffect(()=>{
         else{
             times=datesAndTimes[arrIndex].time;
         }
-        setTSelect(<TimeSelector className='centered' value={times} startTime={new Date(eventData.domainDates[arrIndex].time[0])} endTime={new Date(eventData.domainDates[arrIndex].time[1])} date={curDate} change={setCurTimes} />)
+        setTSelect(<TimeSelector className='centered' value={times} startTime={new Date(eventData.domainDates[arrIndex].time["start"])} endTime={new Date(eventData.domainDates[arrIndex].time["end"])} date={curDate} change={setCurTimes} />)
+    }
     }formData()
 },[curDate,eventData])
 
@@ -153,10 +156,18 @@ if(loading){
         </div>
     )
 }
+else if(error){
+    return(
+        <div>
+            <p>Error: Invalid event ID</p>
+        </div>
+    )
+}
 else{
     if(eventData.domainDates.length===1){
 return(
     <div>
+
          <Calendar className='smallCal' value = {new Date()} tileClassName={setClass} tileDisabled={disableDates} ></Calendar>
          {console.log(curDate)}
          {tSelect}
