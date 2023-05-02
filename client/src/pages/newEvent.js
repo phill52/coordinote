@@ -93,7 +93,12 @@ const NewEvent= ()=>{
                     console.log(times)
                 }
                 console.log(index);
-                setTselect(<TimeSelectorTwoAnchors className='centered' startTime={new Date(curDate.getFullYear(), curDate.getMonth(), curDate.getDate(), 14, 0, 0, 0)} endTime={new Date(curDate.getFullYear(), curDate.getMonth(), curDate.getDate(), 22, 0, 0, 0)} value = {times} date= {clickedDay[arrIndex]} change={setCurTimes}/>)
+                if(datesEqual(new Date(new Date().toDateString()),new Date(curDate.toDateString()))){
+                setTselect(<TimeSelectorTwoAnchors className='centered' startTime={new Date(curDate.getFullYear(), curDate.getMonth(), curDate.getDate(), new Date().getHours(), 0, 0, 0)} endTime={new Date(curDate.getFullYear(), curDate.getMonth(), curDate.getDate(), 23, 59, 59, 0)} value = {times} date= {clickedDay[arrIndex]} change={setCurTimes}/>)
+                }
+                else{
+                    setTselect(<TimeSelectorTwoAnchors className='centered' startTime={new Date(curDate.getFullYear(), curDate.getMonth(), curDate.getDate(), 0, 0, 0, 0)} endTime={new Date(curDate.getFullYear(), curDate.getMonth(), curDate.getDate(), 23,59, 59, 0)} value = {times} date= {clickedDay[arrIndex]} change={setCurTimes}/>)
+                }
                 console.log(curTimes)
             }
             catch(e){
@@ -223,7 +228,17 @@ const buildAnchorObjectArray = (arr) =>{
         return outArr;
     }
 }
-
+const tileDisabled =({date})=>{
+    if(date<new Date(new Date().toDateString())){
+        return true;
+    }
+    else{
+        return false;
+    }
+}
+const disableAll = ({date})=>{
+    return true;
+}
 useEffect(()=>{
     async function fetchData(){
         let tempObj={...output};
@@ -318,7 +333,54 @@ else{
     if(dateLock){
         let tmpDte=new Date(rangedate[1]);
         tmpDte.setDate(tmpDte.getDate()-1);
-        if(clickedDay.length>datesAndTimes.length){
+        if(clickedDay.length===1){
+            if(clickedDay.length>datesAndTimes.length){
+            return(
+                <div>
+                    <div>
+                        <div className='login-form'>
+                             <h2 className='login-label'>Event Name</h2>
+                             <p className='left'>{eventName}</p>
+                             <h2 className='login-label'>Event Description</h2>
+                             <p className='left'>{eventDescription}</p>
+                             <h2 className='login-label'>Event Location</h2>
+                             <p className='left'>{location}</p>
+        </div>
+    <Calendar tileDisabled={disableAll} className='smallCal' value = {new Date()} tileClassName={tileClass} ></Calendar>
+    {console.log(allDates)}
+    </div>
+    <br />
+    <h1 className='currentDay'>{clickedDay[arrIndex].toDateString()}</h1>
+    <br />
+    {Tselect}
+                </div>
+            )
+        }
+        else{
+            return(
+                <div>
+                    <div>
+                        <div className='login-form'>
+                             <h2 className='login-label'>Event Name</h2>
+                             <p className='left'>{eventName}</p>
+                             <h2 className='login-label'>Event Description</h2>
+                             <p className='left'>{eventDescription}</p>
+                             <h2 className='login-label'>Event Location</h2>
+                             <p className='left'>{location}</p>
+        </div>
+    <Calendar tileDisabled={disableAll} className='smallCal' value = {new Date()} tileClassName={tileClass} ></Calendar>
+    {console.log(allDates)}
+    </div>
+    <br />
+    <h1 className='currentDay'>{clickedDay[arrIndex].toDateString()}</h1>
+    <br />
+    {Tselect}
+    <button onClick={()=>{lockDateTime(true)}}>Lock dates and times</button>
+
+                </div>)
+        }
+        }
+        else if(clickedDay.length>datesAndTimes.length){
         if(arrIndex===0){
 return(<div>
     <div>
@@ -330,7 +392,7 @@ return(<div>
         <h2 className='login-label'>Event Location</h2>
         <p className='left'>{location}</p>
         </div>
-    <Calendar className='smallCal' value = {new Date()} tileClassName={tileClass} ></Calendar>
+    <Calendar tileDisabled={disableAll} className='smallCal' value = {new Date()} tileClassName={tileClass} ></Calendar>
     {console.log(allDates)}
     </div>
     <br />
@@ -342,7 +404,7 @@ return(<div>
     {Tselect}
     <br />
     {console.log(curDate)}
-        
+
 </div>);}
 else if(arrIndex===(clickedDay.length-1)){
     return(<div>
@@ -355,7 +417,7 @@ else if(arrIndex===(clickedDay.length-1)){
         <h2 className='login-label'>Event Location</h2>
         <p className='left'>{location}</p>
         </div>
-        <Calendar className='smallCal' value = {new Date()} tileClassName={tileClass} ></Calendar>
+        <Calendar className='smallCal' value = {new Date()} tileDisabled={disableAll} tileClassName={tileClass} ></Calendar>
         {console.log(allDates)}
         </div>
         <br />
@@ -367,6 +429,7 @@ else if(arrIndex===(clickedDay.length-1)){
         {Tselect}
         <br />
         {console.log(curDate)}
+
             
     </div>);
 }
@@ -381,7 +444,7 @@ else{
         <h2 className='login-label'>Event Location</h2>
         <p className='left'>{location}</p>
         </div>
-        <Calendar className='smallCal' value = {new Date()} tileClassName={tileClass} ></Calendar>
+        <Calendar tileDisabled={disableAll} className='smallCal' value = {new Date()} tileClassName={tileClass} ></Calendar>
         {console.log(allDates)}
         </div>
         <br />
@@ -414,7 +477,7 @@ return(<div>
         <h2 className='login-label'>Event Location</h2>
         <p className='left'>{location}</p>
         </div>
-    <Calendar className='smallCal' value = {new Date()} tileClassName={tileClass} ></Calendar>
+    <Calendar tileDisabled={disableAll} className='smallCal' value = {new Date()} tileClassName={tileClass} ></Calendar>
     {console.log(allDates)}
     </div>
     <br />
@@ -509,7 +572,7 @@ else{
         <p className='left'>{location}</p>
         </div>
         <div>
-        <Calendar className='smallCal' value = {new Date()} onChange={setDates} tileClassName={tileClass} ></Calendar>
+        <Calendar className='smallCal' tileDisabled={tileDisabled} value = {new Date()} onChange={setDates} tileClassName={tileClass} ></Calendar>
         </div>
         {console.log(clickedDay)}
         
@@ -531,7 +594,7 @@ else{
         <h2 className='login-label'>Event Location</h2>
         <p className='left'>{location}</p>
         </div><div>
-        <Calendar className='smallCal' value = {new Date()} onChange={setDates} tileClassName={tileClass} ></Calendar>
+        <Calendar className='smallCal' tileDisabled={tileDisabled} value = {new Date()} onChange={setDates} tileClassName={tileClass} ></Calendar>
         </div>
         {console.log(clickedDay)}
         </div>
