@@ -7,25 +7,32 @@ import eventFunctions from './events.js'
 import {ObjectId} from 'mongodb'
 import validation from'../validation.js'
 
-const createUser = async (username, email, image) => {
+// Create mongo user
+const createUser = async (username, uid) => {
     username = validation.checkUsername(username);
-    email = validation.checkEmail(email);
+    uid = validation.checkNotNull(uid);
     const userCollection = await users();
-    if(await userCollection.findOne({username: username})) {
-        throw "Either the username or password is invalid"
+
+    if (await userCollection.findOne({username: username})
+     || await userCollection.findOne({uid: uid})) {
+        throw "Error: Cannot create user.";
     }
     
     let newUser = {
+        _id: uid,
         username: username,
-        email: email,
         events: []
     }
 
     const insertUser = await userCollection.insertOne(newUser);
-    if(!insertUser.acknowledged || !insertUser.insertedId)
-        throw new Error("Could not add user")
-    
-    return {insertedUser: true, userId: insertUser.insertedId}
+    if(!insertUser.acknowledged || !insertUser.insertedId) {
+        throw "Error: Cannot create user."
+    }
+
+    const user = await userCollection.findOne({username: username});
+
+    // return the user doc sans uid (firebase token)
+    return {insertedUser: true, username: user.username}
 }
 
 const checkUser = async (username, password) => {
@@ -34,13 +41,13 @@ const checkUser = async (username, password) => {
 
     const userCollection = await users();
     const user = await userCollection.findOne({username: username})
-    if(!user) throw "Either the username or password is invalid"
+    if(!user) throw "Error: Either the username or password is invalid"
 
     let user_hashed_password = user.password
     let comparison = await bcrypt.compare(password, user_hashed_password)
 
     if(comparison) return {authenticatedUser: true, userId:user._id}
-    throw "Either the username or password is invalid"
+    throw "Error: Either the username or password is invalid"
 }
 
 const addUserPicture = async (userId, picture) => {

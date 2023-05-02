@@ -5,11 +5,12 @@ import session from 'express-session'
 import configRoutes from './routes/index.js'
 import connection from './config/mongoConnection.js'
 import validation from './validation.js';
-import events from './data/events.js';
+import users from './data/users.js';
 import path from 'path'
 import decodeIDToken from './authenticateToken.js';
 import {fileURLToPath} from 'url';
 const __filename = fileURLToPath(import.meta.url);
+import admin from 'firebase-admin';
 import {initializeApp} from 'firebase/app';
 import { getAnalytics } from "firebase/analytics";
 import {getAuth} from 'firebase/auth';
@@ -25,6 +26,7 @@ const main = async() => {
         return;
     } else {
         console.log("Connected to database.");
+        // await users.createUser("test","test");
     }
 }
 
@@ -63,6 +65,7 @@ const getAuthToken = (req, res, next) => {
     next();
 };
 
+// Create firebase user
 const createUser = async (req, res) => {
     const { email, password } = req.body;
     try {
@@ -81,25 +84,25 @@ const createUser = async (req, res) => {
 const checkIfAuthenticated = (req, res, next) => {
     getAuthToken(req, res, async () => {
         try {
-        const { authToken } = req;
-        const userInfo = await app
-            .auth()
-            .verifyIdToken(authToken);
-        req.authId = userInfo.uid;
-        return next();
+            const { authToken } = req;
+            const userInfo = await app
+                .auth()
+                .verifyIdToken(authToken);
+            req.authId = userInfo.uid;
+            return next();
         } catch (e) {
-        return res
-            .status(401)
-            .send({ error: 'You are not authorized to make this request' });
+            return res
+                .status(401)
+                .send({ error: 'You are not authorized to make this request' });
         }
     });
 };
 
-// create a new user
-app.post('/api/user', createUser);
+// create a new firebase user
+app.post('/user', createUser);
 
 // protected route
-app.get('/api/user', checkIfAuthenticated, async (req, res) => {
+app.get('/user', checkIfAuthenticated, async (req, res) => {
     try {
         const users = await admin.auth().listUsers();
         return res.status(200).send(users.users);
