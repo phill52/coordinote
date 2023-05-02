@@ -10,7 +10,7 @@ import {Link, useParams} from 'react-router-dom';
 const ResponseToInvite = (props) => {
     const {id} = useParams(); 
 
-    const uid='6449858e039651db9d8beed2';
+    const uid='6449858e039651db9d8beed4';
 const [eventData,setEventData]=useState(null);
 const [curDate,setCurDate] = useState(new Date());
 const [loading,setLoading] = useState(true);

@@ -99,12 +99,14 @@ const getAttendees=async(eventId) => {
 const getAttendeeById=async(eventId,attendeeId) => {
     eventId=validation.checkId(eventId);
     attendeeId=validation.checkId(attendeeId);
+    console.log(attendeeId);
     const eventCollection=await events();
     const attendee=await eventCollection.findOne(
         {_id:new ObjectId(eventId)},
         {'attendees':{$elemMatch:{_id:new ObjectId(attendeeId)}},
          _id:0}
     )
+    console.log('beforeAttendee')
     console.log(attendee)
     console.log('hi')
     if(!attendee) throw `Unable to find attendee ${attendeeId} in event ${eventId}`
@@ -118,7 +120,10 @@ const addAttendee=async(eventId,newAttendee) => {
         {_id:new ObjectId(eventId)},
         {$push:{"attendees":newAttendee}}
     )
+    console.log(updatedEvent.modifiedCount);
+    console.log('WORK')
     if(!updatedEvent.modifiedCount){
+        console.log('hi everyone, im a string')
         throw `Unable to add attendee ${newAttendee} to event ${eventId}`
     }
     return await getEventById(eventId);
@@ -126,6 +131,7 @@ const addAttendee=async(eventId,newAttendee) => {
 //if the attendee does not currently exist for that event, add it. If it does, update its availability
 const upsertAttendee=async(eventId,newAttendee) => {
     let attendee=undefined; let action=undefined;
+    console.log(newAttendee)
     try{
         attendee=await getAttendeeById(eventId,newAttendee._id)
     }
@@ -136,10 +142,11 @@ const upsertAttendee=async(eventId,newAttendee) => {
     }
     if(action=='addAttendee'){
         attendee=newAttendee;
+        console.log('HERE')
         return await addAttendee(eventId,newAttendee)
     }
     else{   //just change the attendee's availability
-        console.dir(newAttendee,{depth:null})
+        console.log("hello there")
         return await updateAttendeeAvailability(eventId,newAttendee._id,newAttendee.availability);
     }
 
@@ -181,11 +188,14 @@ const updateEventDates=async(eventId,dates) => {
 const updateAttendeeAvailability=async(eventId,attendeeId,newAvailability) => {
     eventId=validation.checkId(eventId)
     attendeeId=validation.checkId(attendeeId)
+    console.log('hi, i shouldnt be here')
     const eventCollection=await events();
     const updatedEvent=await eventCollection.updateOne(
         {_id:new ObjectId(eventId)},
-        {$set:{"attendees":{'_id':new ObjectId(attendeeId),availability:newAvailability}}}
+        {"$set":{"attendees.$[attendee].availability":newAvailability}},
+        {"arrayFilters":[{"attendee._id":new ObjectId(attendeeId)}]}
     )
+    console.log(updatedEvent.matchedCount)
     if(updatedEvent.matchedCount<=0 && updatedEvent.modifiedCount<=0){
         throw `Unable to update event ${eventId} with attendee ${attendeeId} with availability ${newAvailability}`
     }
