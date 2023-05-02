@@ -14,7 +14,7 @@ const __filename = fileURLToPath(import.meta.url);
 // import { getAnalytics } from "firebase/analytics";
 // import {getAuth} from 'firebase/auth';
 // import {getFirestore} from 'firebase/firestore';
-import cors from 'cors'
+
 
 import admin from 'firebase-admin';
 // import {initializeApp} from 'firebase/app';
