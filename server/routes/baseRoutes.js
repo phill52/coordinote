@@ -1,6 +1,7 @@
 import express from 'express'
 const router = express.Router()
 import users from '../data/users.js'
+import events from '../data/events.js';
 
 import validation from '../validation.js'
 
@@ -54,6 +55,29 @@ router
         return res.json({User:"This is your page"})
     });
 
+
+router
+    .route('/api/updateAvailability')
+    .post(async(req,res) => {
+        let eventId=undefined; let updatedEvent=undefined;
+        try{
+            eventId=validation.checkId(req.body.eventId)
+        }
+        catch(e){
+            console.log(e)
+            res.status(400).send(e)
+            return;
+        }
+        try {
+            updatedEvent=await events.upsertAttendee(eventId,req.body.attendee)
+        }
+        catch(e){
+            console.log(e)
+            res.status(500).send(e)
+            return;
+        }
+        return res.json(updatedEvent);
+    })
 
 router
     .route('/logout')

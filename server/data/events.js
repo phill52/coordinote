@@ -9,7 +9,7 @@ const createEvent = async(eventName,domainDates,location,description,attendees,i
     eventName=validation.checkEventName(eventName);
     location=validation.checkLocation(location)
     domainDates=validation.checkDate(domainDates)
-    userId=validation.checkId(userId);
+    //userId=validation.checkId(userId);
     const eventCollection=await events();
     let newEvent = {
         name:eventName,
@@ -121,6 +121,26 @@ const addAttendee=async(eventId,newAttendee) => {
     }
     return await getEventById(eventId);
 }
+//if the attendee does not currently exist for that event, add it. If it does, update its availability
+const upsertAttendee=async(eventId,newAttendee) => {
+    let attendee=undefined; let action=undefined;
+    try{
+        attendee=await getAttendeeById(eventId,newAttendee._id)
+    }
+    catch(e){
+        if(e.toString().includes("Unable to find attendee")){       //add attendee with availability
+            action='addAttendee'
+        }
+    }
+    if(action=='addAttendee'){
+        attendee=newAttendee;
+        return await addAttendee(eventId,newAttendee)
+    }
+    else{   //just change the attendee's availability
+        return await updateAttendeeAvailability(eventId,newAttendee._id,newAttendee.availability);
+    }
+
+}
 //removes attendee with a certain id from an event
 const removeAttendee=async(eventId,attendeeId) => {
     eventId=validation.checkId(eventId);
@@ -134,6 +154,52 @@ const removeAttendee=async(eventId,attendeeId) => {
         throw `Unable to remove attendee ${attendee} from event ${eventId}`
     }
     return await getEventById(eventId);
+}
+
+function unwindStartToEnd(start,end){       //given a starting date and ending date, return a range of half hour increments
+    let startDate=new Date(start);
+    let endDate=new Date(end);
+    let dateArr=[]
+    let incrDate=new Date(start);
+    dateArr.push(startDate.toString())
+    while(incrDate<endDate){
+        let d=new Date(incrDate.setMinutes(incrDate.getMinutes()+30))
+        dateArr.push(d.toString())
+    }
+    return dateArr;
+}
+//Takes array of attendees. Returns array of date objects when the most attendees can meet
+function findCommonDates(attendees){        //This is, what, O(n^5)? 
+    let datesObj={}
+    for(let attendee of attendees){     //for each attendee
+        for(let availableDate of attendee.availability){       //get their availability
+            availableDate=availableDate.time                   //get the time from that
+            for(let eachStartEndObj of availableDate){          //for each start and end point in that time
+                let dateRange=unwindStartToEnd(eachStartEndObj.start,eachStartEndObj.end)       //get the entire range from start to end
+                for(let eachHalfHourInterval of dateRange){     //for each half hour interval, +=1 it to the datesObj
+                    if(!datesObj[eachHalfHourInterval]){
+                        datesObj[eachHalfHourInterval]=1
+                    }
+                    else{
+                        datesObj[eachHalfHourInterval]+=1
+                    }
+                }
+            }
+        }
+    }
+    let max=1
+    for(let date in datesObj){      //highest number of attendees available at once
+        if(datesObj[date]>max){
+            max=datesObj[date]
+        }
+    }
+    let bestMeetupTimes=[]
+    for(let date in datesObj){
+        if(datesObj[date]===max){       //add times/dates with max to the best meetup times
+            bestMeetupTimes.push(new Date(date))
+        }
+    }
+    return bestMeetupTimes;
 }
 
 const getEventDates=async(eventId) => {
@@ -161,12 +227,13 @@ const updateAttendeeAvailability=async(eventId,attendeeId,newAvailability) => {
     const eventCollection=await events();
     const updatedEvent=await eventCollection.updateOne(
         {_id:new ObjectId(eventId)},
-        {$set:{"attendees.$.availability":newAvailability}}
+        {"$set":{"attendees.$[attendee].availability":newAvailability}},
+        {"arrayFilters":[{"attendee._id":new ObjectId(attendeeId)}]}
     )
     if(updatedEvent.matchedCount<=0 && updatedEvent.modifiedCount<=0){
         throw `Unable to update event ${eventId} with attendee ${attendeeId} with availability ${newAvailability}`
     }
-    return getEventById(eventId);
+    return await getEventById(eventId);
 }
 
 //POSSIBLY REDUNDANT FUNCTIONS:
@@ -233,10 +300,12 @@ export default {
     getAttendees,
     getAttendeeById,
     addAttendee,
+    upsertAttendee,
     removeAttendee,
     getEventDates,
     updateEventDates,
     updateAttendeeAvailability,
+    findCommonDates,
     //possibly redundant:
     getAttendeeAvailability,
     addAttendeeAvailabilityNewDay,

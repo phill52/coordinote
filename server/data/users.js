@@ -1,5 +1,3 @@
-import bcrypt from 'bcrypt'
-const saltRounds=11
 import mongoCollections from '../config/mongoCollections.js';
 const users = mongoCollections.users
 const events = mongoCollections.events
