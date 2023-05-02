@@ -156,6 +156,52 @@ const removeAttendee=async(eventId,attendeeId) => {
     return await getEventById(eventId);
 }
 
+function unwindStartToEnd(start,end){       //given a starting date and ending date, return a range of half hour increments
+    let startDate=new Date(start);
+    let endDate=new Date(end);
+    let dateArr=[]
+    let incrDate=new Date(start);
+    dateArr.push(startDate.toString())
+    while(incrDate<endDate){
+        let d=new Date(incrDate.setMinutes(incrDate.getMinutes()+30))
+        dateArr.push(d.toString())
+    }
+    return dateArr;
+}
+//Takes array of attendees. Returns array of date objects when the most attendees can meet
+function findCommonDates(attendees){        //This is, what, O(n^5)? 
+    let datesObj={}
+    for(let attendee of attendees){     //for each attendee
+        for(let availableDate of attendee.availability){       //get their availability
+            availableDate=availableDate.time                   //get the time from that
+            for(let eachStartEndObj of availableDate){          //for each start and end point in that time
+                let dateRange=unwindStartToEnd(eachStartEndObj.start,eachStartEndObj.end)       //get the entire range from start to end
+                for(let eachHalfHourInterval of dateRange){     //for each half hour interval, +=1 it to the datesObj
+                    if(!datesObj[eachHalfHourInterval]){
+                        datesObj[eachHalfHourInterval]=1
+                    }
+                    else{
+                        datesObj[eachHalfHourInterval]+=1
+                    }
+                }
+            }
+        }
+    }
+    let max=1
+    for(let date in datesObj){      //highest number of attendees available at once
+        if(datesObj[date]>max){
+            max=datesObj[date]
+        }
+    }
+    let bestMeetupTimes=[]
+    for(let date in datesObj){
+        if(datesObj[date]===max){       //add times/dates with max to the best meetup times
+            bestMeetupTimes.push(new Date(date))
+        }
+    }
+    return bestMeetupTimes;
+}
+
 const getEventDates=async(eventId) => {
     eventId=validation.checkId(eventId);
     const event=await getEventById(eventId);
@@ -259,6 +305,7 @@ export default {
     getEventDates,
     updateEventDates,
     updateAttendeeAvailability,
+    findCommonDates,
     //possibly redundant:
     getAttendeeAvailability,
     addAttendeeAvailabilityNewDay,
