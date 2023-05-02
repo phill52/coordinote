@@ -3,28 +3,16 @@ const router=express.Router()
 import users from '../data/users.js'
 import events from '../data/events.js'
 import validation from '../validation.js'
-import multer from 'multer'
-import multerS3 from 'multer-s3'    
-import AWS from 'aws-sdk'
+import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
 
-const s3 = new AWS.S3({
-    accessKeyId: process.env.AWS_keyid,
-    secretAccessKey: process.env.AWS_secretkey,
-})
 
-const upload = multer({
-    storage: multerS3({
-        s3: s3,
-        bucket: 'coordinote',
-        acl:'public-read',
-        metadata: function (req, file, cb) {
-            cb(null, {fieldName: file.fieldname});
-        },
-        key: function (req, file, cb) {
-            cb(null, `${Date.now().toString()}-${file.originalname}`)
-        }
-    })
-})
+const s3 = new S3Client({
+    credentials:{
+        accessKeyId: 'AKIA5CTX4VB2K6XBGQAI',
+        secretAccessKey: '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'
+    },
+    region: 'us-east-1',
+});
 
 
 router
@@ -47,6 +35,30 @@ router
     // })
 
 router
+    .post('/imageTest', upload.single('image'), async (req, res) => {
+        try {
+            const fileBuffer = Buffer.from(req.body.file, "base64");
+            const mimeType = req.body.mimeType;
+            const fileName = `${Date.now().toString()}-${req.body.filename}`;
+        
+            const command = new PutObjectCommand({
+                Bucket: process.env.S3_BUCKET,
+                Key: fileName,
+                Body: fileBuffer,
+                ContentType: mimeType,
+            });
+        
+            await s3.send(command);
+            res.status(200).send("File uploaded successfully");
+        } catch (error) {
+            console.error(error);
+            res.status(500).send("Error uploading file");
+        }
+        });
+        
+
+
+router
     .route('/createEvent')
     // .get(async(req,res) => {
     //     res.json({Get: "/yourpage/events/createEvent"})
@@ -61,17 +73,10 @@ router
         catch(e){
             console.log(e)
             return;
-<<<<<<< HEAD
-        }
-
-        try{
-            newEvent=await events.createEvent(req.body.name,req.body.domainDates,req.body.location,req.body.description,req.body.attendees,req.file.location,userId)
-=======
         }*/
         try{
             
-            newEvent=await events.createEvent(req.body.name,req.body.domainDates,req.body.location,req.body.description,req.body.attendees,req.body.image,userId)
->>>>>>> origin/head
+            newEvent=await events.createEvent(req.body.name,req.body.domainDates,req.body.location,req.body.description,req.body.attendees,req.file.location,userId)
         }
         catch(e){
             console.log(e)
