@@ -69,6 +69,7 @@ router
             return;
         }
         try {
+            console.dir(req.body,{depth:null});
             updatedEvent=await events.upsertAttendee(eventId,req.body.attendee)
         }
         catch(e){
