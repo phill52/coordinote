@@ -6,6 +6,7 @@ import configRoutes from './routes/index.js'
 import connection from './config/mongoConnection.js'
 import validation from './validation.js';
 import users from './data/users.js';
+import events from './data/events.js'
 import path from 'path'
 import decodeIDToken from './authenticateToken.js';
 import {fileURLToPath} from 'url';
@@ -27,6 +28,7 @@ import admin from 'firebase-admin';
 // const app = initializeApp(firebaseConfig);
 // const analytics = getAnalytics(app);
 const __dirname=path.dirname(__filename)
+app.use(cors())
 app.use(express.static(path.join(__dirname, '..', 'client', 'build')));
 
 app.use(express.json())
@@ -59,6 +61,12 @@ app.use('/api/yourpage/events/:eventId',async(req,res,next) => {
     // if(!req.session.user){
     //     return res.redirect('/')
     // }
+    console.dir(req.headers,{depth:null})
+    console.log('im in the app');
+    res.header('Access-Control-Allow-Origin', '*');
+    res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization, Custom-Header');
+
+
     let eventId=req.params.eventId
     //let userId=req.session.user.userId
     try{        //user and event id need to be checked separately

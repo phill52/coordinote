@@ -9,11 +9,11 @@ import SignupPage from './pages/signuppage';
 import EmailVerificationLanding from './pages/emailVerification';
 import ResponseToInvite from './pages/responseToInvite';
 import Homepage from './pages/homepage';
+import AuthContext from './AuthContext';
 function App() {
   const [loggedIn, setLoggedIn] = useState(false);
   const [loadingUser, setLoadingUser] = useState(true);
   const [currentUser, setCurrentUser] = useState(null);
-
   useEffect(() => {
     auth.onAuthStateChanged((user) => {
       setCurrentUser(user);
@@ -56,6 +56,7 @@ function App() {
   }
   
   return (
+    <AuthContext.Provider value={{currentUser, setCurrentUser}}>
     <Router className='router'>
     <div className="App">
       <header className='App-header'>
@@ -80,6 +81,7 @@ function App() {
       </div>
     </div>
     </Router>
+  </AuthContext.Provider>
   );
 }
 

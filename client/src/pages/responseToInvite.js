@@ -5,6 +5,8 @@ import React, {useState, useEffect} from 'react';
 import Calendar from 'react-calendar';
 import axios from 'axios'
 import {Link, useParams} from 'react-router-dom';
+import {auth, createToken } from '../fire';
+
 
 
 const ResponseToInvite = (props) => {
@@ -25,7 +27,10 @@ const [daysSet,setDaysSet] = useState(0);
 useEffect(()=>{
     async function formData(){
         try{
-        let {data}=await axios.get(`http://localhost:3001/api/yourpage/events/${id}`);
+            const header=await createToken();
+            console.log(header)
+        let {data}=await axios.get(`http://localhost:3001/api/yourpage/events/${id}`,{headers:{'Content-Type':'application/json',
+        authorization:header.headers.Authorization}});
         console.log(data)
         setEventData(data);
         setLoading(false)
@@ -113,7 +118,10 @@ useEffect(()=>{
         //change the attendee id to uid later 
         console.log(oput)
         try{
-            await axios.post('http://localhost:3001/api/api/updateAvailability',oput)
+            const header=await createToken();
+            console.log(header);
+            await axios.post('http://localhost:3001/api/api/updateAvailability',oput,{headers:{'Content-Type':'application/json',
+            authorization:header.headers.Authorization}})
             .then(function (response){
                 console.log(response);
             })

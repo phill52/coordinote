@@ -5,7 +5,7 @@ import { validateEmail } from '../validate';
 import { auth } from '../fire';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import axios from 'axios';
-import AuthContext  from '../AuthContext';
+import AuthContext from '../AuthContext';
 
 const LoginPage = () => {
   const [email, setEmail] = useState('');

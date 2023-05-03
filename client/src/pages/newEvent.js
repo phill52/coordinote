@@ -11,7 +11,7 @@ import Calendar from 'react-calendar';
 import { Button } from '@mui/material';
 import { formatDate } from 'react-calendar/dist/cjs/shared/dateFormatter';
 import axios from 'axios'
-
+import {createToken } from '../fire';
 
 const NewEvent= ()=>{
     const [dates,setDates]=useState(new Date());
@@ -249,7 +249,9 @@ useEffect(()=>{
             domDates=[...domDates,{date:datesAndTimes[x].date,time:{start:datesAndTimes[x].time[0],end:datesAndTimes[x].time[1]}}];
         }
             let oput={name:eventName,location:location,domainDates:domDates,description:eventDescription,image:fileInput,attendees:[]}
-        await axios.post('http://localhost:3001/api/yourpage/events/createEvent',{name:eventName,location:location,domainDates:domDates,description:eventDescription,image:fileInput,attendees:[]})
+            const header=await createToken();
+        await axios.post('http://localhost:3001/api/yourpage/events/createEvent',{name:eventName,location:location,domainDates:domDates,description:eventDescription,image:fileInput,attendees:[]},{headers:{'Content-Type':'application/json',
+        authorization:header.headers.Authorization}})
         .then(function (response){
             console.log(response);
         })
