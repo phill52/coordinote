@@ -1,8 +1,10 @@
-import React from 'react';
+import React,{useEffect,useState} from 'react';
 
-const TimeViewer = ({date, attendees}) => {
+const TimeViewer = (props) => {
+  const {startTime,endTime,date,attendees} = props;
   const attendeeCount=attendees.length;
-
+  const [timeSlots, setTimeSlots] = useState([]);
+  //console.log(date)
   function formatAMPM(date) {
     let hours = date.getHours();
     let minutes = date.getMinutes();
@@ -22,41 +24,49 @@ const TimeViewer = ({date, attendees}) => {
   }
 
   const betweenTimes = (time,startTime,endTime) =>{
-    return (time>=startTime && time<=endTime);
+
+    return ((time>=startTime) && (time<=endTime));
   }
 
 
   function generateTimeSlots() {
     const slots = [];
+   // console.log('im in the generate function')
     while (startTime <= endTime) {
+     // console.log('im in the loop')
+     console.log(startTime)
       const formattedTime = formatAMPM(startTime);
       const insertedStartTime = new Date(startTime);
       let attendeesAvailable=0;
-      for(attendee in attendees){
-        for (day in attendee.availability){
+      for(let indx in attendees){
+        let attendee=attendees[indx]
+        //console.log(attendee)
+        for (let day of attendee.availability){
           let available=false;
-          if(datesEqual(day.date,date)){
-            for (time in day.times){
-              if(betweenTimes(insertedStartTime,time.startTime,time.endTime)){
+          //console.log(day.date)
+          if(datesEqual(new Date(day.date),date)){
+            for (let time of day.time){
+            //  console.log(time)
+              if(betweenTimes(insertedStartTime,new Date(time.start),new Date(time.end))){
                 available=true;
+                //console.log('hi')
               }
             }
           }
-          if (available) attendeesAvailable++;
-      }
-      const color = `${}rgb(255, 140, 0, ${attendeesAvailable/attendeeCount})`;
-      slots.push({ time: formattedTime, comparableTime: insertedStartTime, color: color});
+          if (available){
+             attendeesAvailable++;
+            // console.log('i should work');
+          }
+      }}
+
+      const color = `rgb(255, 140, 0, ${attendeesAvailable/attendeeCount})`;
+      slots.push({ time: formattedTime, comparableTime: insertedStartTime, attendeesAvailable: attendeesAvailable});
       startTime.setMinutes(startTime.getMinutes() + 30);
     }
     console.log(slots);
     return slots;
   }
-  useEffect(()=>{
-    async function formData(){
-      setAnchors(value);
-      console.log(value);
-    }formData()
-  },[value])
+
   useEffect(() => { //initialize time slots useEffect
     async function formData(){
     setTimeSlots(generateTimeSlots());
@@ -66,17 +76,34 @@ const TimeViewer = ({date, attendees}) => {
 
 
   return (
+
     <div className="time-selector">
       <ul className="time-range">
-          {timeSlots.map((slot, index) => (
+          {timeSlots.map((slot, index) => { 
+            let color = `rgb(255, 140, 0, ${slot.attendeesAvailable/attendeeCount})`;
+            if((slot.attendeesAvailable/attendeeCount)===1){
+              color='rgb(124,252,0)'
+            }
+            if(slot.attendeesAvailable===0){
+              return (
+                <li className="row" key={slot.time}>
+                <div className="time-label">{slot.time}</div>
+                <div
+                  className={`time-slot`}
+                />
+            </li>
+            )
+            }
+            else{
+            return (
             <li className="row" key={slot.time}>
             <div className="time-label">{slot.time}</div>
             <div
               className={`time-slot`}
-              style={{color:{``}}}
+              style={{"background-color":color}}
             />
         </li>
-        ))}        
+        )}})}        
       </ul>
     </div>
   );

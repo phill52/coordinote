@@ -96,6 +96,16 @@ const getAttendees=async(eventId) => {
     return event.attendees;
 }
 
+const getIndex = async (id1,arr) =>{
+    let index=-1;
+    for(let x=0;x<arr.length;x++){
+        if(arr[x]._id.toString()===(id1.toString())){
+            index=x;
+        }
+    }
+    return index;
+}
+
 const getAttendeeById=async(eventId,attendeeId) => {
     eventId=validation.checkId(eventId);
     attendeeId=validation.checkId(attendeeId);
@@ -105,11 +115,15 @@ const getAttendeeById=async(eventId,attendeeId) => {
         {'attendees':{$elemMatch:{_id:new ObjectId(attendeeId)}}}
     )
     console.log(attendee.attendees[0]);
-    if(!(attendee.attendees[0])) throw `Unable to find attendee ${attendeeId} in event ${eventId}`
-    return attendee.attendees[0];
+    console.log('i dont like to work')
+    let index=await getIndex(attendeeId,attendee);
+    console.log(index);
+    if(index===-1) throw `Unable to find attendee ${attendeeId} in event ${eventId}`
+    return attendee.attendees[index];
 }
 //needs an entire attendee object (with attendee id and new availability)
 const addAttendee=async(eventId,newAttendee) => {
+    console.log(newAttendee)
     eventId=validation.checkId(eventId);
     const eventCollection=await events();
     const updatedEvent=await eventCollection.updateOne(

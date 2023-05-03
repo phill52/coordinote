@@ -17,11 +17,11 @@ initializeApp({
 });
 
 async function decodeIDToken(req, res, next) {
-    console.dir(req.headers,{depth:null})
-    console.log('after the header');
+    //console.dir(req.headers,{depth:null})
+  //  console.log('after the header');
     const header = req.headers.authorization;
-    console.log(req.headers.authorization)
-    console.log('hi')
+   // console.log(req.headers.authorization)
+   // console.log('hi')
     if (header !== 'Bearer null' && req.headers.authorization.startsWith('Bearer ')) {
         const idToken = req.headers.authorization.split('Bearer ')[1];
         try {
