@@ -62,7 +62,7 @@ return(
 </div>
 
 <div className='calContain'>
-<Calendar value = {new Date(2023,4,1,0,0,0,0)} tileClassName={tileClass} tileDisabled={disableAll}/>
+<Calendar minDetail={'month'} value = {new Date(2023,4,1,0,0,0,0)} tileClassName={tileClass} tileDisabled={disableAll}/>
 <h3>Pick the dates on which you are avalible</h3>
 
 </div>
