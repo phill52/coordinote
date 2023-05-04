@@ -220,7 +220,7 @@ const arrayIncludes = (arr,element) =>{
 const buildAnchorObjectArray = (arr) =>{
     let outArr=[];
     if(arr.length===0){
-        return 'N/A';
+        return [];
     }
     else{
         let y=0;
@@ -264,7 +264,7 @@ useEffect(()=>{
 const tileClassBuilder = (date,event)=>{
     for(let x=0;x<event.domainDates.length;x++){
         for(let y=0;y<bestDates.length;y++){
-            console.log(new Date(bestDates[y]))
+        //    console.log(new Date(bestDates[y]))
             let dateObj=new Date(bestDates[y]);
         if(datesEqual(date,new Date(dateObj.getFullYear(),dateObj.getMonth(),dateObj.getDate(),0,0,0,0))){
             

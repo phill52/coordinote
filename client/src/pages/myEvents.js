@@ -5,16 +5,19 @@ import '../App.css';
 import logo from '../logo.svg';
 import axios from 'axios'
 import {createToken } from '../fire';
-import {Link, useParams} from 'react-router-dom';
+import {Link, useParams,Navigate} from 'react-router-dom';
 import TimeViewer from '../components/TimeViewer';
 import {Card,CardMedia,CardContent,CardActionArea,Accordion,AccordionSummary,Typography,Grid} from '@mui/material';
 
 const MyEvents =()=>{
 const {uId}=useParams();
 const [userEvents,setUserEvents]=useState(null);
+const [userAttended,setUserAttended]= useState(null);
 const [loading,setLoading] = useState(true);
 const [error,setErr]= useState(false);
-
+const [selected,setSelected] = useState(false);
+const [createdEvents,userCreated]=useState(false);
+const [attendedEvents,pickAttended] = useState(false);
 useEffect(()=>{
     console.log('on load useEffect')
     async function formData(){
@@ -24,17 +27,21 @@ useEffect(()=>{
         await axios.get(`http://localhost:3001/api/yourpage/events/myEvents/${uId}`,{headers:{'Content-Type':'application/json','Authorization':header.headers.Authorization}})
         .then(function (response){
             console.log(response);
-            setUserEvents(response.data);
+            setLoading(false)
+            setErr(false)
+            setUserEvents(response.data.events);
+            setUserAttended(response.data.attended)
             console.log(response.data)
 
         })
         .catch(function (error){
+            setErr(true);
+            setLoading(false)
             console.log(error);
         });
         //setUserEvents(data);
         //console.log(data);
-        setLoading(false)
-        setErr(false)
+
         }
         catch(e){
             setErr(true);
@@ -43,6 +50,7 @@ useEffect(()=>{
         }
     }formData()
 },[uId])
+
 const datesEqual = (dte1,dte2) =>{
     if(!(dte1<dte2)){
         if(!(dte1>dte2)){
@@ -106,7 +114,7 @@ const cardBuilder =(event) =>{
                         </label>
                     </Typography>
                     <Calendar tileDisabled={()=>{return true}} className='smallCal' value = {new Date()} tileClassName={({date})=>{return tileClassBuilder(date,event)}}></Calendar>
-                    <TimeViewer date={new Date(event.domainDates[0].date)} startTime={new Date(event.domainDates[0].time.start)} endTime={new Date(event.domainDates[0].time.end)} attendees={event.attendees}></TimeViewer>
+                    
                 </CardContent>
 
                 </Link>
@@ -114,6 +122,7 @@ const cardBuilder =(event) =>{
         </Grid>
     )
 }
+//<TimeViewer date={new Date(event.domainDates[0].date)} startTime={new Date(event.domainDates[0].time.start)} endTime={new Date(event.domainDates[0].time.end)} attendees={event.attendees}></TimeViewer>
 if(loading){
 return(
     <div>
@@ -133,6 +142,7 @@ else if(error){
     )
 }
 else{
+    if(createdEvents){
     let card = null;
     card = userEvents && userEvents.map((event)=>{
         return cardBuilder(event);
@@ -148,9 +158,51 @@ else{
             flexDirection: 'row'
           }}
         >{card}</Grid>
-            
+            <button className='App-link' onClick={()=>{
+            userCreated(false)
+            pickAttended(true)
+        }}>Attended Events</button>
         </div>
     )
+}
+else if(attendedEvents){
+    let card = null;
+    card = userAttended && userAttended.map((event)=>{
+        return cardBuilder(event);
+    })
+    return(
+        <div>
+            
+            <Grid
+          container
+          spacing={2}
+          sx={{
+            flexGrow: 1,
+            flexDirection: 'row'
+          }}
+        >{card}</Grid>
+             <button className='App-link' onClick={()=>{
+            userCreated(true)
+            pickAttended(false)
+        }}>Created Events</button>
+        </div>
+    )
+}
+else{
+    return(
+        <div>
+            <h1>
+                Do you want to see events that you created, or events that you responded to an invite for?
+            </h1>
+        <button className='App-link' onClick={()=>{
+            userCreated(true)}}>Created Events</button>
+        <button className='App-link' onClick={()=>{
+            pickAttended(true)
+        }}>Invited Events</button>
+
+        </div>
+    )
+}
 }
 
 }

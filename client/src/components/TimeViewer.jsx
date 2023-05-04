@@ -100,7 +100,7 @@ const TimeViewer = (props) => {
             <div className="time-label">{slot.time}</div>
             <div
               className={`time-slot`}
-              style={{"background-color":color}}
+              style={{"backgroundColor":color}}
             />
         </li>
         )}})}        
