@@ -32,23 +32,54 @@ const upload = multer({
 
 
 router
-    .route('/')
-    // .get(async(req,res) => {        //get events for a specific user
-    //     if(req.session && req.session.user){
-    //         let userEvents=undefined;
-    //         let userId=undefined;
-    //         try{
-    //             userId=validation.checkId(req.session.user.userId)
-    //             userEvents=await users.getUsersEvents(userId)
-    //         }
-    //         catch(e){
-    //             res.send(e)
-    //             return;
-    //         }
-    //         return res.json(userEvents)
-    //     }
-    //     res.json({Get: "/yourpage/events/"})
-    // })
+.route('/bestTimes/:id')
+.get(async (req,res)=>{
+    let eventId=undefined;
+    try{
+        eventId=validation.checkId(req.params.id)
+    }
+    catch(e){
+        console.log(e)
+        res.json({Error:e}).status(400)
+        return
+    }
+    let event=undefined;
+    try{
+        event=await events.getEventById(eventId)
+    }
+    catch(e){
+        console.log(e)
+        res.json({"Error retrieving event":e}).status(500)
+        return
+    }
+    let bestTimes=undefined;
+    try{
+        bestTimes=await events.findCommonDates(event.attendees);
+    }
+    catch(e){
+        console.log(e);
+        res.json({"Error, did not properly recieve common dates":e}).status(500);
+        return
+    }
+    res.json(bestTimes);
+})
+
+router
+    .route('/myEvents/:userId')
+    .get(async(req,res) => {        //get events for a specific user
+        let userEvents=undefined;
+        let userId=undefined;
+        try{
+            userId=validation.checkId(req.params.userId)
+            userEvents=await users.getUsersEvents(userId)
+        }
+        catch(e){
+            res.status(400).json(e)
+            console.log(e)
+            return;
+        }
+        return res.json(userEvents)
+    })
     const singleUpload = upload.single('image')
 router
     .post('/imageTest',upload.single('image'),  async (req, res) => {
@@ -80,7 +111,7 @@ router
         }*/
         try{
             
-            newEvent=await events.createEvent(req.body.name,req.body.domainDates,req.body.location,req.body.description,req.body.attendees,req.file.location,userId)
+            newEvent=await events.createEvent(req.body.name,req.body.domainDates,req.body.location,req.body.description,req.body.attendees,req.file.location,'6449858e039651db9d8beed2')
         }
         catch(e){
             console.log(e)

@@ -1,13 +1,20 @@
 import express from 'express';
 const app=express();
+import cors from 'cors';
 import session from 'express-session'
 import configRoutes from './routes/index.js'
 import connection from './config/mongoConnection.js'
 import validation from './validation.js';
-import events from './data/events.js';
+import users from './data/users.js';
+import events from './data/events.js'
 import path from 'path'
+import decodeIDToken from './authenticateToken.js';
 import {fileURLToPath} from 'url';
 const __filename = fileURLToPath(import.meta.url);
+// import {initializeApp} from 'firebase/app';
+// import { getAnalytics } from "firebase/analytics";
+// import {getAuth} from 'firebase/auth';
+// import {getFirestore} from 'firebase/firestore';
 // import {initializeApp} from 'firebase/app';
 // import { getAnalytics } from "firebase/analytics";
 // import {getAuth} from 'firebase/auth';
@@ -15,11 +22,18 @@ const __filename = fileURLToPath(import.meta.url);
 import cors from 'cors'
 
 
+import admin from 'firebase-admin';
+// import {initializeApp} from 'firebase/app';
+// import { getAnalytics } from "firebase/analytics";
+// import {getAuth} from 'firebase/auth';
+// import {getFirestore} from 'firebase/firestore';
+
   
 // Initialize Firebase
 // const app = initializeApp(firebaseConfig);
 // const analytics = getAnalytics(app);
 const __dirname=path.dirname(__filename)
+app.use(cors())
 app.use(express.static(path.join(__dirname, '..', 'client', 'build')));
 
 app.use(express.json())
@@ -52,6 +66,12 @@ app.use('/api/yourpage/events/:eventId',async(req,res,next) => {
     // if(!req.session.user){
     //     return res.redirect('/')
     // }
+  //  console.dir(req.headers,{depth:null})
+   // console.log('im in the app');
+    res.header('Access-Control-Allow-Origin', '*');
+    res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization, Custom-Header');
+
+
     let eventId=req.params.eventId
     //let userId=req.session.user.userId
     try{        //user and event id need to be checked separately
@@ -81,6 +101,15 @@ app.use('/api/yourpage/events/:eventId',async(req,res,next) => {
           //  return res.redirect('/yourpage/events')
       //  }
     }
+    next();
+})
+
+app.use('/api/yourpage/events/myEvents/:userId',async (req,res,next)=>{
+    //console.dir(req.headers,{depth:null})
+    //console.log(req.body)
+    //console.log('im in the app');
+    res.header('Access-Control-Allow-Origin', '*');
+    res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization, Custom-Header');
     next();
 })
 
@@ -116,7 +145,67 @@ app.use('/api/register',(req,res,next) => {
     }
 })
 
-configRoutes(app)
+// Initialize Firebase
+app.use(decodeIDToken);
+
+const getAuthToken = (req, res, next) => {
+    if (req.headers.authorization &&
+        req.headers.authorization.split(' ')[0] === 'Bearer') {
+        req.authToken = req.headers.authorization.split(' ')[1];
+    } else {
+        req.authToken = null;
+    }
+    next();
+};
+
+// Create firebase user
+const createUser = async (req, res) => {
+    const { email, password } = req.body;
+    try {
+        const user = await admin.auth().createUser({
+            email: email,
+            password: password,
+        });
+        console.log(user);
+        return res.status(200).send(user);
+    } catch (error) {
+        console.log(error);
+        return res.status(500).send({ error: error });
+    }
+};
+
+const checkIfAuthenticated = (req, res, next) => {
+    getAuthToken(req, res, async () => {
+        try {
+            const { authToken } = req;
+            const userInfo = await app
+                .auth()
+                .verifyIdToken(authToken);
+            req.authId = userInfo.uid;
+            return next();
+        } catch (e) {
+            return res
+                .status(401)
+                .send({ error: 'You are not authorized to make this request' });
+        }
+    });
+};
+
+// create a new firebase user
+app.post('/user', createUser);
+
+// protected route
+app.get('/user', checkIfAuthenticated, async (req, res) => {
+    try {
+        const users = await admin.auth().listUsers();
+        return res.status(200).send(users.users);
+    } catch (error) {
+        console.log(error);
+        return res.status(500).send({ error: error });
+    }
+});
+
+configRoutes(app);
 
 app.get('*', (req, res) => {
     res.sendFile(path.join(__dirname, '..', 'client', 'build', 'index.html'));
@@ -126,7 +215,10 @@ const main=async() => {
     const db = await connection.dbConnection();
 }
 
+
 app.listen(3001, () => {
-    console.log("Your routes are running on http://localhost:3001")
-})
+    console.log("We've now got a server!");
+    console.log('Your routes will be running on http://localhost:3001');
+});
+
 main()
