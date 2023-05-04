@@ -3,16 +3,33 @@ const router=express.Router()
 import users from '../data/users.js'
 import events from '../data/events.js'
 import validation from '../validation.js'
-import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
-
-
-const s3 = new S3Client({
-    credentials:{
-        accessKeyId: 'AKIA5CTX4VB2K6XBGQAI',
-        secretAccessKey: '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'
-    },
-    region: 'us-east-1',
+import aws from 'aws-sdk'
+import multer from 'multer'
+import multerS3 from 'multer-s3'
+import dotenv from 'dotenv';
+dotenv.config({path:'../.env'})
+console.log(process.env.AWS_secretkey)
+aws.config.update({
+    secretAccessKey: process.env.AWS_secretkey,
+    accessKeyId: process.env.AWS_keyid,
+    region: process.env.AWS_region 
 });
+const s3 = new aws.S3();
+const upload = multer({
+    storage: multerS3({
+        s3: s3,
+        bucket: 'coordinote',
+        acl: 'public-read',
+        metadata: function (req, file, cb) {
+            cb(null, {fieldName: file.fieldname});
+        },
+        key: function (req, file, cb) {
+            cb(null, Date.now().toString())
+        },
+        contentType: multerS3.AUTO_CONTENT_TYPE,
+    })
+})
+
 
 
 router
@@ -33,30 +50,18 @@ router
     //     }
     //     res.json({Get: "/yourpage/events/"})
     // })
-
+    const singleUpload = upload.single('image')
 router
-    .post('/imageTest', upload.single('image'), async (req, res) => {
-        try {
-            const fileBuffer = Buffer.from(req.body.file, "base64");
-            const mimeType = req.body.mimeType;
-            const fileName = `${Date.now().toString()}-${req.body.filename}`;
-        
-            const command = new PutObjectCommand({
-                Bucket: process.env.S3_BUCKET,
-                Key: fileName,
-                Body: fileBuffer,
-                ContentType: mimeType,
-            });
-        
-            await s3.send(command);
-            res.status(200).send("File uploaded successfully");
-        } catch (error) {
-            console.error(error);
-            res.status(500).send("Error uploading file");
+    .post('/imageTest',upload.single('image'),  async (req, res) => {
+        if (req.file) {
+            return res.json({ imageUrl: req.file.location });
         }
+    }, (error, req, res, next) => {
+        console.log(error)
+        return res.status(400).json({ error: error.message })
         });
-        
 
+        
 
 router
     .route('/createEvent')
@@ -85,7 +90,10 @@ router
         }
         res.json(newEvent)
         return;
-    })
+    }, (error, req, res, next) => {
+        console.log(error)
+        return res.status(400).json({ error: error.message })
+        });
 
 router
     .route('/:id')
