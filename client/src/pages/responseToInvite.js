@@ -257,6 +257,8 @@ useEffect(()=>{
             catch(e){
                 console.log(e);
             }
+        setPickDates(false);
+        setFinished(false);
         console.log(datesAndTimes);
     }
 }formData()
