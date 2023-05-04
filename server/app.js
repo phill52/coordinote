@@ -61,8 +61,8 @@ app.use('/api/yourpage/events/:eventId',async(req,res,next) => {
     // if(!req.session.user){
     //     return res.redirect('/')
     // }
-    console.dir(req.headers,{depth:null})
-    console.log('im in the app');
+  //  console.dir(req.headers,{depth:null})
+   // console.log('im in the app');
     res.header('Access-Control-Allow-Origin', '*');
     res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization, Custom-Header');
 
@@ -96,6 +96,15 @@ app.use('/api/yourpage/events/:eventId',async(req,res,next) => {
           //  return res.redirect('/yourpage/events')
       //  }
     }
+    next();
+})
+
+app.use('/api/yourpage/events/myEvents/:userId',async (req,res,next)=>{
+    //console.dir(req.headers,{depth:null})
+    //console.log(req.body)
+    //console.log('im in the app');
+    res.header('Access-Control-Allow-Origin', '*');
+    res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization, Custom-Header');
     next();
 })
 

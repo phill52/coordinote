@@ -96,6 +96,18 @@ const getAttendees=async(eventId) => {
     return event.attendees;
 }
 
+const getIndex = async (id1,arr) =>{
+    let index=-1;
+    console.log(arr)
+    for(let x=0;x<arr.length;x++){
+        console.log(arr[x]);
+        if(arr[x]._id.toString()===(id1.toString())){
+            index=x;
+        }
+    }
+    return index;
+}
+
 const getAttendeeById=async(eventId,attendeeId) => {
     eventId=validation.checkId(eventId);
     attendeeId=validation.checkId(attendeeId);
@@ -105,11 +117,15 @@ const getAttendeeById=async(eventId,attendeeId) => {
         {'attendees':{$elemMatch:{_id:new ObjectId(attendeeId)}}}
     )
     console.log(attendee.attendees[0]);
-    if(!(attendee.attendees[0])) throw `Unable to find attendee ${attendeeId} in event ${eventId}`
-    return attendee.attendees[0];
+    console.log('i dont like to work')
+    let index=await getIndex(attendeeId,attendee.attendees);
+    console.log(index);
+    if(index===-1) throw `Unable to find attendee ${attendeeId} in event ${eventId}`
+    return attendee.attendees[index];
 }
 //needs an entire attendee object (with attendee id and new availability)
 const addAttendee=async(eventId,newAttendee) => {
+    console.log(newAttendee)
     eventId=validation.checkId(eventId);
     const eventCollection=await events();
     const updatedEvent=await eventCollection.updateOne(
@@ -119,6 +135,15 @@ const addAttendee=async(eventId,newAttendee) => {
     if(!updatedEvent.modifiedCount){
         throw `Unable to add attendee ${newAttendee} to event ${eventId}`
     }
+    const userCollection=await users();
+    const updatedUser = await userCollection.updateOne(
+        {_id:new ObjectId(newAttendee._id)},
+        {$push: {attendedEvents:new ObjectId(eventId)}}
+    )
+    if(updatedUser.modifiedCount<1){
+        throw "Unable to add this event to your account"
+    }
+
     return await getEventById(eventId);
 }
 //if the attendee does not currently exist for that event, add it. If it does, update its availability

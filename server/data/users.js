@@ -19,7 +19,8 @@ const createUser = async (username, uid) => {
     let newUser = {
         _id: uid,
         username: username,
-        events: []
+        events: [],
+        attendedEvents:[]
     }
 
     const insertUser = await userCollection.insertOne(newUser);
@@ -75,8 +76,12 @@ const getUsersEvents = async (userId) => {
     for(let i in user.events){
         eventsArray.push(await eventFunctions.getEventById(user.events[i]));
     }
+    let attendedArray=[];
+    for(let i in user.attendedEvents){
+        attendedArray.push(await eventFunctions.getEventById(user.attendedEvents[i]))
+    }
     
-    return eventsArray;
+    return {events:eventsArray,attended:attendedArray};
 }
 
 export default {
