@@ -8,7 +8,6 @@ import multer from 'multer'
 import multerS3 from 'multer-s3'
 import dotenv from 'dotenv';
 dotenv.config({path:'../.env'})
-console.log(process.env.AWS_secretkey)
 aws.config.update({
     secretAccessKey: process.env.AWS_secretkey,
     accessKeyId: process.env.AWS_keyid,
