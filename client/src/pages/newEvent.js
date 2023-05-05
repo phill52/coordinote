@@ -22,7 +22,7 @@ const NewEvent= ()=>{
     const [Tselect,setTselect]=useState(null);
     const [allDates,setAllDates]= useState([]);
     const [dateLock,SetDateLock] = useState(false);
-    const [curDate,setCurDate] = useState(new Date);
+    const [curDate,setCurDate] = useState(new Date());
     const [curTimes,setCurTimes] = useState({date:new Date(),time:[]})
     const [datesAndTimes,setDatesAndTimes] = useState([]);
     const [clickedDay,setClickedDay] = useState([]);
@@ -40,6 +40,7 @@ const NewEvent= ()=>{
     const [errMsg,setErrMsg] = useState('');
     const [fileUrl,setFileUrl] = useState('');
     const [fileForm,setFileFormValue]=useState(null);
+    const [inputTaken,setInputTaken] = useState(false);
     const datesEqual = (dte1,dte2) =>{
         if(!(dte1<dte2)){
             if(!(dte1>dte2)){
@@ -94,7 +95,7 @@ const NewEvent= ()=>{
                     times=datesAndTimes[index].time;
                     console.log(times)
                 }
-                console.log(index);
+                console.log(curDate);
                 if(datesEqual(new Date(new Date().toDateString()),new Date(curDate.toDateString()))){
                 setTselect(<TimeSelectorTwoAnchors className='centered' startTime={new Date(curDate.getFullYear(), curDate.getMonth(), curDate.getDate(), new Date().getHours(), 0, 0, 0)} endTime={new Date(curDate.getFullYear(), curDate.getMonth(), curDate.getDate(), 23, 59, 59, 0)} value = {times} date= {clickedDay[arrIndex]} change={setCurTimes}/>)
                 }
@@ -264,6 +265,7 @@ const disableAll = ({date,view})=>{
 }
 useEffect(()=>{
     async function fetchData(){
+        if(dateTimeLock){
         let tempObj={...output};
         setOutput({name:eventName,location:location,domainDates:datesAndTimes,description:eventDescription,image:fileInput});
         try{
@@ -286,12 +288,13 @@ useEffect(()=>{
             console.log(e);
         }
 
-    }fetchData()
+    }}fetchData()
 },[dateTimeLock])
 useEffect(()=>{
 async function handleFileInput(){
     console.log(fileForm)
-    if(document.querySelector('input[type="file"]').files.length!==0){
+    if(inputTaken){
+    if((document.querySelector('input[type="file"]').files.length!==0)){
 const formData = new FormData();
 console.log(document.querySelector('input[type="file"]').files[0])
 formData.append("image",document.querySelector('input[type="file"]').files[0],document.querySelector('input[type="file"]').files[0].name)
@@ -318,6 +321,9 @@ console.log(e);
     else{
         setErrMsg("Error, incorrect upload of image");
         setFileIsIn(false);
+    }}
+    else{
+        setErrMsg('');
     }
 }handleFileInput()},[fileForm])
 if(error){
@@ -359,6 +365,7 @@ else{
                         {'Event Image: '}
                         <input type='file' accept='image/png, image/jpeg, image/jpg' required className='login-input' id='imageInput' onChange={(e)=>{
                             console.log(e)
+                            setInputTaken(true)
                             setFileFormValue(e)}} />
                     </label>
                     <br />
