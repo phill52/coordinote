@@ -139,9 +139,9 @@ router
         return;
     })
     .delete(async(req,res) => {         //  delete      /yourpage/events/:id
-        let eventId=undefined; let userId=undefined;
+        let eventId=undefined; let userId='6449858e039651db9d8beed2';
         try{
-            userId=validation.checkId(req.session.user.userId)
+            //userId=validation.checkId(req.session.user.userId)
             eventId=validation.checkId(req.params.id)
         }
         catch(e){

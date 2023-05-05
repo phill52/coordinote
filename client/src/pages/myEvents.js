@@ -113,7 +113,7 @@ const cardBuilder =(event) =>{
                         <p className='makeBlack'>{event.location}</p>
                         </label>
                     </Typography>
-                    <Calendar tileDisabled={()=>{return true}} className='smallCal' value = {new Date()} tileClassName={({date})=>{return tileClassBuilder(date,event)}}></Calendar>
+                    <Calendar minDetail={'month'} tileDisabled={()=>{return true}} className='smallCal' value = {new Date()} tileClassName={({date})=>{return tileClassBuilder(date,event)}}></Calendar>
                     
                 </CardContent>
 

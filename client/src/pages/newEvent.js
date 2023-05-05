@@ -228,16 +228,37 @@ const buildAnchorObjectArray = (arr) =>{
         return outArr;
     }
 }
-const tileDisabled =({date})=>{
-    if(date<new Date(new Date().toDateString())){
+const tileDisabled =({date,view})=>{
+    let today=new Date(new Date().toDateString());
+    if(view==='month'){
+    if(date<today){
         return true;
     }
     else{
         return false;
     }
 }
-const disableAll = ({date})=>{
+else if(view==='year'){
+    if(date<new Date(today.getFullYear(),today.getMonth(),0)){
+        return true;
+    }
+    else{
+        return false;
+    }
+}
+else{
+    if(date<new Date(today.getFullYear(),0,0)){
+        return true;
+    }
+    else{
+        return false;
+    }
+}
+}
+const disableAll = ({date,view})=>{
+    if(view==='month'){
     return true;
+    }
 }
 useEffect(()=>{
     async function fetchData(){
@@ -348,7 +369,7 @@ else{
                              <h2 className='login-label'>Event Location</h2>
                              <p className='left'>{location}</p>
         </div>
-    <Calendar tileDisabled={disableAll} className='smallCal' value = {new Date()} tileClassName={tileClass} ></Calendar>
+    <Calendar minDetail={'decade'} tileDisabled={disableAll} className='smallCal' value = {new Date()} tileClassName={tileClass} ></Calendar>
     {console.log(allDates)}
     </div>
     <br />
@@ -370,7 +391,7 @@ else{
                              <h2 className='login-label'>Event Location</h2>
                              <p className='left'>{location}</p>
         </div>
-    <Calendar tileDisabled={disableAll} className='smallCal' value = {new Date()} tileClassName={tileClass} ></Calendar>
+    <Calendar minDetail={'decade'} tileDisabled={disableAll} className='smallCal' value = {new Date()} tileClassName={tileClass} ></Calendar>
     {console.log(allDates)}
     </div>
     <br />
@@ -394,7 +415,7 @@ return(<div>
         <h2 className='login-label'>Event Location</h2>
         <p className='left'>{location}</p>
         </div>
-    <Calendar tileDisabled={disableAll} className='smallCal' value = {new Date()} tileClassName={tileClass} ></Calendar>
+    <Calendar minDetail={'decade'} tileDisabled={disableAll} className='smallCal' value = {new Date()} tileClassName={tileClass} ></Calendar>
     {console.log(allDates)}
     </div>
     <br />
@@ -419,7 +440,7 @@ else if(arrIndex===(clickedDay.length-1)){
         <h2 className='login-label'>Event Location</h2>
         <p className='left'>{location}</p>
         </div>
-        <Calendar className='smallCal' value = {new Date()} tileDisabled={disableAll} tileClassName={tileClass} ></Calendar>
+        <Calendar minDetail={'decade'} className='smallCal' value = {new Date()} tileDisabled={disableAll} tileClassName={tileClass} ></Calendar>
         {console.log(allDates)}
         </div>
         <br />
@@ -446,7 +467,7 @@ else{
         <h2 className='login-label'>Event Location</h2>
         <p className='left'>{location}</p>
         </div>
-        <Calendar tileDisabled={disableAll} className='smallCal' value = {new Date()} tileClassName={tileClass} ></Calendar>
+        <Calendar minDetail={'decade'} tileDisabled={disableAll} className='smallCal' value = {new Date()} tileClassName={tileClass} ></Calendar>
         {console.log(allDates)}
         </div>
         <br />
@@ -479,7 +500,7 @@ return(<div>
         <h2 className='login-label'>Event Location</h2>
         <p className='left'>{location}</p>
         </div>
-    <Calendar tileDisabled={disableAll} className='smallCal' value = {new Date()} tileClassName={tileClass} ></Calendar>
+    <Calendar minDetail={'decade'} tileDisabled={disableAll} className='smallCal' value = {new Date()} tileClassName={tileClass} ></Calendar>
     {console.log(allDates)}
     </div>
     <br />
@@ -509,7 +530,7 @@ else if(arrIndex===(clickedDay.length-1)){
         <h2 className='login-label'>Event Location</h2>
         <p className='left'>{location}</p>
         </div>
-        <Calendar className='smallCal' value = {new Date()} tileClassName={tileClass} ></Calendar>
+        <Calendar minDetail={'decade'} className='smallCal' value = {new Date()} tileClassName={tileClass} ></Calendar>
         {console.log(allDates)}
         </div>
         <br />
@@ -538,7 +559,7 @@ else{
         <h2 className='login-label'>Event Location</h2>
         <p className='left'>{location}</p>
         </div>
-        <Calendar className='smallCal' value = {new Date()} tileClassName={tileClass} ></Calendar>
+        <Calendar minDetail={'decade'} className='smallCal' value = {new Date()} tileClassName={tileClass} ></Calendar>
         {console.log(allDates)}
         </div>
         <br />
@@ -574,7 +595,7 @@ else{
         <p className='left'>{location}</p>
         </div>
         <div>
-        <Calendar className='smallCal' tileDisabled={tileDisabled} value = {new Date()} onChange={setDates} tileClassName={tileClass} ></Calendar>
+        <Calendar minDetail={'decade'} className='smallCal' tileDisabled={tileDisabled} value = {new Date()} onChange={setDates} tileClassName={tileClass} ></Calendar>
         </div>
         {console.log(clickedDay)}
         
@@ -596,7 +617,7 @@ else{
         <h2 className='login-label'>Event Location</h2>
         <p className='left'>{location}</p>
         </div><div>
-        <Calendar className='smallCal' tileDisabled={tileDisabled} value = {new Date()} onChange={setDates} tileClassName={tileClass} ></Calendar>
+        <Calendar minDetail={'decade'} className='smallCal' tileDisabled={tileDisabled} value = {new Date()} onChange={setDates} tileClassName={tileClass} ></Calendar>
         </div>
         {console.log(clickedDay)}
         </div>
