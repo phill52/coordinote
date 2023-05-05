@@ -97,6 +97,8 @@ const SignupPage = () => {
         setIsBadSignup(false);
         console.log('User signed up:', userCredential.user);
         userId = userCredential.user.uid;
+        console.log(userId);
+        console.log(userCredential);
         sendEmailVerification(userCredential.user).then(() => {
           console.log('Email sent');
         }).catch((error) => {
@@ -115,18 +117,27 @@ const SignupPage = () => {
       });
       
       const serverSubmit= async () => {
-        const header = await createToken();
         const body = {
           username: username,
           uid: userId
         };
         try {
-          const response = await axios.post('/api/signup', body, header);
+          const response = await axios.post('http://localhost:3001/api/signup', body);
           return response;
-        } catch {
+        } catch(e) {
+          console.log(e);
           console.log("error with server");
         }
       }
+
+      serverSubmit().then((response) => {
+        console.log(response);
+      }
+      ).catch((error) => {
+        console.log(error);
+      }
+      );
+
     };
 
     return (
