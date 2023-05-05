@@ -10,7 +10,7 @@ import EmailVerificationLanding from './pages/emailVerification';
 import ResponseToInvite from './pages/responseToInvite';
 import Homepage from './pages/homepage';
 import AuthContext from './AuthContext';
-import MyEvents from './pages/myEvents';
+import MyEvents from './pages/MyEvents';
 function App() {
   const [loggedIn, setLoggedIn] = useState(false);
   const [loadingUser, setLoadingUser] = useState(true);
@@ -79,7 +79,8 @@ function App() {
           <Route path='/' element={<Homepage />} />
           <Route path='/*' element={<p>404 not found</p>}></Route> {/* TODO: make a 404 page */}
           {/* <Route path='/myEvent/:uId' element={<MyEvents />} /> */}
-          <Route path='/myEvents' element={<MyEvents />} />
+          <Route path='/createdEvents' element={<MyEvents invited={false}/>}/>
+          <Route path='/invitedEvents' element={<MyEvents invited={true}/>}/>
         </Routes>
       </div>
     </div>
