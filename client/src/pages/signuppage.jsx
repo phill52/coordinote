@@ -81,7 +81,7 @@ const SignupPage = () => {
       }
     };
     checkUsername().then((response) => {
-      if (response.data) {
+      if (response.data==false) {
         setUsernameError('Username is already taken');
         validation = false;
         return;
