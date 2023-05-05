@@ -1,12 +1,14 @@
 import {MongoClient} from 'mongodb';
+
 const settings = {
   "mongoConfig": {
     "serverUrl": "mongodb://localhost:27017/",
     "database": "Coordinote"
   }
 }
+
 import dotenv from 'dotenv';
-dotenv.config({path:'../.env'});
+dotenv.config({path:'.env'});
 const uri = process.env.DB_URL
 let _connection = undefined;
 let _db = undefined;
