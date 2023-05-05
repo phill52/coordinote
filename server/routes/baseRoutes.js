@@ -39,6 +39,28 @@ router.route('/signup')
         }
     });
 
+router.route('/checkUsername')
+    .post(async (req, res) => {
+        let {username} = req.body;
+        let usernameExists = false;
+        // Validation
+        try {
+            username = validation.checkUsername(username);
+        } catch(error) {
+            console.log(error);
+            return res.status(400).send(error);
+        }
+        // Check if username exists
+        try {
+            usernameExists = await users.checkUsernameUnique(username);
+            return res.status(200).send(usernameExists);
+        } catch(error) {
+            console.log(error);
+            return res.status(400).send(error);
+        }
+    });
+
+
 router
     .route('/yourpage')
     .get(async (req, res) => {

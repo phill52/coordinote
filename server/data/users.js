@@ -35,19 +35,12 @@ const createUser = async (username, uid) => {
     return {insertedUser: true, username: user.username}
 }
 
-const checkUser = async (username, password) => {
-    username = validation.checkUsername(username)
-    password = validation.checkPassword(password,true)
-
+const checkUsernameUnique = async (username) => {
+    username = validation.checkUsername(username);
     const userCollection = await users();
-    const user = await userCollection.findOne({username: username})
-    if(!user) throw "Error: Either the username or password is invalid"
-
-    let user_hashed_password = user.password
-    let comparison = await bcrypt.compare(password, user_hashed_password)
-
-    if(comparison) return {authenticatedUser: true, userId:user._id}
-    throw "Error: Either the username or password is invalid"
+    const user = await userCollection.findOne({username: username});
+    if(user) return false;s
+    return true;
 }
 
 const addUserPicture = async (userId, picture) => {
@@ -83,7 +76,7 @@ const getUsersEvents = async (userId) => {
 
 export default {
     createUser,
-    checkUser,
+    checkUsernameUnique,
     addUserPicture,
     getUsersEvents
 }
