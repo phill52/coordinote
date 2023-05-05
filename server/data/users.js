@@ -17,9 +17,9 @@ const createUser = async (username, uid) => {
     }
     
     let newUser = {
-        _id: uid,
+        firebaseId: uid,
         username: username,
-        events: [],
+        createdEvents: [],
         attendedEvents:[]
     }
 
@@ -32,6 +32,14 @@ const createUser = async (username, uid) => {
 
     // return the user doc sans uid (firebase token)
     return {insertedUser: true, username: user.username}
+}
+
+const getUserByName = async(username) => {
+    username = validation.checkUsername(username);
+    const userCollection=await users();
+    const user=await userCollection.findOne({username:username});
+    if(!user) throw `Unable to find user with name of ${username}`
+    return user;
 }
 
 const checkUsernameUnique = async (username) => {
@@ -81,5 +89,6 @@ export default {
     createUser,
     checkUsernameUnique,
     addUserPicture,
-    getUsersEvents
+    getUsersEvents,
+    getUserByName
 }

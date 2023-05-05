@@ -83,7 +83,7 @@ const deleteEvent = async(eventId,userId) => {
     }
     const updatedUser=await userCollection.updateOne(
         {_id:new ObjectId(userId)},
-        {$pull: {"events": new ObjectId(eventId)}}
+        {$pull: {"createdEvents": new ObjectId(eventId)}}
     )
     if(!updatedUser.acknowledged || !updatedUser.modifiedCount) {
         throw "Event not removed from user"
@@ -93,7 +93,7 @@ const deleteEvent = async(eventId,userId) => {
             {_id:new ObjectId(attendees[x]._id)},
             {$pull: {"attendedEvents": new ObjectId(eventId)}}
         )
-        if(!updatedUser.acknowledged || !updatedUser.modifiedCount) {
+        if(!updatedAttendee.acknowledged || !updatedAttendee.modifiedCount) {
             throw "Event not removed from attendee"
         }
     }
