@@ -10,6 +10,9 @@
   background-color: #8faf9a;
 
 }
+.imTheBest{
+  background-color: rgb(124,252,0);
+}
 
 .App-logo {
   height: 40vmin;
@@ -61,8 +64,12 @@ body{
 }
 
 .App-link {
-  color: #61dafb;
-}
+  padding: 0.4rem 0.8rem;
+	background-color: white;
+	border-radius: 3px;
+	color: green;
+	text-decoration: none !important;
+	margin: 5px;}
 
 @keyframes App-logo-spin {
   from {
@@ -89,6 +96,9 @@ body{
   margin-bottom: 20px;
   width: 23rem;
 } 
+.whiteBackground{
+  background-color: white;
+}
 .login-form textarea {
   width: 100%;
   padding: 10px;
@@ -96,9 +106,20 @@ body{
   border-radius: 5px;
   margin-bottom: 20px;
 }
-
+.inputPage{
+  display: flex;
+  height:100%;
+  width: 700px;
+  max-width: 200%;
+  justify-content: right;
+}
 .login-label {
   display: block;
+  margin-bottom: 10px;
+  font-weight: bold;
+  color: green;
+}
+.homepageLabel{
   margin-bottom: 10px;
   font-weight: bold;
   color: green;
@@ -112,6 +133,19 @@ body{
   font-weight: bold;
   transition: background-color 0.2s;
   margin-bottom: 10px;
+}
+.makeBlack{
+  color:black;
+}
+.homepageInput{
+  background-color: #f0f0f0c4;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background-color 0.2s;
+  margin-bottom: 10px;
+  color:black;
 }
 .login-input error {
   border-color: #ff0000;
@@ -266,6 +300,26 @@ body{
 .bottomAnchor{
   transform: translateY(100%);
 }
+.right{
+  justify-content: right;
+  font-size: large;
+  align-items: end;
+  top: '100%';
+}
+.howItWorks{
+  font-size: larger;
+  font-weight: bold;
+}
+.titleText{
+  font-size: xx-large;
+  font-weight:bolder;
+}
 
-
-
+.calContain{
+  justify-content: left;
+  align-items: start;
+  height:100%;
+  width: 700px;
+  max-width: 200%;
+  display: flex;
+}

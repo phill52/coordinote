@@ -5,6 +5,7 @@ import { validateEmail } from '../validate';
 import { auth } from '../fire';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import axios from 'axios';
+import AuthContext from '../AuthContext';
 
 const LoginPage = () => {
   const [email, setEmail] = useState('');
@@ -12,6 +13,7 @@ const LoginPage = () => {
   const [emailError, setEmailError] = useState('');
   const [passwordError, setPasswordError] = useState('');
   const [isBadLogin, setIsBadLogin] = useState(false);
+  const { currentUser, setCurrentUser } = React.useContext(AuthContext);
 
   const handleEmailChange = async (value) => {
     setEmail(value);
@@ -55,6 +57,7 @@ const LoginPage = () => {
           }
         })
         console.log('logged in');
+        setCurrentUser(userCredentials.user);
         setIsBadLogin(false);
       }).
       catch((error)=>{

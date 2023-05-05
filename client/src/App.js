@@ -7,12 +7,14 @@ import React, { useState, useEffect } from 'react';
 import { auth } from './fire';
 import SignupPage from './pages/signuppage';
 import EmailVerificationLanding from './pages/emailVerification';
-
+import ResponseToInvite from './pages/responseToInvite';
+import Homepage from './pages/homepage';
+import AuthContext from './AuthContext';
+import MyEvents from './pages/myEvents';
 function App() {
   const [loggedIn, setLoggedIn] = useState(false);
   const [loadingUser, setLoadingUser] = useState(true);
   const [currentUser, setCurrentUser] = useState(null);
-
   useEffect(() => {
     auth.onAuthStateChanged((user) => {
       setCurrentUser(user);
@@ -55,6 +57,7 @@ function App() {
   }
   
   return (
+    <AuthContext.Provider value={{currentUser, setCurrentUser}}>
     <Router className='router'>
     <div className="App">
       <header className='App-header'>
@@ -63,6 +66,7 @@ function App() {
         <Link to='/'>Home</Link>
         <Link to='/login'>Login</Link>
         <Link to='/signup'>Sign Up</Link>
+        {/* <Link to='/event/644ddc19c0db45afd6c996ed' uid={currentUser.uid}>Event (temporary)</Link> */}
         <button onClick={signOut}>Sign Out</button>
       </header>
       <div className='App-body'>
@@ -71,10 +75,15 @@ function App() {
           <Route path='/login' element={<UnloggedRoute Component={<LoginPage />}/>} />
           <Route path='/signup' element={<UnloggedRoute Component={<SignupPage/>}/>} />
           <Route path='/email-verification' element={<EmailVerificationLanding/>} />
+          <Route path='/event/:id' element={<ResponseToInvite />} />
+          <Route path='/' element={<Homepage />} />
+          <Route path='/*' element={<p>404 not found</p>}></Route> {/* TODO: make a 404 page */}
+          <Route path ='/myEvent/:uId' element={<MyEvents />} />
         </Routes>
       </div>
     </div>
     </Router>
+  </AuthContext.Provider>
   );
 }
 
