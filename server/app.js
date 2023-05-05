@@ -10,6 +10,38 @@ import events from './data/events.js'
 import path from 'path'
 import decodeIDToken from './authenticateToken.js';
 import {fileURLToPath} from 'url';
+import { Server } from 'socket.io';
+import http from 'http';
+const server = http.createServer(app);
+const io = new Server(server);
+
+
+io.on('connection', (socket) => {
+    console.log('new client connected', socket.id);
+  
+    socket.on('user_join', (name, room) => {
+      console.log('A user joined their name is ' + name);
+      console.log('The user joined room ' + room);
+      socket.join(room);
+      // socket.broadcast.emit('user_join', name);
+      io.to(room).emit('user_join', name);
+    });
+  
+    socket.on('message', async ({name, message, room}) => {
+      console.log(name, message, room, socket.id);
+      let evnt = await events.getEventById(room);
+      let tempArr= evnt.eventChat;
+      tempArr.push(`${name}: ${message}`);
+      await events.updateChatLogs(room,tempArr);
+      io.to(room).emit('message', {name, message});
+    });
+  
+    socket.on('disconnect', () => {
+      console.log('Disconnect Fired');
+    });
+  });
+  
+
 const __filename = fileURLToPath(import.meta.url);
 // import {initializeApp} from 'firebase/app';
 // import { getAnalytics } from "firebase/analytics";
@@ -231,7 +263,7 @@ const main = async() => {
 }
 
 
-app.listen(3001, () => {
+server.listen(3001, () => {
     console.log("We've now got a server!");
     console.log('Your routes will be running on http://localhost:3001');
 });

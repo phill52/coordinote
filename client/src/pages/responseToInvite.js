@@ -1,13 +1,14 @@
 import 'react-clock/dist/Clock.css';
 import 'react-datetime-picker/dist/DateTimePicker.css';
 import TimeSelector from '../components/TimeSelector';
-import React, {useState, useEffect} from 'react';
+import React, {useState, useRef, useEffect} from 'react';
 import Calendar from 'react-calendar';
 import axios from 'axios'
 import {Link, useParams,useNavigate} from 'react-router-dom';
 import {auth, createToken } from '../fire';
 import TimeViewer from '../components/TimeViewer';
 import {Card,CardHeader,CardMedia,CardContent,CardActionArea,Accordion,AccordionSummary,Typography,Grid, unstable_createMuiStrictModeTheme} from '@mui/material';
+import io from 'socket.io-client';
 
 
 
@@ -37,6 +38,7 @@ const [deleteConfirm,setDeleteConfirm]=useState(false);
 const [deleteMsg,setDeleteMsg] = useState('');
 const [errMsg,setErrMsg] = useState('');
 const [reloadIt,setReloadIt]= useState(false);
+const [chatOption,setChatOption] = useState(false);
 const nav=useNavigate();
 useEffect(()=>{
     async function formData(){
@@ -167,39 +169,6 @@ useEffect(()=>{
         }
     }formData()
 },[id])
-const cardBuilder= (event) =>{
-    return (
-        <Grid sx={{backgroundColor:'none'}} item xs={12} sm={7} md={5} lg={4} xl={3} key ={eventData._id}>
-        <Card sx={{backgroundColor:'transparent'}}>
-            <CardContent>
-            <Typography
-                sx={{
-                    borderBottom: '1px solid #1e8678',
-                    fontWeight: 'bold'
-                  }}
-                  gutterBottom
-                  variant='body1'
-                  component='div'
-                  >
-                    <label className='homepageLabel'>
-                        Event Name
-                    <h1 className='makeBlack'>{eventData.name}</h1>
-                    </label>
-                    <label className='homepageLabel'>
-                        Event Description
-                    <h2 className='makeBlack'>{eventData.description}</h2>
-                    </label>
-                    <label className='homepageLabel'>
-                        Event Location
-                    <p className='makeBlack'>{eventData.location}</p>
-                    </label>
-                </Typography>
-        <TimeViewer date={new Date(event.date)} startTime={new Date(event.time.start)} endTime={new Date(event.time.end)} attendees={eventData.attendees} ></TimeViewer>
-        </CardContent>
-        </Card>
-        </Grid>
-        )
-}
 useEffect(()=>{
     async function formData(){
         if(!error){

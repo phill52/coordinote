@@ -33,6 +33,20 @@ const createEvent = async(eventName,domainDates,location,description,attendees,i
     }
     return await getEventById(insertEvent.insertedId)
 }
+
+const updateChatLogs = async (eventId,newChatLog) =>{
+    const eventCollection = await events();
+    const updatedEvent= await eventCollection.updateOne(
+        {id:new ObjectId(eventId)},
+        {$set: {eventChat:chatLogs}}
+    ) 
+    if(updatedEvent.modifiedCount<1){
+        throw "unable to update chat logs"
+    }
+    return await getEventById(eventId);
+}
+
+
 //replaces fields in event document with the ones pass in as parameters
 const updateEvent = async(eventId,newName,newDomainDates,newLocation,newDescription,newAttendees,newImage,creatorId) => {
     eventId=validation.checkId(eventId)
