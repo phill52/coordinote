@@ -14,7 +14,8 @@ function checkNotNull(obj){
 function checkUsername(username,notCreating){
     if(!username) throw "You must supply a username"
     if(typeof username!=='string') throw new Error("Username must be a string")
-    username=username.trim().toLowerCase(); username=xss(username);
+    username=username.trim();
+     username=xss(username);
     if(notCreating) { //done this way so that users can still log in if username requirements change
         if(username.length<4) throw new Error("Username must be at least 4 characters long")
     }
