@@ -67,7 +67,30 @@ const SignupPage = () => {
     if (!validation) return;
     let userId;
 
-    //check if username is valid
+    //check if username is used or not
+    //if used, set usernameError to 'Username is already taken'
+    const checkUsername = async () => {
+      const body = {
+        username: username
+      };
+      try {
+        const response = await axios.post('/api/checkUsername', body);
+        return response;
+      } catch {
+        console.log("error with server");
+      }
+    };
+    checkUsername().then((response) => {
+      if (response.data) {
+        setUsernameError('Username is already taken');
+        validation = false;
+        return;
+      } else {
+        setUsernameError('');
+      }
+    });
+    
+
 
     createUserWithEmailAndPassword(auth, email, password)
       .then((userCredential) => {
@@ -98,7 +121,7 @@ const SignupPage = () => {
           uid: userId
         };
         try {
-          const response = await axios.post('/api/users', body, header);
+          const response = await axios.post('/api/signup', body, header);
           return response;
         } catch {
           console.log("error with server");
