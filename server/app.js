@@ -15,6 +15,10 @@ const __filename = fileURLToPath(import.meta.url);
 // import { getAnalytics } from "firebase/analytics";
 // import {getAuth} from 'firebase/auth';
 // import {getFirestore} from 'firebase/firestore';
+// import {initializeApp} from 'firebase/app';
+// import { getAnalytics } from "firebase/analytics";
+// import {getAuth} from 'firebase/auth';
+// import {getFirestore} from 'firebase/firestore';
 
 
 import admin from 'firebase-admin';
@@ -52,6 +56,12 @@ app.use(            //authentication middleware
         next()
     }
 })*/
+
+app.use('/api/yourpage/events/imageTest',async(req,res,next)=>{
+    res.header('Access-Control-Allow-Origin', '*');
+    res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization, Custom-Header');
+    next();
+})
 
 app.use('/api/yourpage/events/createEvent',async(req,res,next) => {
     next();

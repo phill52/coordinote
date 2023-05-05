@@ -4,7 +4,7 @@ import TimeSelector from '../components/TimeSelector';
 import React, {useState, useEffect} from 'react';
 import Calendar from 'react-calendar';
 import axios from 'axios'
-import {Link, useParams} from 'react-router-dom';
+import {Link, useParams,useNavigate} from 'react-router-dom';
 import {auth, createToken } from '../fire';
 import TimeViewer from '../components/TimeViewer';
 import {Card,CardHeader,CardMedia,CardContent,CardActionArea,Accordion,AccordionSummary,Typography,Grid, unstable_createMuiStrictModeTheme} from '@mui/material';
@@ -32,6 +32,12 @@ const [makeDoneButtonAppear,setDoneButtonAppears]=useState(false);
 const [eventPgGrid,setEventPgGrid] = useState(null);
 const [totalConflicts,setTotalConflicts]=useState([]);
 const [bestDates,setBestDates]=useState([]);
+const [deleteTheEventWarn,setDeleteWarn]=useState(false);
+const [deleteConfirm,setDeleteConfirm]=useState(false);
+const [deleteMsg,setDeleteMsg] = useState('');
+const [errMsg,setErrMsg] = useState('');
+const [reloadIt,setReloadIt]= useState(false);
+const nav=useNavigate();
 useEffect(()=>{
     async function formData(){
         try{
@@ -102,6 +108,50 @@ useEffect(()=>{
         }
     }formData()
 },[id])
+async function bestDatesRequest(){
+    try{
+        let header= await createToken();
+    let {data}=await axios.get(`http://localhost:3001/api/yourpage/events/bestTimes/${id}`,{headers:{'Content-Type':'application/json',
+        authorization:header.headers.Authorization}});
+        setBestDates(data);
+        console.log(data);
+        setError(false)
+        }
+        catch(e){
+            console.log(e);
+            setError(true);
+        }
+}
+async function getTimesRequest(){
+    try{
+        let header= await createToken();
+    let {data}=await axios.get(`http://localhost:3001/api/yourpage/events/${id}`,{headers:{'Content-Type':'application/json',
+    authorization:header.headers.Authorization}});
+    console.log(data)
+    setEventData(data);
+    setCurDate(new Date(data.domainDates[0].date))
+    setError(false)
+    }
+    catch(e){
+        setError(true);
+    }
+}
+
+useEffect(()=>{
+    async function formData(){
+        if(reloadIt){
+            try{
+            getTimesRequest();
+            bestDatesRequest();
+            setReloadIt(false);
+            setError(false);
+            }
+            catch(e){
+                setError(true);
+            }
+        }
+    }formData()
+},[reloadIt])
 
 useEffect(()=>{
     async function formData(){
@@ -195,6 +245,38 @@ useEffect(()=>{
 
 useEffect(()=>{
     async function formData(){
+        if(deleteTheEventWarn){
+            setDeleteMsg('Are you sure that you want to delete the event?')
+        }
+        else{
+            setDeleteMsg('');
+        }
+    }formData()
+},[deleteTheEventWarn])
+
+useEffect(()=>{
+    async function formData(){
+        if(deleteConfirm){
+            let header = await createToken();
+            let oput = {userId:uid};
+            await axios.delete(`http://localhost:3001/api/yourpage/events/${id}`,{headers:{'Content-Type':'application/json',
+            authorization:header.headers.Authorization}})
+            .then(function (response){
+                console.log(response);
+                
+                nav('/',{replace:true})
+
+            })
+            .catch(function (error){
+                console.log(error);
+            });
+   
+        }
+    }formData()
+},[deleteConfirm])
+
+useEffect(()=>{
+    async function formData(){
         let tempArr=[...datesAndTimes];
         tempArr[arrIndex]=curTimes;
         setDatesAndTimes(tempArr);
@@ -220,9 +302,15 @@ const arrayIncludes = (arr,element) =>{
 const buildAnchorObjectArray = (arr) =>{
     let outArr=[];
     if(arr.length===0){
+        setErrMsg('');
         return [];
     }
+    else if(arr.length%2!==0){
+        setErrMsg('Error, an even number of anchor points must be picked for each date, as each range must have an open and close.');
+        throw "Error: Not enough "
+    }
     else{
+        setErrMsg('');
         let y=0;
         for(let x=0;x<arr.length;x=x+2){
             outArr[y]={start:arr[x],end:arr[x+1]};
@@ -233,15 +321,26 @@ const buildAnchorObjectArray = (arr) =>{
 }
 useEffect(()=>{
     async function formData(){
+        let goHere=true;
         if(finish){
         let availability = [];
+        try{
         for(let x=0;x<datesAndTimes.length;x++){
             availability=[...availability,{date:datesAndTimes[x].date,time:buildAnchorObjectArray(datesAndTimes[x].time)}];
         }
+    }
+    catch(e){
+        goHere=false;
+        setFinished(false);
+        console.log(e);
+
+
+    }
         console.log(availability);
         let oput={eventId:id,attendee:{_id:uid,availability:availability}};
         //change the attendee id to uid later 
         console.log(oput)
+        if(goHere){
         try{
             const header=await createToken();
             console.log(header);
@@ -249,17 +348,22 @@ useEffect(()=>{
             authorization:header.headers.Authorization}})
             .then(function (response){
                 console.log(response);
+                setReloadIt(true);
+                setPickDates(false);
+                setFinished(false);
+                console.log(datesAndTimes);
             })
             .catch(function (error){
                 console.log(error);
+                setPickDates(true);
+                setFinished(false);
             });
             }
             catch(e){
+
                 console.log(e);
-            }
-        setPickDates(false);
-        setFinished(false);
-        console.log(datesAndTimes);
+            }}
+
     }
 }formData()
 },[finish])
@@ -320,9 +424,10 @@ else{
 return(
     <div>
 
-         <Calendar className='smallCal' value = {new Date()} tileClassName={setClass} tileDisabled={disableDates} ></Calendar>
+         <Calendar minDetail={'month'} className='smallCal' value = {new Date()} tileClassName={setClass} tileDisabled={disableDates} ></Calendar>
          {console.log(curDate)}
          {tSelect}
+         <p>{errMsg}</p>
          <button onClick={()=>{setFinished(true)}}>Done</button>
     </div>
 )
@@ -333,7 +438,7 @@ else{
         return(
     <div>
 
-         <Calendar className='smallCal' value = {new Date()} tileClassName={setClass} tileDisabled={disableDates} ></Calendar>
+         <Calendar minDetail={'month'} className='smallCal' value = {new Date()} tileClassName={setClass} tileDisabled={disableDates} ></Calendar>
          {console.log(curDate)}
          <h1>{curDate.toDateString()}</h1>
          <button onClick={()=>{setArrIndex(arrIndex+1)
@@ -350,13 +455,14 @@ else{
         return(
             <div>
         
-         <Calendar className='smallCal' value = {new Date()} tileClassName={setClass} tileDisabled={disableDates} ></Calendar>
+         <Calendar minDetail={'month'} className='smallCal' value = {new Date()} tileClassName={setClass} tileDisabled={disableDates} ></Calendar>
          <h1>{curDate.toDateString()}</h1>
          <button onClick={()=>{setArrIndex(arrIndex-1)
         setCurDate(new Date(eventData.domainDates[arrIndex-1].date))
         }}>Previous</button>
          {console.log(curDate)}
          {tSelect}
+         <p>{errMsg}</p>
          <button onClick={()=>{setFinished(true)}}>Done</button>
     </div>
         )
@@ -365,7 +471,7 @@ else{
         return(
             <div>
         
-         <Calendar className='smallCal' value = {new Date()} tileClassName={setClass} tileDisabled={disableDates} ></Calendar>
+         <Calendar minDetail={'month'} className='smallCal' value = {new Date()} tileClassName={setClass} tileDisabled={disableDates} ></Calendar>
          <h1>{curDate.toDateString()}</h1>
          <button onClick={()=>{setArrIndex(arrIndex-1)
         setCurDate(new Date(eventData.domainDates[arrIndex-1].date))
@@ -384,7 +490,7 @@ else{
         return(
     <div>
 
-         <Calendar className='smallCal' value = {new Date()} tileClassName={setClass} tileDisabled={disableDates} ></Calendar>
+         <Calendar minDetail={'month'} className='smallCal' value = {new Date()} tileClassName={setClass} tileDisabled={disableDates} ></Calendar>
          {console.log(curDate)}
          <h1>{curDate.toDateString()}</h1>
          <button onClick={()=>{setArrIndex(arrIndex+1)
@@ -392,6 +498,7 @@ else{
         }}>Next</button>
          {console.log(curDate)}
          {tSelect}
+         <p>{errMsg}</p>
          <button onClick={()=>{setFinished(true)}}>Done</button>
     </div>)
     }
@@ -399,13 +506,14 @@ else{
         return(
             <div>
         
-         <Calendar className='smallCal' value = {new Date()} tileClassName={setClass} tileDisabled={disableDates} ></Calendar>
+         <Calendar minDetail={'month'} className='smallCal' value = {new Date()} tileClassName={setClass} tileDisabled={disableDates} ></Calendar>
          <h1>{curDate.toDateString()}</h1>
          <button onClick={()=>{setArrIndex(arrIndex-1)
         setCurDate(new Date(eventData.domainDates[arrIndex-1].date))
         }}>Previous</button>
          {console.log(curDate)}
          {tSelect}
+         <p>{errMsg}</p>
          <button onClick={()=>{setFinished(true)}}>Done</button>
     </div>
         )
@@ -414,7 +522,7 @@ else{
         return(
             <div>
         
-         <Calendar className='smallCal' value = {new Date()} tileClassName={setClass} tileDisabled={disableDates} ></Calendar>
+         <Calendar minDetail={'month'} className='smallCal' value = {new Date()} tileClassName={setClass} tileDisabled={disableDates} ></Calendar>
          <h1>{curDate.toDateString()}</h1>
          <button onClick={()=>{setArrIndex(arrIndex-1)
         setCurDate(new Date(eventData.domainDates[arrIndex-1].date))
@@ -423,7 +531,8 @@ else{
         setCurDate(new Date(eventData.domainDates[arrIndex+1].date))}}>Next</button>
          {console.log(curDate)}
          {tSelect}
-         <button onClick={()=>{setFinished(true)}}>Done</button>
+         <p>{errMsg}</p>
+         <button className='App-link' onClick={()=>{setFinished(true)}}>Done</button>
     </div>
         )
     }
@@ -431,6 +540,7 @@ else{
 }
 }
 else if(viewEventPage){
+    if(eventData.creatorID!==uid){
     return(
         <div>
             <div className='whiteBackground'>
@@ -450,15 +560,77 @@ else if(viewEventPage){
                         </label>
                         <br />
             </div>
-    <Calendar tileDisabled={()=>{return true}} className='smallCal' value = {new Date()} tileClassName={({date})=>{return tileClassBuilder(date,eventData)}}></Calendar>
+    <Calendar minDetail={'month'} tileDisabled={()=>{return true}} className='smallCal' value = {new Date()} tileClassName={({date})=>{return tileClassBuilder(date,eventData)}}></Calendar>
     {eventPgGrid}
-    <button onClick={()=>{setViewEventPage(false)}}>Go Back</button>
+    <button className='App-link' onClick={()=>{setViewEventPage(false)}}>Go Back</button>
+    </div>)}
+    else{
+        if(!deleteTheEventWarn){
+        return(
+            <div>
+                <div className='whiteBackground'>
+                <label className='homepageLabel'>
+                                Event Name
+                            <h1 className='makeBlack'>{eventData.name}</h1>
+                            </label>
+                            <br />
+                            <label className='homepageLabel'>
+                                Event Description
+                            <h2 className='makeBlack'>{eventData.description}</h2>
+                            </label>
+                            <br />
+                            <label className='homepageLabel'>
+                                Event Location
+                            <p className='makeBlack'>{eventData.location}</p>
+                            </label>
+                            <br />
+                </div>
+        <Calendar minDetail={'month'} tileDisabled={()=>{return true}} className='smallCal' value = {new Date()} tileClassName={({date})=>{return tileClassBuilder(date,eventData)}}></Calendar>
+        {eventPgGrid}
+        <br />
+        <button className='App-link' onClick={()=>{setDeleteWarn(true)}}>Delete the event</button>
+
+        <button className='App-link' onClick={()=>{setViewEventPage(false)}}>Go Back</button>
+        </div>)
+    }
+else{
+    return(
+        <div>
+            <div className='whiteBackground'>
+            <label className='homepageLabel'>
+                            Event Name
+                        <h1 className='makeBlack'>{eventData.name}</h1>
+                        </label>
+                        <br />
+                        <label className='homepageLabel'>
+                            Event Description
+                        <h2 className='makeBlack'>{eventData.description}</h2>
+                        </label>
+                        <br />
+                        <label className='homepageLabel'>
+                            Event Location
+                        <p className='makeBlack'>{eventData.location}</p>
+                        </label>
+                        <br />
+            </div>
+    <Calendar minDetail={'month'} tileDisabled={()=>{return true}} className='smallCal' value = {new Date()} tileClassName={({date})=>{return tileClassBuilder(date,eventData)}}></Calendar>
+    {eventPgGrid}
+    <br />
+    <p>Are you sure you want to delete the event</p>
+    <button className='App-link' onClick={()=>{setDeleteWarn(false)}}>Do not delete the event</button>
+    <button className='App-link' onClick={()=>{setDeleteConfirm(true)}}>Confirm Delete</button>
+    <br />
+    <button className='App-link' onClick={()=>{setViewEventPage(false)
+    setDeleteWarn(false);
+    }}>Go Back</button>
     </div>)
+}
+}
 }
 else{
     return(
         <div>
-<Calendar tileDisabled={()=>{return true}} className='smallCal' value = {new Date()} tileClassName={({date})=>{return tileClassBuilder(date,eventData)}}></Calendar>
+<Calendar minDetail={'month'} tileDisabled={()=>{return true}} className='smallCal' value = {new Date()} tileClassName={({date})=>{return tileClassBuilder(date,eventData)}}></Calendar>
 <br />
     <button className='App-link' onClick={()=>{setPickDates(true)}}>Pick Your Dates</button>
     <br />
