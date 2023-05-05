@@ -85,10 +85,21 @@ const getUsersEvents = async (userId) => {
     return {events:eventsArray,attended:attendedArray};
 }
 
+const getUserByFirebaseId = async (firebaseId) => {
+    firebaseId = validation.checkNotNull(firebaseId);
+    const userCollection = await users();
+    const user = await userCollection.findOne(
+        {firebaseId: firebaseId}
+    )
+    if (!user) throw `Could not find user with firebaseId ${firebaseId}.`;
+    return user;
+};
+
 export default {
     createUser,
     checkUsernameUnique,
     addUserPicture,
     getUsersEvents,
-    getUserByName
+    getUserByName,
+    getUserByFirebaseId
 }

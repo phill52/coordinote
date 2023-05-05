@@ -10,7 +10,6 @@ import TimeViewer from '../components/TimeViewer';
 import {Card,CardMedia,CardContent,CardActionArea,Accordion,AccordionSummary,Typography,Grid} from '@mui/material';
 
 const MyEvents =()=>{
-const {uId}=useParams();
 const [userEvents,setUserEvents]=useState(null);
 const [userAttended,setUserAttended]= useState(null);
 const [loading,setLoading] = useState(true);
@@ -20,11 +19,12 @@ const [createdEvents,userCreated]=useState(false);
 const [attendedEvents,pickAttended] = useState(false);
 useEffect(()=>{
     console.log('on load useEffect')
+    const header = createToken();
     async function formData(){
         try{
         const header=await createToken();
         console.log(header.headers);
-        await axios.get(`http://localhost:3001/api/yourpage/events/myEvents/${uId}`,{headers:{'Content-Type':'application/json','Authorization':header.headers.Authorization}})
+        await axios.get(`http://localhost:3001/api/yourpage/events/myEvents`,{headers:{'Content-Type':'application/json','Authorization':header.headers.Authorization}})
         .then(function (response){
             console.log(response);
             setLoading(false)
@@ -49,7 +49,7 @@ useEffect(()=>{
             console.log(e)
         }
     }formData()
-},[uId])
+},[])
 
 const datesEqual = (dte1,dte2) =>{
     if(!(dte1<dte2)){
