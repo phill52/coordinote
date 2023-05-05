@@ -26,7 +26,7 @@ const createEvent = async(eventName,domainDates,location,description,attendees,i
     const userCollection=await users()
     const updatedUser = await userCollection.updateOne(
         {_id:new ObjectId(userId)},
-        {$push: {events:insertEvent.insertedId}}
+        {$push: {createdEvents:insertEvent.insertedId}}
     )
     if(updatedUser.modifiedCount<1){
         throw "Unable to add this event to your account"
