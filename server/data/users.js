@@ -34,8 +34,25 @@ const createUser = async (username, uid) => {
     return {insertedUser: true, username: user.username}
 }
 
+const getUserByName = async (username) => {
+    const userCollection = await users();
+    const user = await userCollection.findOne({username: username});
+
+    if(!user) throw `Error: No user found with username '${username}'.`;
+    return user;
+}
+
+const getUserByUID = async (uid) => {
+    const userCollection = await users();
+    const user = await userCollection.findOne({_id: uid});
+
+    if (!user) throw `Error: No user found with uid '${uid}'.`;
+    return user;
+}
+
 const checkUsernameUnique = async (username) => {
     username = validation.checkUsername(username);
+    username = username.toLowerCase();
     const userCollection = await users();
     const user = await userCollection.findOne({username: username});
     if(user) return false;
@@ -79,6 +96,8 @@ const getUsersEvents = async (userId) => {
 
 export default {
     createUser,
+    getUserByName,
+    getUserByUID,
     checkUsernameUnique,
     addUserPicture,
     getUsersEvents
