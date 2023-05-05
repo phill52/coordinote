@@ -25,8 +25,8 @@ const createEvent = async (eventName, domainDates, location, description, attend
         throw "Unable to add event to events collection";
     const userCollection = await users()
     const updatedUser = await userCollection.updateOne(
-        {_id: new ObjectId(userId)},
-        {$push: {events: insertEvent.insertedId}}
+        {firebaseId: userId},
+        {$push: {createdEvents:insertEvent.insertedId}}
     )
     if(updatedUser.modifiedCount < 1){
         throw "Unable to add this event to your account"
@@ -84,7 +84,7 @@ const deleteEvent = async(eventId,userId) => {
     }
     const updatedUser=await userCollection.updateOne(
         {_id:new ObjectId(userId)},
-        {$pull: {"events": new ObjectId(eventId)}}
+        {$pull: {"createdEvents": new ObjectId(eventId)}}
     )
     if(!updatedUser.acknowledged || !updatedUser.modifiedCount) {
         throw "Event not removed from user"
@@ -94,7 +94,7 @@ const deleteEvent = async(eventId,userId) => {
             {_id:new ObjectId(attendees[x]._id)},
             {$pull: {"attendedEvents": new ObjectId(eventId)}}
         )
-        if(!updatedUser.acknowledged || !updatedUser.modifiedCount) {
+        if(!updatedAttendee.acknowledged || !updatedAttendee.modifiedCount) {
             throw "Event not removed from attendee"
         }
     }

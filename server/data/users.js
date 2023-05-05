@@ -17,9 +17,9 @@ const createUser = async (username, uid) => {
     }
     
     let newUser = {
-        _id: uid,
+        firebaseId: uid,
         username: username,
-        events: [],
+        createdEvents: [],
         attendedEvents:[]
     }
 
@@ -83,8 +83,8 @@ const getUsersEvents = async (userId) => {
     if(!user) throw `Could not find user with id ${userId}.`;
     
     let eventsArray = [];
-    for(let i in user.events){
-        eventsArray.push(await eventFunctions.getEventById(user.events[i]));
+    for(let i in user.createdEvents){
+        eventsArray.push(await eventFunctions.getEventById(user.createdEvents[i]));
     }
     let attendedArray=[];
     for(let i in user.attendedEvents){
@@ -94,11 +94,23 @@ const getUsersEvents = async (userId) => {
     return {events:eventsArray,attended:attendedArray};
 }
 
+const getUserByFirebaseId = async (firebaseId) => {
+    firebaseId = validation.checkNotNull(firebaseId);
+    const userCollection = await users();
+    const user = await userCollection.findOne(
+        {firebaseId: firebaseId}
+    )
+    if (!user) throw `Could not find user with firebaseId ${firebaseId}.`;
+    return user;
+};
+
 export default {
     createUser,
     getUserByName,
     getUserByUID,
     checkUsernameUnique,
     addUserPicture,
-    getUsersEvents
+    getUsersEvents,
+    getUserByName,
+    getUserByFirebaseId
 }
