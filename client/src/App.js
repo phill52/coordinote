@@ -78,7 +78,8 @@ function App() {
           <Route path='/event/:id' element={<ResponseToInvite />} />
           <Route path='/' element={<Homepage />} />
           <Route path='/*' element={<p>404 not found</p>}></Route> {/* TODO: make a 404 page */}
-          <Route path ='/myEvent/:uId' element={<MyEvents />} />
+          {/* <Route path='/myEvent/:uId' element={<MyEvents />} /> */}
+          <Route path='/myEvents' element={<MyEvents />} />
         </Routes>
       </div>
     </div>
