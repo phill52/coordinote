@@ -36,6 +36,7 @@ const [deleteTheEventWarn,setDeleteWarn]=useState(false);
 const [deleteConfirm,setDeleteConfirm]=useState(false);
 const [deleteMsg,setDeleteMsg] = useState('');
 const [errMsg,setErrMsg] = useState('');
+const [reloadIt,setReloadIt]= useState(false);
 const nav=useNavigate();
 useEffect(()=>{
     async function formData(){
@@ -107,6 +108,50 @@ useEffect(()=>{
         }
     }formData()
 },[id])
+async function bestDatesRequest(){
+    try{
+        let header= await createToken();
+    let {data}=await axios.get(`http://localhost:3001/api/yourpage/events/bestTimes/${id}`,{headers:{'Content-Type':'application/json',
+        authorization:header.headers.Authorization}});
+        setBestDates(data);
+        console.log(data);
+        setError(false)
+        }
+        catch(e){
+            console.log(e);
+            setError(true);
+        }
+}
+async function getTimesRequest(){
+    try{
+        let header= await createToken();
+    let {data}=await axios.get(`http://localhost:3001/api/yourpage/events/${id}`,{headers:{'Content-Type':'application/json',
+    authorization:header.headers.Authorization}});
+    console.log(data)
+    setEventData(data);
+    setCurDate(new Date(data.domainDates[0].date))
+    setError(false)
+    }
+    catch(e){
+        setError(true);
+    }
+}
+
+useEffect(()=>{
+    async function formData(){
+        if(reloadIt){
+            try{
+            getTimesRequest();
+            bestDatesRequest();
+            setReloadIt(false);
+            setError(false);
+            }
+            catch(e){
+                setError(true);
+            }
+        }
+    }formData()
+},[reloadIt])
 
 useEffect(()=>{
     async function formData(){
@@ -303,6 +348,7 @@ useEffect(()=>{
             authorization:header.headers.Authorization}})
             .then(function (response){
                 console.log(response);
+                setReloadIt(true);
                 setPickDates(false);
                 setFinished(false);
                 console.log(datesAndTimes);
