@@ -80,9 +80,9 @@ router
         }
         return res.json(userEvents)
     })
-    const singleUpload = upload.single('image')
 router
     .post('/imageTest',upload.single('image'),  async (req, res) => {
+        console.log('i made it into the images')
         if (req.file) {
             return res.json({ imageUrl: req.file.location });
         }
@@ -110,8 +110,9 @@ router
             return;
         }*/
         try{
-            
-            newEvent=await events.createEvent(req.body.name,req.body.domainDates,req.body.location,req.body.description,req.body.attendees,req.file.location,'6449858e039651db9d8beed2')
+            console.log(req.image);
+            console.log('IM IN HERE')
+            newEvent=await events.createEvent(req.body.name,req.body.domainDates,req.body.location,req.body.description,req.body.attendees,req.body.image,'6449858e039651db9d8beed2')
         }
         catch(e){
             console.log(e)

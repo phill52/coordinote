@@ -73,8 +73,8 @@ const getUsersEvents = async (userId) => {
     if(!user) throw `Could not find user with id ${userId}.`;
     
     let eventsArray = [];
-    for(let i in user.events){
-        eventsArray.push(await eventFunctions.getEventById(user.events[i]));
+    for(let i in user.createdEvents){
+        eventsArray.push(await eventFunctions.getEventById(user.createdEvents[i]));
     }
     let attendedArray=[];
     for(let i in user.attendedEvents){

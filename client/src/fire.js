@@ -19,7 +19,7 @@ const createToken = async () => {
   const token = user && (await user.getIdToken());
   const payloadHeader = {
     headers: {
-      'Content-Type': 'application/json',
+      'Content-Type': 'application/json, multipart/form-data',
       Authorization: `Bearer ${token}`,
     },
   };
