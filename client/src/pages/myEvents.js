@@ -69,6 +69,8 @@ const tileClassBuilder = (date,event)=>{
     
 }
 const cardBuilder =(event) =>{
+    console.log(event)
+    if(typeof event.image==='string'){
     return(
         <Grid item xs={12} sm={7} md={5} lg={4} xl={3} key ={event._id}>
             <Card
@@ -87,7 +89,7 @@ const cardBuilder =(event) =>{
                   height:"100%"
                 }}
                 component='img'
-                src={"https://www.shutterstock.com/image-vector/flat-calendar-icon-on-wall-260nw-732721924.jpg"}
+                src={event.image}
                 title='event image' 
                 />
                 <CardContent>
@@ -121,6 +123,61 @@ const cardBuilder =(event) =>{
             </Card>
         </Grid>
     )
+    }
+    else{
+        return(
+            <Grid item xs={12} sm={7} md={5} lg={4} xl={3} key ={event._id}>
+                <Card
+                variant = "outlined"
+                sx={{
+                    width: 'auto',
+                    height: 'auto',
+                    marginLeft: 'auto',
+                    marginRight: 'auto',
+                    borderRadius: 5,
+                    border: '1px solid'
+                }}>
+                   <Link to={`/event/${event._id}`} > 
+                    <CardMedia sx={{
+                      width:"100%",
+                      height:"100%"
+                    }}
+                    component='img'
+                    src={"https://www.shutterstock.com/image-vector/flat-calendar-icon-on-wall-260nw-732721924.jpg"}
+                    title='event image' 
+                    />
+                    <CardContent>
+                        <Typography
+                        sx={{
+                            borderBottom: '1px solid #1e8678',
+                            fontWeight: 'bold'
+                          }}
+                          gutterBottom
+                          variant='body1'
+                          component='div'
+                          >
+                            <label className='homepageLabel'>
+                                Event Name
+                            <h1 className='makeBlack'>{event.name}</h1>
+                            </label>
+                            <label className='homepageLabel'>
+                                Event Description
+                            <h2 className='makeBlack'>{event.description}</h2>
+                            </label>
+                            <label className='homepageLabel'>
+                                Event Location
+                            <p className='makeBlack'>{event.location}</p>
+                            </label>
+                        </Typography>
+                        <Calendar tileDisabled={()=>{return true}} className='smallCal' value = {new Date()} tileClassName={({date})=>{return tileClassBuilder(date,event)}}></Calendar>
+                        
+                    </CardContent>
+    
+                    </Link>
+                </Card>
+            </Grid>
+        )
+    }
 }
 //<TimeViewer date={new Date(event.domainDates[0].date)} startTime={new Date(event.domainDates[0].time.start)} endTime={new Date(event.domainDates[0].time.end)} attendees={event.attendees}></TimeViewer>
 if(loading){

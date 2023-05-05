@@ -35,9 +35,11 @@ const NewEvent= ()=>{
     const [firstLoad,setFirstLoad] = useState(true);
     const [dateTimeLock, lockDateTime] = useState(false);
     const [output,setOutput] = useState({name:'', location:'',domainDates:[],description:'',image:new FormData(),attendees:[]})
-    const [fileInput,setFileInput] = useState(null);
+    const [fileInput,setFileInput] = useState(new FormData());
     const [fileIsIn, setFileIsIn] = useState(false);
     const [errMsg,setErrMsg] = useState('');
+    const [fileUrl,setFileUrl] = useState('');
+    const [fileForm,setFileFormValue]=useState(null);
     const datesEqual = (dte1,dte2) =>{
         if(!(dte1<dte2)){
             if(!(dte1>dte2)){
@@ -271,7 +273,7 @@ useEffect(()=>{
         }
             let oput={name:eventName,location:location,domainDates:domDates,description:eventDescription,image:fileInput,attendees:[]}
             const header=await createToken();
-        await axios.post('http://localhost:3001/api/yourpage/events/createEvent',{name:eventName,location:location,domainDates:domDates,description:eventDescription,image:fileInput,attendees:[]},{headers:{'Content-Type':'application/json',
+        await axios.post('http://localhost:3001/api/yourpage/events/createEvent',{name:eventName,location:location,domainDates:domDates,description:eventDescription,image:fileUrl,attendees:[]},{headers:{'Content-Type':'application/json',
         authorization:header.headers.Authorization}})
         .then(function (response){
             console.log(response);
@@ -286,21 +288,38 @@ useEffect(()=>{
 
     }fetchData()
 },[dateTimeLock])
-const handleFileInput = (event) =>{
-    if(event.target.value!==''){
+useEffect(()=>{
+async function handleFileInput(){
+    console.log(fileForm)
+    if(document.querySelector('input[type="file"]').files.length!==0){
 const formData = new FormData();
-console.log(event.target.files[0])
-formData.append("myImage",event.target.files[0],event.target.files[0].name)
-setFileInput(formData.getAll('myImage')[0]);
+console.log(document.querySelector('input[type="file"]').files[0])
+formData.append("image",document.querySelector('input[type="file"]').files[0],document.querySelector('input[type="file"]').files[0].name)
+console.log(formData.getAll('image')[0]);
 setFileIsIn(true);
 console.log(formData)
-console.log(formData.getAll('myImage'));
+const header=await createToken();
+try{
+await axios.post('http://localhost:3001/api/yourpage/events/imageTest',formData,{headers:{'Content-Type':'multipart/form-data',
+authorization:header.headers.Authorization}})
+.then(function (response){
+    console.log(response);
+    setFileUrl(response.data.imageUrl);
+})
+.catch(function (error){
+    console.log(error);
+});
+console.log('WHY WONT I WORK')
+}
+catch(e){
+console.log(e);
+}
     }
     else{
         setErrMsg("Error, incorrect upload of image");
         setFileIsIn(false);
     }
-}
+}handleFileInput()},[fileForm])
 if(error){
     return(<div>
         <p>Error</p>
@@ -340,7 +359,7 @@ else{
                         {'Event Image: '}
                         <input type='file' accept='image/png, image/jpeg, image/jpg' required className='login-input' id='imageInput' onChange={(e)=>{
                             console.log(e)
-                            handleFileInput(e)}} />
+                            setFileFormValue(e)}} />
                     </label>
                     <br />
                 <div className='flex justify-center'>
