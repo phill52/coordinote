@@ -151,7 +151,7 @@ var unless = function(path, middleware) {
     };
 };
 // Initialize Firebase, unless signup
-app.use(unless('api/signup', decodeIDToken));
+app.use(unless('/api/signup', decodeIDToken));
 
 const getAuthToken = (req, res, next) => {
     if (req.headers.authorization &&

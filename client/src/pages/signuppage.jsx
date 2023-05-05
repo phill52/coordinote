@@ -26,7 +26,7 @@ const SignupPage = () => {
     setUsername(value);
   };
   
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
     let validation = true;
 
@@ -65,7 +65,7 @@ const SignupPage = () => {
       setPasswordError('');
     }
     if (!validation) return;
-    let userId;
+    let userId='test';
 
     //check if username is used or not
     //if used, set usernameError to 'Username is already taken'
@@ -90,20 +90,33 @@ const SignupPage = () => {
       }
     });
     
-
-
     createUserWithEmailAndPassword(auth, email, password)
       .then((userCredential) => {
         setIsBadSignup(false);
-        console.log('User signed up:', userCredential.user);
+
         userId = userCredential.user.uid;
-        console.log(userId);
-        console.log(userCredential);
+
         sendEmailVerification(userCredential.user).then(() => {
           console.log('Email sent');
         }).catch((error) => {
           console.error('Error sending email verification:', error);
         });
+
+        const serverSubmit= async () => {
+          const body = {
+            username: username,
+            uid: userId
+          };
+          try {
+            const response = await axios.post('http://localhost:3001/api/signup', body);
+            return response;
+          } catch(e) {
+            console.log(e);
+            console.log("error with server");
+          }
+        }
+    
+        serverSubmit();
       })
       .catch((error) => {
         var errorCode = error.code;
@@ -114,57 +127,37 @@ const SignupPage = () => {
             setBadSignupMessage('Email already in use.');
         }
         console.log(errorCode, errorMessage);
-      });
-      
-      const serverSubmit= async () => {
-        const body = {
-          username: username,
-          uid: userId
-        };
-        try {
-          const response = await axios.post('http://localhost:3001/api/signup', body);
-          return response;
-        } catch(e) {
-          console.log(e);
-          console.log("error with server");
-        }
       }
-
-      serverSubmit().then((response) => {
-        console.log(response);
-      }
-      ).catch((error) => {
-        console.log(error);
-      }
-      );
-
-    };
-
-    return (
-      <div className='Login-page'>
-        <form onSubmit={handleSubmit} className="login-form">
-          <label htmlFor="username" className={`login-label ${usernameError.length>0 ? 'error' : ''}`}>Username:</label>
-            <LoginInput for="username" onChange={handleUsernameChange} value={username}/>
-            <p className="input-error-message">{usernameError}</p>
-  
-          <label htmlFor="email" className={`login-label ${emailError.length>0 ? 'error' : ''}
-          ${isBadSignup ? 'error' : ''}
-          `}>Email:</label>
-            <LoginInput for="email" onChange={handleEmailChange} value={email}/>
-            <p className="input-error-message">{emailError}</p>
-            
-          <label htmlFor="password" className={`login-label
-          ${isBadSignup ? 'error' : ''}`}>Password:</label>
-            <LoginInput for="password" onChange={handlePasswordChange} value={password}/>
-            <p className="input-error-message">{passwordError}</p>
-            
-          <div className="flex justify-center">
-            <button type="submit" onClick={handleSubmit}>Sign up</button>
-          </div>
-          {isBadSignup && <p className="input-error-message">{badSignupMessage}</p>}
-        </form>
-      </div>
     );
+      
+
+  };
+
+  return (
+    <div className='Login-page'>
+      <form onSubmit={handleSubmit} className="login-form">
+        <label htmlFor="username" className={`login-label ${usernameError.length>0 ? 'error' : ''}`}>Username:</label>
+          <LoginInput for="username" onChange={handleUsernameChange} value={username}/>
+          <p className="input-error-message">{usernameError}</p>
+
+        <label htmlFor="email" className={`login-label ${emailError.length>0 ? 'error' : ''}
+        ${isBadSignup ? 'error' : ''}
+        `}>Email:</label>
+          <LoginInput for="email" onChange={handleEmailChange} value={email}/>
+          <p className="input-error-message">{emailError}</p>
+          
+        <label htmlFor="password" className={`login-label
+        ${isBadSignup ? 'error' : ''}`}>Password:</label>
+          <LoginInput for="password" onChange={handlePasswordChange} value={password}/>
+          <p className="input-error-message">{passwordError}</p>
+          
+        <div className="flex justify-center">
+          <button type="submit" onClick={handleSubmit}>Sign up</button>
+        </div>
+        {isBadSignup && <p className="input-error-message">{badSignupMessage}</p>}
+      </form>
+    </div>
+  );
   };
 
 export default SignupPage;

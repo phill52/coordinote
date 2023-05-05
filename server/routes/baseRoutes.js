@@ -21,7 +21,8 @@ router.route('/signup')
     })
     .post(async (req, res) => {
         let {username, uid} = req.body;
-        let createdUser = false;
+        let createdUser = false;    
+        console.log(req.body);
         // Validation
         try {
             username = validation.checkUsername(username);
