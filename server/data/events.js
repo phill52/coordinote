@@ -76,6 +76,7 @@ const deleteEvent = async(eventId,userId) => {
     userId=validation.checkId(userId)
     const eventCollection=await events();
     const userCollection=await users();
+    let attendees=await getAttendees(eventId);
     const deleteEvent=await eventCollection.deleteOne({_id:new ObjectId(eventId)})
     if(!deleteEvent.acknowledged || !deleteEvent.deletedCount) {
         throw "Unable to delete event"
@@ -86,6 +87,15 @@ const deleteEvent = async(eventId,userId) => {
     )
     if(!updatedUser.acknowledged || !updatedUser.modifiedCount) {
         throw "Event not removed from user"
+    }
+    for(let x=0;x<attendees.length;x++){
+        let updatedAttendee=await userCollection.updateOne(
+            {_id:new ObjectId(attendees[x]._id)},
+            {$pull: {"attendedEvents": new ObjectId(eventId)}}
+        )
+        if(!updatedUser.acknowledged || !updatedUser.modifiedCount) {
+            throw "Event not removed from attendee"
+        }
     }
     return {deleted:true}
 }
