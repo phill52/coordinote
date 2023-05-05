@@ -80,7 +80,7 @@ router
 
 
 router
-    .route('/api/updateAvailability')
+    .route('/updateAvailability')
     .post(async(req,res) => {
         let eventId=undefined; let updatedEvent=undefined;
         try{
@@ -91,9 +91,23 @@ router
             res.status(400).send(e)
             return;
         }
+        let uid = req.currentUser.uid;
+        let user;
+        try {
+            user = await users.getUserByFirebaseId(uid);
+        } catch (e) {
+            console.log(e);
+            res.status(500).json(e);
+            return;
+        }
+        uid = user._id;
+        console.log("uid",uid);
+        let availability = req.body.attendee;
+        console.log(req.body);
+        availability._id=uid;
         try {
             console.dir(req.body,{depth:null});
-            updatedEvent=await events.upsertAttendee(eventId,req.body.attendee)
+            updatedEvent=await events.upsertAttendee(eventId,availability);
         }
         catch(e){
             console.log(e)
