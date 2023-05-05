@@ -21,7 +21,8 @@ router.route('/signup')
     })
     .post(async (req, res) => {
         let {username, uid} = req.body;
-        let createdUser = false;
+        let createdUser = false;    
+        console.log(req.body);
         // Validation
         try {
             username = validation.checkUsername(username);
@@ -39,6 +40,28 @@ router.route('/signup')
             return res.status(500).send(error)
         }
     });
+
+router.route('/checkUsername')
+    .post(async (req, res) => {
+        let {username} = req.body;
+        let usernameExists = false;
+        // Validation
+        try {
+            username = validation.checkUsername(username);
+        } catch(error) {
+            console.log(error);
+            return res.status(400).send(error);
+        }
+        // Check if username exists
+        try {
+            usernameExists = await users.checkUsernameUnique(username);
+            return res.status(200).send(usernameExists);
+        } catch(error) {
+            console.log(error);
+            return res.status(400).send(error);
+        }
+    });
+
 
 router
     .route('/yourpage')

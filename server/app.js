@@ -140,8 +140,18 @@ app.use('/api/register',(req,res,next) => {
     }
 })
 
-// Initialize Firebase
-app.use(decodeIDToken);
+// https://stackoverflow.com/questions/27117337/exclude-route-from-express-middleware
+var unless = function(path, middleware) {
+    return function(req, res, next) {
+        if (path === req.path) {
+            return next();
+        } else {
+            return middleware(req, res, next);
+        }
+    };
+};
+// Initialize Firebase, unless signup
+app.use(unless('/api/signup', decodeIDToken));
 
 const getAuthToken = (req, res, next) => {
     if (req.headers.authorization &&
@@ -206,7 +216,7 @@ app.get('*', (req, res) => {
     res.sendFile(path.join(__dirname, '..', 'client', 'build', 'index.html'));
 });
 
-const main=async() => {
+const main = async() => {
     const db = await connection.dbConnection();
 }
 
