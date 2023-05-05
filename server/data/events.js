@@ -76,6 +76,7 @@ const deleteEvent = async(eventId,userId) => {
     userId=validation.checkId(userId)
     const eventCollection=await events();
     const userCollection=await users();
+    let attendees=await getAttendees(eventId);
     const deleteEvent=await eventCollection.deleteOne({_id:new ObjectId(eventId)})
     if(!deleteEvent.acknowledged || !deleteEvent.deletedCount) {
         throw "Unable to delete event"
@@ -87,6 +88,15 @@ const deleteEvent = async(eventId,userId) => {
     if(!updatedUser.acknowledged || !updatedUser.modifiedCount) {
         throw "Event not removed from user"
     }
+    for(let x=0;x<attendees.length;x++){
+        let updatedAttendee=await userCollection.updateOne(
+            {_id:new ObjectId(attendees[x]._id)},
+            {$pull: {"attendedEvents": new ObjectId(eventId)}}
+        )
+        if(!updatedUser.acknowledged || !updatedUser.modifiedCount) {
+            throw "Event not removed from attendee"
+        }
+    }
     return {deleted:true}
 }
 
@@ -96,29 +106,54 @@ const getAttendees=async(eventId) => {
     return event.attendees;
 }
 
+const getIndex = async (id1,arr) =>{
+    let index=-1;
+    console.log(arr)
+    for(let x=0;x<arr.length;x++){
+        console.log(arr[x]);
+        if(arr[x]._id.toString()===(id1.toString())){
+            index=x;
+        }
+    }
+    return index;
+}
+
 const getAttendeeById=async(eventId,attendeeId) => {
     eventId=validation.checkId(eventId);
     attendeeId=validation.checkId(attendeeId);
     const eventCollection=await events();
     const attendee=await eventCollection.findOne(
         {_id:new ObjectId(eventId)},
-        {'attendees':{$elemMatch:{_id:new ObjectId(attendeeId)}},
-         _id:0}
+        {'attendees':{$elemMatch:{_id:new ObjectId(attendeeId)}}}
     )
-    if(!attendee) throw `Unable to find attendee ${attendeeId} in event ${eventId}`
-    return attendee.attendees[0];
+    console.log(attendee.attendees[0]);
+    console.log('i dont like to work')
+    let index=await getIndex(attendeeId,attendee.attendees);
+    console.log(index);
+    if(index===-1) throw `Unable to find attendee ${attendeeId} in event ${eventId}`
+    return attendee.attendees[index];
 }
 //needs an entire attendee object (with attendee id and new availability)
 const addAttendee=async(eventId,newAttendee) => {
+    console.log(newAttendee)
     eventId=validation.checkId(eventId);
     const eventCollection=await events();
     const updatedEvent=await eventCollection.updateOne(
         {_id:new ObjectId(eventId)},
-        {$push:{"attendees":newAttendee}}
+        {$push:{"attendees":{_id:new ObjectId(newAttendee._id),availability:newAttendee.availability}}}
     )
     if(!updatedEvent.modifiedCount){
         throw `Unable to add attendee ${newAttendee} to event ${eventId}`
     }
+    const userCollection=await users();
+    const updatedUser = await userCollection.updateOne(
+        {_id:new ObjectId(newAttendee._id)},
+        {$push: {attendedEvents:new ObjectId(eventId)}}
+    )
+    if(updatedUser.modifiedCount<1){
+        throw "Unable to add this event to your account"
+    }
+
     return await getEventById(eventId);
 }
 //if the attendee does not currently exist for that event, add it. If it does, update its availability
@@ -128,6 +163,7 @@ const upsertAttendee=async(eventId,newAttendee) => {
         attendee=await getAttendeeById(eventId,newAttendee._id)
     }
     catch(e){
+        console.log(e);
         if(e.toString().includes("Unable to find attendee")){       //add attendee with availability
             action='addAttendee'
         }
@@ -228,8 +264,9 @@ const updateAttendeeAvailability=async(eventId,attendeeId,newAvailability) => {
     const updatedEvent=await eventCollection.updateOne(
         {_id:new ObjectId(eventId)},
         {"$set":{"attendees.$[attendee].availability":newAvailability}},
-        {"arrayFilters":[{"attendee._id":new ObjectId(attendeeId)}]}
+        {arrayFilters:[{"attendee._id":new ObjectId(attendeeId)}]}
     )
+    //BREAKS RIGHT ABOVE HERE, IS BEING ADDED AS A STRING NOT AN OBJECT ID
     if(updatedEvent.matchedCount<=0 && updatedEvent.modifiedCount<=0){
         throw `Unable to update event ${eventId} with attendee ${attendeeId} with availability ${newAvailability}`
     }

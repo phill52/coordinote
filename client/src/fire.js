@@ -15,7 +15,7 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 
 const createToken = async () => {
-  const user = auth().currentUser;
+  const user = auth.currentUser;
   const token = user && (await user.getIdToken());
   const payloadHeader = {
     headers: {
