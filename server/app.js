@@ -164,18 +164,18 @@ app.use('/api/yourpage/events/myEvents/:userId',async (req,res,next)=>{
 // })
 
 // https://stackoverflow.com/questions/27117337/exclude-route-from-express-middleware
-var unless = function(path, middleware) {
-    return function(req, res, next) {
-        if (path === req.path) {
-            return next();
-        } else {
+var unless = function(paths, middleware) {
+    return function(req,res,next) {
+        if (req.path.startsWith('/api') && !paths.includes(req.path)) {
             return middleware(req, res, next);
+        } else {
+            return next();
         }
-    };
+    }
 };
 // Initialize Firebase, unless for unprotected routes
-app.use(unless('/api/signup', decodeIDToken));
-app.use(unless('/api/users/:id', decodeIDToken));
+const exclude = ['/api/signup', '/api/users/:id'];
+app.use(unless(exclude, decodeIDToken));
 
 const getAuthToken = (req, res, next) => {
     if (req.headers.authorization &&
