@@ -675,6 +675,7 @@ return(
     <div>
         <Calendar minDetail={'month'} tileDisabled={()=>{return true}} className='smallCal' value = {new Date()} tileClassName={({date})=>{return tileClassBuilder(date,eventData)}}></Calendar>
         <Chat id={id} ></Chat>
+        <button className='App-link' onClick={()=>{setChatOption(false)}}>Go Back</button>
     </div>
 )
 }
