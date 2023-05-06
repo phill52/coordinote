@@ -275,6 +275,7 @@ useEffect(()=>{
         }
             let oput={name:eventName,location:location,domainDates:domDates,description:eventDescription,image:fileInput,attendees:[]}
             const header=await createToken();
+            if(window.location.hostname==='localhost'){
         await axios.post('http://localhost:3001/api/yourpage/events/createEvent',{name:eventName,location:location,domainDates:domDates,description:eventDescription,image:fileUrl,attendees:[]},{headers:{'Content-Type':'application/json',
         authorization:header.headers.Authorization}})
         .then(function (response){
@@ -282,7 +283,17 @@ useEffect(()=>{
         })
         .catch(function (error){
             console.log(error);
+        });}
+        else{
+            await axios.post('https://coordinote.us/api/yourpage/events/createEvent',{name:eventName,location:location,domainDates:domDates,description:eventDescription,image:fileUrl,attendees:[]},{headers:{'Content-Type':'application/json',
+        authorization:header.headers.Authorization}})
+        .then(function (response){
+            console.log(response);
+        })
+        .catch(function (error){
+            console.log(error);
         });
+        }
         }
         catch(e){
             console.log(e);
@@ -303,6 +314,7 @@ setFileIsIn(true);
 console.log(formData)
 const header=await createToken();
 try{
+    if(window.location.hostname==='localhost'){
 await axios.post('http://localhost:3001/api/yourpage/events/imageTest',formData,{headers:{'Content-Type':'multipart/form-data',
 authorization:header.headers.Authorization}})
 .then(function (response){
@@ -313,6 +325,19 @@ authorization:header.headers.Authorization}})
     console.log(error);
 });
 console.log('WHY WONT I WORK')
+    }
+    else{
+        await axios.post('https://coordinote.us/api/yourpage/events/imageTest',formData,{headers:{'Content-Type':'multipart/form-data',
+authorization:header.headers.Authorization}})
+.then(function (response){
+    console.log(response);
+    setFileUrl(response.data.imageUrl);
+})
+.catch(function (error){
+    console.log(error);
+});
+console.log('WHY WONT I WORK')
+    }
 }
 catch(e){
 console.log(e);
