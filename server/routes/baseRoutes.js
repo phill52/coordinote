@@ -125,4 +125,48 @@ router
         res.redirect('/')
     });
 
+router
+    .route('/user/:id') 
+    .get(async(req,res)=> {
+        let userId=undefined;
+        try{
+            userId=validation.checkId(req.params.id)
+        }
+        catch(e){
+            console.log(e)
+            res.send(e)
+            return
+        }
+        let user=undefined;
+        try{
+            user=await users.getUserByUID(userId)
+        }
+        catch(e){
+            console.log(e)
+            res.send(e)
+            return
+        }
+        res.json(user)
+        return;
+    });
+
+router
+    .route('/fireuser')
+    .get(async(req,res) => {
+        console.log("i am called")
+        let uid=req.currentUser.uid
+        let user=undefined;
+        try{
+            user=await users.getUserByFirebaseId(uid)
+        }
+        catch(e){
+            console.log(e)
+            res.send(e)
+            return
+        }
+        console.log(user);
+        res.json(user)
+        return;
+    })
+
 export default router;

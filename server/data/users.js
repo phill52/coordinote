@@ -12,7 +12,7 @@ const createUser = async (username, uid) => {
     const userCollection = await users();
 
     if (await userCollection.findOne({username: username})
-     || await userCollection.findOne({uid: uid})) {
+     || await userCollection.findOne({_id: uid})) {
         throw "Error: Cannot create user.";
     }
     
@@ -20,7 +20,8 @@ const createUser = async (username, uid) => {
         firebaseId: uid,
         username: username,
         createdEvents: [],
-        attendedEvents:[]
+        attendedEvents:[],
+        picture: "https://coordinote.s3.amazonaws.com/defaultPFP.png"
     }
 
     const insertUser = await userCollection.insertOne(newUser);
@@ -44,7 +45,7 @@ const getUserByName = async (username) => {
 
 const getUserByUID = async (uid) => {
     const userCollection = await users();
-    const user = await userCollection.findOne({_id: uid});
+    const user = await userCollection.findOne({_id: new ObjectId(uid)});
 
     if (!user) throw `Error: No user found with uid '${uid}'.`;
     return user;
@@ -72,7 +73,7 @@ const addUserPicture = async (userId, picture) => {
     if(!updatedUser.acknowledged || !updatedUser.modifiedCount)
         throw "Could not update user picture"
 
-    return await getUserById(userId);
+    return await getUserByUID(userId);
 }
 
 const getUsersEvents = async (userId) => {
