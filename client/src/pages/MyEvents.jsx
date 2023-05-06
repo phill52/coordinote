@@ -9,11 +9,14 @@ import {Link, useParams,Navigate} from 'react-router-dom';
 import TimeViewer from '../components/TimeViewer';
 import {Card,CardMedia,CardContent,CardActionArea,Accordion,AccordionSummary,Typography,Grid} from '@mui/material';
 import CardBuilder from '../components/cardBuilder';
+import { useLocation } from 'react-router-dom';
 
 const MyEvents = ({invited}) => {
   const [loading, setLoading] = useState(true);
   const [error, setErr] = useState(false);
   const [userEvents, setUserEvents] = useState(null);
+  const location = useLocation();
+
   useEffect(() => {
     const header = createToken();
     async function formData(){
@@ -38,7 +41,7 @@ const MyEvents = ({invited}) => {
           setLoading(false);
         }
       }formData()
-    },[]);
+    },[location]);
   if (loading) {
     return (
       <div>
