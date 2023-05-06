@@ -13,12 +13,14 @@ import AuthContext from './AuthContext';
 import MyEvents from './pages/MyEvents';
 import Profile from './pages/userProfile';
 import axios from 'axios';
+import Header from './components/header';
 
 function App() {
   const [loggedIn, setLoggedIn] = useState(false);
   const [loadingUser, setLoadingUser] = useState(true);
   const [currentUser, setCurrentUser] = useState(null);
   const [mongoUser, setMongoUser] = useState(null);
+  const [loading, setLoading] = useState(true);
   useEffect(() => { //firebase useEffect
     const unsubscribe = auth.onAuthStateChanged((user) => {
       if (user) {
@@ -51,6 +53,7 @@ function App() {
             username: data.data.username,
             _id: data.data._id,
           });
+          setLoading(false);
         }
         catch(e){
           console.log(e);
@@ -59,10 +62,6 @@ function App() {
     }
     checkUser();
   }, [currentUser]);
-
-  const signOut = () => {
-    auth.signOut()
-  };
 
   if (loadingUser) {
     return (  
@@ -95,18 +94,10 @@ function App() {
   }
   
   return (
-    <AuthContext.Provider value={{currentUser, setCurrentUser, mongoUser}}>
+    <AuthContext.Provider value={{currentUser, setCurrentUser, mongoUser, loading}}>
     <Router className='router'>
     <div className="App">
-      <header className='App-header'>
-        <p>Hello</p>
-        <Link to='/newEvent'>New Event</Link>
-        <Link to='/'>Home</Link>
-        <Link to='/login'>Login</Link>
-        <Link to='/signup'>Sign Up</Link>
-        {/* <Link to='/event/644ddc19c0db45afd6c996ed' uid={currentUser.uid}>Event (temporary)</Link> */}
-        <button onClick={signOut}>Sign Out</button>
-      </header>
+      <Header />
       <div className='App-body'>
         <Routes>
           <Route path='/newEvent' element={<ProtectedRoute Component={<NewEvent/>}/> }/>
