@@ -20,8 +20,8 @@
 }
 
 .App-body {
-  background-color: #8faf9a;
-  font-family: Arial, sans-serif;
+  background-color: #fefbe9; 
+	font-family: Palatino,Palatino Linotype,Palatino LT STD,Book Antiqua,Georgia,serif; 
 }
 
 @media (prefers-reduced-motion: no-preference) {
@@ -33,8 +33,9 @@ body{
   height: 100%;
   width: 100%;
   background-color: #8faf9a;
-  
+  color: #183a1d;
 }
+
 .currentDay{
   font-size: large;
 }
@@ -52,15 +53,15 @@ body{
   align-items: center;
   justify-content: center;
 }
-.App-header {
-  background-color: #282c34;
-  min-height: 50vh;
-  display: flex;
-  flex-direction: column;
+
+.header {
+  display: flex; 
+  justify-content: space-between;
   align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+  padding: 1rem;
+  background-color: #C17A4E;
+  color: #F6F1EC;
+  font-family: Palatino,Palatino Linotype,Palatino LT STD,Book Antiqua,Georgia,serif; 
 }
 
 .App-link {
@@ -69,16 +70,17 @@ body{
 	border-radius: 3px;
 	color: green;
 	text-decoration: none !important;
-	margin: 5px;}
-
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+	margin: 5px;
 }
+
+.centered-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 100vh;
+  text-align: center;
+}
+
 
 .Login-page {
   display: flex;
@@ -313,13 +315,23 @@ body{
 .titleText{
   font-size: xx-large;
   font-weight:bolder;
+  color: #F0A04B;
 }
 
 .calContain{
-  justify-content: left;
-  align-items: start;
-  height:100%;
-  width: 700px;
-  max-width: 200%;
   display: flex;
+  flex-direction: column;
+  width: 25rem;
+}
+
+.light-green-100{
+  color: #41732A;
+}
+
+.light-green-200{
+  color: #41732A;
+}
+
+.dark-green-100{
+  color: #183A1D;
 }
