@@ -18,7 +18,7 @@ initializeApp({
 
 async function decodeIDToken(req, res, next) {
     const header = req.headers.authorization;
-    console.log(req.headers)
+    if (!header) return res.json({error: 'Unauthorized!'});
     if (header !== 'Bearer null' && req.headers.authorization.startsWith('Bearer ')) {
         const idToken = req.headers.authorization.split('Bearer ')[1];
         try {
