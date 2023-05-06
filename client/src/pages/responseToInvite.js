@@ -45,8 +45,17 @@ useEffect(()=>{
         try{
             const header=await createToken();
             console.log(header)
-        let {data}=await axios.get(`http://localhost:3001/api/yourpage/events/${id}`,{headers:{'Content-Type':'application/json',
+            let data ={};
+        if(window.location.hostname==='localhost'){
+        let response=await axios.get(`http://localhost:3001/api/yourpage/events/${id}`,{headers:{'Content-Type':'application/json',
         authorization:header.headers.Authorization}});
+        data=response.data;
+        }
+        else{
+            let response = await axios.get(`https://coordinote.us/api/yourpage/events/${id}`,{headers:{'Content-Type':'application/json',
+            authorization:header.headers.Authorization}});
+            data=response.data
+        }
         console.log(data)
         setEventData(data);
         setLoading(false)
@@ -113,8 +122,18 @@ useEffect(()=>{
 async function bestDatesRequest(){
     try{
         let header= await createToken();
-    let {data}=await axios.get(`http://localhost:3001/api/yourpage/events/bestTimes/${id}`,{headers:{'Content-Type':'application/json',
+        let data={};
+        if(window.location.hostname==='localhost'){
+    let response=await axios.get(`http://localhost:3001/api/yourpage/events/bestTimes/${id}`,{headers:{'Content-Type':'application/json',
         authorization:header.headers.Authorization}});
+        data=response.data;
+    }
+    else{
+        let response=await axios.get(`https://coordinote.us/api/yourpage/events/bestTimes/${id}`,{headers:{'Content-Type':'application/json',
+        authorization:header.headers.Authorization}});
+        data=response.data;
+    }
+
         setBestDates(data);
         console.log(data);
         setError(false)
@@ -127,14 +146,24 @@ async function bestDatesRequest(){
 async function getTimesRequest(){
     try{
         let header= await createToken();
-    let {data}=await axios.get(`http://localhost:3001/api/yourpage/events/${id}`,{headers:{'Content-Type':'application/json',
+        let data={};
+        if(window.location.hostname==='localhost'){
+    let response=await axios.get(`http://localhost:3001/api/yourpage/events/${id}`,{headers:{'Content-Type':'application/json',
     authorization:header.headers.Authorization}});
+    data=response.data;
+        }
+        else{
+            let response=await axios.get(`https://coordinote.us/api/yourpage/events/${id}`,{headers:{'Content-Type':'application/json',
+    authorization:header.headers.Authorization}});
+    data=response.data;
+        }
     console.log(data)
     setEventData(data);
     setCurDate(new Date(data.domainDates[0].date))
     setError(false)
     }
     catch(e){
+        console.log(e)
         setError(true);
     }
 }
@@ -150,6 +179,7 @@ useEffect(()=>{
             }
             catch(e){
                 setError(true);
+                console.log(e)
             }
         }
     }formData()
@@ -158,9 +188,18 @@ useEffect(()=>{
 useEffect(()=>{
     async function formData(){
         try{
+            let data=[];
         const header=await createToken();
-        let {data}=await axios.get(`http://localhost:3001/api/yourpage/events/bestTimes/${id}`,{headers:{'Content-Type':'application/json',
+        if(window.location.hostname==='localhost'){
+        let response=await axios.get(`http://localhost:3001/api/yourpage/events/bestTimes/${id}`,{headers:{'Content-Type':'application/json',
         authorization:header.headers.Authorization}});
+            data=response.data;
+    }
+    else{
+        let response=await axios.get(`https://coordinote.us/api/yourpage/events/bestTimes/${id}`,{headers:{'Content-Type':'application/json',
+        authorization:header.headers.Authorization}});
+            data=response.data;
+    }
         setBestDates(data);
         console.log(data);
         }
@@ -228,8 +267,10 @@ useEffect(()=>{
         if(deleteConfirm){
             let header = await createToken();
             let oput = {userId:uid};
+            if(window.location.hostname==='localhost'){
             await axios.delete(`http://localhost:3001/api/yourpage/events/${id}`,{headers:{'Content-Type':'application/json',
             authorization:header.headers.Authorization}})
+
             .then(function (response){
                 console.log(response);
                 
@@ -239,6 +280,21 @@ useEffect(()=>{
             .catch(function (error){
                 console.log(error);
             });
+        }
+        else{
+            await axios.delete(`https://coordinote.us/api/yourpage/events/${id}`,{headers:{'Content-Type':'application/json',
+            authorization:header.headers.Authorization}})
+
+            .then(function (response){
+                console.log(response);
+                
+                nav('/',{replace:true})
+
+            })
+            .catch(function (error){
+                console.log(error);
+            });
+        }
    
         }
     }formData()
@@ -313,6 +369,7 @@ useEffect(()=>{
         try{
             const header=await createToken();
             console.log(header);
+            if(window.location.hostname==='localhost'){
             await axios.post('http://localhost:3001/api/updateAvailability',oput,{headers:{'Content-Type':'application/json',
             authorization:header.headers.Authorization}})
             .then(function (response){
@@ -327,6 +384,23 @@ useEffect(()=>{
                 setPickDates(true);
                 setFinished(false);
             });
+        }
+        else{
+            await axios.post('https://coordinote.us/api/updateAvailability',oput,{headers:{'Content-Type':'application/json',
+            authorization:header.headers.Authorization}})
+            .then(function (response){
+                console.log(response);
+                setReloadIt(true);
+                setPickDates(false);
+                setFinished(false);
+                console.log(datesAndTimes);
+            })
+            .catch(function (error){
+                console.log(error);
+                setPickDates(true);
+                setFinished(false);
+            });
+        }
             }
             catch(e){
 

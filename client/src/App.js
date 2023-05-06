@@ -41,7 +41,12 @@ function App() {
       let data;
       if (currentUser) {
         try{
+          if(window.location.hostname==='localhost'){
           data = await axios.get('http://localhost:3001/api/fireuser',{headers:{'Content-Type':'application/json', authorization:header.headers.Authorization}});
+          }
+          else{
+            data = await axios.get('https://coordinote.us/api/fireuser',{headers:{'Content-Type':'application/json', authorization:header.headers.Authorization}})
+          }
           setMongoUser({
             username: data.data.username,
             _id: data.data._id,
