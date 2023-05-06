@@ -344,7 +344,7 @@ useEffect(()=>{
         try{
             const header=await createToken();
             console.log(header);
-            await axios.post('http://localhost:3001/api/api/updateAvailability',oput,{headers:{'Content-Type':'application/json',
+            await axios.post('http://localhost:3001/api/updateAvailability',oput,{headers:{'Content-Type':'application/json',
             authorization:header.headers.Authorization}})
             .then(function (response){
                 console.log(response);
