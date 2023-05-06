@@ -60,7 +60,7 @@ const checkUsernameUnique = async (username) => {
     return true;
 }
 
-const addUserPicture = async (userId, picture) => {
+const setUserPicture = async (userId, picture) => {
     userId = validation.checkId(userId)
     picture = validation.checkPicture(picture)
 
@@ -110,7 +110,7 @@ export default {
     getUserByName,
     getUserByUID,
     checkUsernameUnique,
-    addUserPicture,
+    setUserPicture,
     getUsersEvents,
     getUserByName,
     getUserByFirebaseId

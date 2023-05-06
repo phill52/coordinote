@@ -73,6 +73,10 @@ function checkLocation(location){
     return location
 }
 
+function checkPicture(picture){
+    return picture
+}
+
 
 export default {
     checkNotNull,
@@ -81,6 +85,7 @@ export default {
     checkId, //this bad boy is gonna be used a lot
     checkEventName,
     checkDate,
+    checkPicture,
     checkAttendees,
     checkLocation,
     fn
