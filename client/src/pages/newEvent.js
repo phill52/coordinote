@@ -343,38 +343,38 @@ else{
     else{
     if(!nameSet){
                 return(
-            <div className='Login-page'>
-                <form className='login-form' onSubmit={handleSubmit}>
-                <label className='login-label'>
-                    {'Event Input: '}
-                <input className="login-input" id='eventInput' onChange={(e)=>{setEventName(e.target.value)
-                console.log(e)}} placeholder='event name' required />
-                </label>
-                <br />
-                <label className='login-label'>
-                    {'Event Description: '}
-                    <input className="login-input" id='descriptionInput' onChange={(e)=>{setDescription(e.target.value)}} placeholder='Enter Description' required />
-                </label>
-                <br />
-                <label className='login-label'>
-                    {'Location Input: '}
-                    <input className="login-input" id='locationInput' onChange={(e)=>{setLocation(e.target.value)}} placeholder='Enter Location' required/>
-                </label>
-                <br />
-                <label className='login-label'>
-                        {'Event Image: '}
-                        <input type='file' accept='image/png, image/jpeg, image/jpg' required className='login-input' id='imageInput' onChange={(e)=>{
-                            console.log(e)
-                            setInputTaken(true)
-                            setFileFormValue(e)}} />
+                <div className='Login-page'>
+                    <form className='login-form' onSubmit={handleSubmit}>
+                    <br />
+                    <label className='login-label'>
+                        <h1>Event Name: </h1>
+                    <input className="login-input" id='eventName' onChange={(e)=>{setEventName(e.target.value)}} placeholder='Enter Name' required />
                     </label>
                     <br />
-                <div className='flex justify-center'>
-                <button type='submit' onClick={handleSubmit}>Lock Event Info</button>
+                    <label className='login-label'>
+                        <h1>Event Description: </h1>
+                        <input className="login-input" id='descriptionInput' onChange={(e)=>{setDescription(e.target.value)}} placeholder='Enter Description' required />
+                    </label>
+                    <br />
+                    <label className='login-label'>
+                        <h1>Event Location: </h1>
+                        <input className="login-input" id='locationInput' onChange={(e)=>{setLocation(e.target.value)}} placeholder='Enter Location' required/>
+                    </label>
+                    <br />
+                    <label className='login-label'>
+                            {'Event Image: '}
+                            <input type='file' accept='image/png, image/jpeg, image/jpg' required className='login-input' id='imageInput' onChange={(e)=>{
+                                console.log(e)
+                                setInputTaken(true)
+                                setFileFormValue(e)}} />
+                        </label>
+                        <br />
+                    <div className='flex justify-center'>
+                    <button type='submit' onClick={handleSubmit}>Lock Event Info</button>
+                    </div>
+                    </form>
+                    <p>{errMsg}</p>
                 </div>
-                </form>
-                <p>{errMsg}</p>
-            </div>
         )
         
     }
@@ -385,49 +385,49 @@ else{
         if(clickedDay.length===1){
             if(clickedDay.length>datesAndTimes.length){
             return(
-                <div>
+                <div className='flex flex-col align-center justify-center'>
+                    <div className='login-form'>
+                        <h2 className='login-label'>Event Name</h2>
+                        <p className='left'>{eventName}</p>
+                        <h2 className='login-label'>Event Description</h2>
+                        <p className='left'>{eventDescription}</p>
+                        <h2 className='login-label'>Event Location</h2>
+                        <p className='left'>{location}</p>
+                    </div>
                     <div>
-                        <div className='login-form'>
-                             <h2 className='login-label'>Event Name</h2>
-                             <p className='left'>{eventName}</p>
-                             <h2 className='login-label'>Event Description</h2>
-                             <p className='left'>{eventDescription}</p>
-                             <h2 className='login-label'>Event Location</h2>
-                             <p className='left'>{location}</p>
-        </div>
-    <Calendar minDetail={'decade'} tileDisabled={disableAll} className='smallCal' value = {new Date()} tileClassName={tileClass} ></Calendar>
-    {console.log(allDates)}
-    </div>
-    <br />
-    <h1 className='currentDay'>{clickedDay[arrIndex].toDateString()}</h1>
-    <br />
-    {Tselect}
+                        <Calendar minDetail={'decade'} tileDisabled={disableAll} className='smallCal' value = {new Date()} tileClassName={tileClass} ></Calendar>
+                        <br />
+                        <h1 className='currentDay'>{clickedDay[arrIndex].toDateString()}</h1>
+                        <br />
+                        {Tselect}
+                    </div>
                 </div>
-            )
+                )
         }
         else{
             return(
-                <div>
+                <div className='flex flex-col align-center justify-center'>
+                    <div className='login-form'>
+                        <h2 className='login-label'>Event Name</h2>
+                        <p className='left'>{eventName}</p>
+                        <h2 className='login-label'>Event Description</h2>
+                        <p className='left'>{eventDescription}</p>
+                        <h2 className='login-label'>Event Location</h2>
+                        <p className='left'>{location}</p>
+                    </div>
                     <div>
-                        <div className='login-form'>
-                             <h2 className='login-label'>Event Name</h2>
-                             <p className='left'>{eventName}</p>
-                             <h2 className='login-label'>Event Description</h2>
-                             <p className='left'>{eventDescription}</p>
-                             <h2 className='login-label'>Event Location</h2>
-                             <p className='left'>{location}</p>
-        </div>
-    <Calendar minDetail={'decade'} tileDisabled={disableAll} className='smallCal' value = {new Date()} tileClassName={tileClass} ></Calendar>
-    {console.log(allDates)}
-    </div>
-    <br />
-    <h1 className='currentDay'>{clickedDay[arrIndex].toDateString()}</h1>
-    <br />
-    {Tselect}
-    <button onClick={()=>{lockDateTime(true)}}>Lock dates and times</button>
-
+                        <Calendar minDetail={'decade'} tileDisabled={disableAll} className='smallCal' value = {new Date()} tileClassName={tileClass} ></Calendar>
+                        {console.log(allDates)}
+                    </div>
+                    <div>
+                        <br />
+                        <h1 className='currentDay'>{clickedDay[arrIndex].toDateString()}</h1>
+                        <br />
+                        {Tselect}
+                        <button onClick={()=>{lockDateTime(true)}}>Lock dates and times</button>
+                    </div>
                 </div>)
-        }
+            }
         }
         else if(clickedDay.length>datesAndTimes.length){
         if(arrIndex===0){
