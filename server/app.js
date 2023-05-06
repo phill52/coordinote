@@ -67,6 +67,19 @@ app.use('/api/yourpage/events/createEvent',async(req,res,next) => {
     next();
 })
 
+app.use('/api/user/:id',async(req,res,next) => {
+    res.header('Access-Control-Allow-Origin', '*');
+    res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization, Custom-Header');
+    next();
+})
+
+app.use('/api/fireuser',async(req,res,next) => {
+    console.log(req.headers)
+    res.header('Access-Control-Allow-Origin', '*');
+    res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization, Custom-Header');
+    next();
+})
+
 app.use('/api/yourpage/events/:eventId',async(req,res,next) => {
     // if(!req.session.user){
     //     return res.redirect('/')
@@ -132,23 +145,23 @@ app.use('/api/yourpage/events/myEvents/:userId',async (req,res,next)=>{
 //     next()
 // })
 
-app.use('/api/login',(req,res,next) => {
-    if(req.session.user){
-        return res.redirect('/yourpage')
-    }
-    else{
-        next()
-    }
-})
+// app.use('/api/login',(req,res,next) => {
+//     if(req.session.user){
+//         return res.redirect('/yourpage')
+//     }
+//     else{
+//         next()
+//     }
+// })
 
-app.use('/api/register',(req,res,next) => {
-    if(req.session.user){
-        return res.redirect('/yourpage')
-    }
-    else{
-        next();
-    }
-})
+// app.use('/api/register',(req,res,next) => {
+//     if(req.session.user){
+//         return res.redirect('/yourpage')
+//     }
+//     else{
+//         next();
+//     }
+// })
 
 // https://stackoverflow.com/questions/27117337/exclude-route-from-express-middleware
 var unless = function(path, middleware) {
@@ -160,8 +173,9 @@ var unless = function(path, middleware) {
         }
     };
 };
-// Initialize Firebase, unless signup
+// Initialize Firebase, unless for unprotected routes
 app.use(unless('/api/signup', decodeIDToken));
+app.use(unless('/api/users/:id', decodeIDToken));
 
 const getAuthToken = (req, res, next) => {
     if (req.headers.authorization &&
