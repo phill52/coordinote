@@ -9,7 +9,7 @@ import {auth, createToken } from '../fire';
 import TimeViewer from '../components/TimeViewer';
 import {Card,CardHeader,CardMedia,CardContent,CardActionArea,Accordion,AccordionSummary,Typography,Grid, unstable_createMuiStrictModeTheme} from '@mui/material';
 import io from 'socket.io-client';
-
+import Chat from '../components/chat';
 
 
 const ResponseToInvite = (props) => {
@@ -596,6 +596,14 @@ else{
 }
 }
 }
+else if(chatOption){
+return(
+    <div>
+        <Calendar minDetail={'month'} tileDisabled={()=>{return true}} className='smallCal' value = {new Date()} tileClassName={({date})=>{return tileClassBuilder(date,eventData)}}></Calendar>
+        <Chat id={id} ></Chat>
+    </div>
+)
+}
 else{
     return(
         <div>
@@ -604,6 +612,8 @@ else{
     <button className='App-link' onClick={()=>{setPickDates(true)}}>Pick Your Dates</button>
     <br />
     <button className='App-link' onClick={()=>{setViewEventPage(true)}}>View the event page</button>
+    <br />
+    <button className='App-link' onClick={()=>{setChatOption(true)}}>Chat</button>
 
     </div>
     );

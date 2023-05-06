@@ -18,7 +18,8 @@ const createEvent = async(eventName,domainDates,location,description,attendees,i
         description,description,
         attendees:attendees,
         image:image,
-        creatorID:userId
+        creatorID:userId,
+        chatLogs:[]
     }
     const insertEvent=await eventCollection.insertOne(newEvent);
     if(!insertEvent.acknowledged || !insertEvent.insertedId)
@@ -36,14 +37,20 @@ const createEvent = async(eventName,domainDates,location,description,attendees,i
 
 const updateChatLogs = async (eventId,newChatLog) =>{
     const eventCollection = await events();
+    console.log(eventId)
+    try{
     const updatedEvent= await eventCollection.updateOne(
-        {id:new ObjectId(eventId)},
-        {$set: {eventChat:chatLogs}}
+        {_id:new ObjectId(eventId)},
+        {$set: {chatLogs:newChatLog}}
     ) 
-    if(updatedEvent.modifiedCount<1){
-        throw "unable to update chat logs"
-    }
+    console.log(updatedEvent);
     return await getEventById(eventId);
+    }
+catch(e){
+console.log('Error, not able to update chat');
+throw "Error"
+
+}
 }
 
 
@@ -65,7 +72,8 @@ const updateEvent = async(eventId,newName,newDomainDates,newLocation,newDescript
             "location":newLocation?newLocation:oldEvent.location, 
             "description":newDescription?newDescription:oldEvent.description,
             "attendees":newAttendees?newAttendees:oldEvent.attendees,
-            "image":newImage?newAttendees:oldEvent.image
+            "image":newImage?newAttendees:oldEvent.image,
+            "chatLogs":oldEvent.chatLogs
         }}
     )
     if(editedEvent.modifiedCount==0 && editedEvent.matchedCount==0){
@@ -361,5 +369,6 @@ export default {
     getAttendeeAvailability,
     addAttendeeAvailabilityNewDay,
     addEventDate,
-    removeEventDate
+    removeEventDate,
+    updateChatLogs
 }

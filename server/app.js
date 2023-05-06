@@ -12,34 +12,6 @@ import decodeIDToken from './authenticateToken.js';
 import {fileURLToPath} from 'url';
 import { Server } from 'socket.io';
 import http from 'http';
-const server = http.createServer(app);
-const io = new Server(server);
-
-
-io.on('connection', (socket) => {
-    console.log('new client connected', socket.id);
-  
-    socket.on('user_join', (name, room) => {
-      console.log('A user joined their name is ' + name);
-      console.log('The user joined room ' + room);
-      socket.join(room);
-      // socket.broadcast.emit('user_join', name);
-      io.to(room).emit('user_join', name);
-    });
-  
-    socket.on('message', async ({name, message, room}) => {
-      console.log(name, message, room, socket.id);
-      let evnt = await events.getEventById(room);
-      let tempArr= evnt.eventChat;
-      tempArr.push(`${name}: ${message}`);
-      await events.updateChatLogs(room,tempArr);
-      io.to(room).emit('message', {name, message});
-    });
-  
-    socket.on('disconnect', () => {
-      console.log('Disconnect Fired');
-    });
-  });
   
 
 const __filename = fileURLToPath(import.meta.url);
@@ -262,6 +234,51 @@ const main = async() => {
     const db = await connection.dbConnection();
 }
 
+const server = http.createServer(app);
+let io = new Server(server);
+
+
+io.on('connection', async (socket) => {
+    console.log('new client connected', socket.id);
+  
+    socket.on('user_join', async (name, room) => {
+      console.log('A user joined their name is ' + name);
+      console.log('The user joined room ' + room);
+      socket.join(room);
+      // socket.broadcast.emit('user_join', name);
+      let evnt = await events.getEventById(room);
+      let tempArr= evnt.chatLogs;
+      io.to(room).emit('user_join', tempArr);
+    });
+  
+    socket.on('message', async ({name, message, room}) => {
+      console.log(name, message, room, socket.id);
+      let evnt = await events.getEventById(room);
+      let tempArr= evnt.chatLogs;
+      tempArr=[...tempArr,{name:name, message:message}];
+      let noErr=true;
+      try{
+      await events.updateChatLogs(room,tempArr);
+      console.log('hi')
+      }
+      catch(e){
+        noErr=false
+      }
+      if(noErr){
+
+      io.to(room).emit('message', {name:name, message:message});
+      console.log('no error')
+      }
+      else{
+        io.to(room).emit('message',{name,message})
+        console.log('error');
+      }
+    });
+  
+    socket.on('disconnect', () => {
+      console.log('Disconnect Fired');
+    });
+  });
 
 server.listen(3001, () => {
     console.log("We've now got a server!");
