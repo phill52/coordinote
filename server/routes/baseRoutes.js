@@ -148,7 +148,30 @@ router
         }
         res.json(user)
         return;
-    });
+    })
+    .post(async(req,res) => {
+        let userId=undefined; let picture=undefined;
+        try{
+            userId=validation.checkId(req.params.id)
+            picture=validation.checkPicture(req.body.picture)
+        }
+        catch(e){
+            console.log(e)
+            res.send(e)
+            return
+        }
+        let user=undefined;
+        try{
+            user=await users.setUserPicture(userId,picture)
+        }
+        catch(e){
+            console.log(e)
+            res.send(e)
+            return;
+        }
+        res.json(user);
+        return;
+    })
 
 router
     .route('/fireuser')
