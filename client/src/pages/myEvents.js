@@ -10,7 +10,6 @@ import TimeViewer from '../components/TimeViewer';
 import {Card,CardMedia,CardContent,CardActionArea,Accordion,AccordionSummary,Typography,Grid} from '@mui/material';
 
 const MyEvents =()=>{
-const {uId}=useParams();
 const [userEvents,setUserEvents]=useState(null);
 const [userAttended,setUserAttended]= useState(null);
 const [loading,setLoading] = useState(true);
@@ -20,11 +19,12 @@ const [createdEvents,userCreated]=useState(false);
 const [attendedEvents,pickAttended] = useState(false);
 useEffect(()=>{
     console.log('on load useEffect')
+    const header = createToken();
     async function formData(){
         try{
         const header=await createToken();
         console.log(header.headers);
-        await axios.get(`http://localhost:3001/api/yourpage/events/myEvents/${uId}`,{headers:{'Content-Type':'application/json','Authorization':header.headers.Authorization}})
+        await axios.get(`http://localhost:3001/api/yourpage/events/myEvents`,{headers:{'Content-Type':'application/json','Authorization':header.headers.Authorization}})
         .then(function (response){
             console.log(response);
             setLoading(false)
@@ -49,7 +49,7 @@ useEffect(()=>{
             console.log(e)
         }
     }formData()
-},[uId])
+},[])
 
 const datesEqual = (dte1,dte2) =>{
     if(!(dte1<dte2)){
@@ -204,9 +204,22 @@ else{
     card = userEvents && userEvents.map((event)=>{
         return cardBuilder(event);
     })
+    if (card.length===0){
+        return(
+            <div>
+                <button className='App-link' onClick={()=>{userCreated(false)
+            pickAttended(true)}}>Attended Events</button>
+                <h1>You have not created any events yet!</h1>
+            </div>
+        )
+    }
+
     return(
         <div>
-            
+            <button className='App-link' onClick={()=>{
+            userCreated(false)
+            pickAttended(true)
+            }}>Attended Events</button>
             <Grid
           container
           spacing={2}
@@ -215,10 +228,6 @@ else{
             flexDirection: 'row'
           }}
         >{card}</Grid>
-            <button className='App-link' onClick={()=>{
-            userCreated(false)
-            pickAttended(true)
-        }}>Attended Events</button>
         </div>
     )
 }
@@ -227,7 +236,18 @@ else if(attendedEvents){
     card = userAttended && userAttended.map((event)=>{
         return cardBuilder(event);
     })
-    return(
+    if (card.length===0){
+        return(
+            <div>
+                <button className='App-link' onClick={()=>{
+                    userCreated(true)
+                    pickAttended(false)
+                }}>Created Events</button>
+                <h1>You have not been invited to any events yet!</h1>
+            </div>
+        )
+    } 
+    else return(
         <div>
             
             <Grid
