@@ -74,8 +74,14 @@ const SignupPage = () => {
         username: username
       };
       try {
-        const response = await axios.post('/api/checkUsername', body);
+        if(window.location.hostname==='localhost'){
+        const response = await axios.post('http://localhost:3001/api/checkUsername', body);
         return response;
+        }
+        else{
+          const response = await axios.post('https://coordinote.us/api/checkUsername', body);
+        return response;
+        }
       } catch {
         console.log("error with server");
       }
@@ -108,8 +114,14 @@ const SignupPage = () => {
             uid: userId
           };
           try {
+            if(window.location.hostname==='localhost'){
             const response = await axios.post('http://localhost:3001/api/signup', body);
             return response;
+            }
+            else{
+              const response = await axios.post('https://coordinote.us/api/signup', body);
+              return response;
+            }
           } catch(e) {
             console.log(e);
             console.log("error with server");
