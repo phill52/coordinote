@@ -2,15 +2,21 @@ import React, {useEffect, useRef, useState} from 'react';
 import io from 'socket.io-client';
 import '../App.css';
 import { useParams } from 'react-router-dom';
+import AuthContext from '../AuthContext';
+
 function Chat(){
+    const {mongoUser} = React.useContext(AuthContext);
+
+    console.log(mongoUser);
     const {id} = useParams();
-    const [state, setState] = useState({message: '', name: '', room: id});
+    const [state, setState] = useState({message: '', name: mongoUser.username, room: id});
     const [chat, setChat] = useState([]);
     
     const socketRef = useRef();
   
     useEffect(() => {
       socketRef.current = io('/');
+      userjoin('','');
       return () => {
         socketRef.current.disconnect();
       };
@@ -34,7 +40,7 @@ function Chat(){
     }, [chat]);
   
     const userjoin = (name, room) => {
-      socketRef.current.emit('user_join', name, id);
+      socketRef.current.emit('user_join', mongoUser.username, id);
     };
   
     const onMessageSubmit = (e) => {
@@ -67,7 +73,6 @@ function Chat(){
   
     return (
       <div>
-        {state.name && (
           <div className='card'>
             <div className='render-chat'>
               <h1>Chat Log</h1>
@@ -86,38 +91,6 @@ function Chat(){
               <button>Send Message</button>
             </form>
           </div>
-        )}
-  
-        {!state.name && (
-          <form
-            className='form'
-            onSubmit={(e) => {
-              console.log(document.getElementById('username_input').value);
-              console.log(document.getElementById('room_input').value);
-              e.preventDefault();
-              setState({name: document.getElementById('username_input').value, room: id});
-              userjoin(document.getElementById('username_input').value, document.getElementById('room_input').value);
-              // userName.value = '';
-            }}
-          >
-            <div className='form-group'>
-              <label>
-                User Name:
-                <br />
-                <input id='username_input' />
-              </label>
-              <label>
-                Room:
-                <br />
-                <input id='room_input' />
-              </label>
-            </div>
-            <br />
-            <br />
-            <br />
-            <button type='submit'> Click to join</button>
-          </form>
-        )}
       </div>
     );
 

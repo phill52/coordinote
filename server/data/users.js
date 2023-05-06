@@ -12,7 +12,7 @@ const createUser = async (username, uid) => {
     const userCollection = await users();
 
     if (await userCollection.findOne({username: username})
-     || await userCollection.findOne({uid: uid})) {
+     || await userCollection.findOne({_id: uid})) {
         throw "Error: Cannot create user.";
     }
     
@@ -20,7 +20,8 @@ const createUser = async (username, uid) => {
         firebaseId: uid,
         username: username,
         createdEvents: [],
-        attendedEvents:[]
+        attendedEvents:[],
+        picture: "https://coordinote.s3.amazonaws.com/defaultPFP.png"
     }
 
     const insertUser = await userCollection.insertOne(newUser);
@@ -34,16 +35,25 @@ const createUser = async (username, uid) => {
     return {insertedUser: true, username: user.username}
 }
 
-const getUserByName = async(username) => {
-    username = validation.checkUsername(username);
-    const userCollection=await users();
-    const user=await userCollection.findOne({username:username});
-    if(!user) throw `Unable to find user with name of ${username}`
+const getUserByName = async (username) => {
+    const userCollection = await users();
+    const user = await userCollection.findOne({username: username});
+
+    if(!user) throw `Error: No user found with username '${username}'.`;
+    return user;
+}
+
+const getUserByUID = async (uid) => {
+    const userCollection = await users();
+    const user = await userCollection.findOne({_id: new ObjectId(uid)});
+
+    if (!user) throw `Error: No user found with uid '${uid}'.`;
     return user;
 }
 
 const checkUsernameUnique = async (username) => {
     username = validation.checkUsername(username);
+    username = username.toLowerCase();
     const userCollection = await users();
     const user = await userCollection.findOne({username: username});
     if(user) return false;
@@ -63,7 +73,7 @@ const addUserPicture = async (userId, picture) => {
     if(!updatedUser.acknowledged || !updatedUser.modifiedCount)
         throw "Could not update user picture"
 
-    return await getUserById(userId);
+    return await getUserByUID(userId);
 }
 
 const getUsersEvents = async (userId) => {
@@ -85,10 +95,23 @@ const getUsersEvents = async (userId) => {
     return {events:eventsArray,attended:attendedArray};
 }
 
+const getUserByFirebaseId = async (firebaseId) => {
+    firebaseId = validation.checkNotNull(firebaseId);
+    const userCollection = await users();
+    const user = await userCollection.findOne(
+        {firebaseId: firebaseId}
+    )
+    if (!user) throw `Could not find user with firebaseId ${firebaseId}.`;
+    return user;
+};
+
 export default {
     createUser,
+    getUserByName,
+    getUserByUID,
     checkUsernameUnique,
     addUserPicture,
     getUsersEvents,
-    getUserByName
+    getUserByName,
+    getUserByFirebaseId
 }

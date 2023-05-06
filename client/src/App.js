@@ -4,23 +4,56 @@ import LoginPage from './pages/loginpage';
 import NewEvent from './pages/newEvent';
 import { BrowserRouter as Router, Routes, Route, Link, Navigate } from 'react-router-dom';
 import React, { useState, useEffect } from 'react';
-import { auth } from './fire';
+import { auth,createToken } from './fire';
 import SignupPage from './pages/signuppage';
 import EmailVerificationLanding from './pages/emailVerification';
 import ResponseToInvite from './pages/responseToInvite';
 import Homepage from './pages/homepage';
 import AuthContext from './AuthContext';
-import MyEvents from './pages/myEvents';
+import MyEvents from './pages/MyEvents';
+import Profile from './pages/userProfile';
+import axios from 'axios';
+
 function App() {
   const [loggedIn, setLoggedIn] = useState(false);
   const [loadingUser, setLoadingUser] = useState(true);
   const [currentUser, setCurrentUser] = useState(null);
-  useEffect(() => {
-    auth.onAuthStateChanged((user) => {
-      setCurrentUser(user);
+  const [mongoUser, setMongoUser] = useState(null);
+  useEffect(() => { //firebase useEffect
+    const unsubscribe = auth.onAuthStateChanged((user) => {
+      if (user) {
+        setCurrentUser(user);
+      } else {
+        setCurrentUser(null);
+      }
       setLoadingUser(false);
     });
+  
+    // Clean up the listener when the component unmounts
+    return () => {
+      unsubscribe();
+    };
   }, []);
+
+  useEffect(() => { //mongo useEffect
+    const checkUser = async () => {
+      let header=await createToken();
+      let data;
+      if (currentUser) {
+        try{
+          data = await axios.get('http://localhost:3001/api/fireuser',{headers:{'Content-Type':'application/json', authorization:header.headers.Authorization}});
+          setMongoUser({
+            username: data.data.username,
+            _id: data.data._id,
+          });
+        }
+        catch(e){
+          console.log(e);
+        }
+      }
+    }
+    checkUser();
+  }, [currentUser]);
 
   const signOut = () => {
     auth.signOut()
@@ -57,7 +90,7 @@ function App() {
   }
   
   return (
-    <AuthContext.Provider value={{currentUser, setCurrentUser}}>
+    <AuthContext.Provider value={{currentUser, setCurrentUser, mongoUser}}>
     <Router className='router'>
     <div className="App">
       <header className='App-header'>
@@ -78,7 +111,10 @@ function App() {
           <Route path='/event/:id' element={<ResponseToInvite />} />
           <Route path='/' element={<Homepage />} />
           <Route path='/*' element={<p>404 not found</p>}></Route> {/* TODO: make a 404 page */}
-          <Route path ='/myEvent/:uId' element={<MyEvents />} />
+          {/* <Route path='/myEvent/:uId' element={<MyEvents />} /> */}
+          <Route path='/createdEvents' element={<ProtectedRoute Component={<MyEvents invited={false}/>}/>}/>
+          <Route path='/invitedEvents' element={<ProtectedRoute Component={<MyEvents invited={true}/>}/>}/>
+          <Route path='/user/:id' Component={Profile}/>4
         </Routes>
       </div>
     </div>
