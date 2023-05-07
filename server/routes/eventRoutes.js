@@ -72,7 +72,7 @@ router
         let userId=undefined;
         let user=undefined;
         try {
-            user = await users.getUserByUID(uid);
+            user = await users.getUserByFirebaseId(uid);
         } catch (e) {
             console.log(e);
             res.status(500).json(e);
@@ -81,7 +81,7 @@ router
         uid = user._id;
         try{
             userId=validation.checkId(uid)
-            userEvents=await users.getUserEvents(uid)
+            userEvents=await users.getUsersEvents(uid)
         }
         catch(e){
             res.status(400).json(e)
@@ -120,8 +120,8 @@ router
             return;
         }*/
         try{
-            newEvent=await events.createEvent(req.body.name, req.body.location, req.body.description, req.body.domainDates,
-            req.body.image,req.currentUser.uid);
+            newEvent=await events.createEvent(req.body.name,req.body.domainDates,req.body.location,req.body.description,
+            req.body.attendees,req.body.image,req.currentUser.uid);
         }
         catch(e){
             console.log(e)
@@ -175,9 +175,9 @@ router
         try{
             updatedEvent=await events.updateEvent(eventId,
                 req.body.name,
+                req.body.domainDates,
                 req.body.location,
                 req.body.description,
-                req.body.domainDates,
                 req.body.attendees,
                 req.body.image,
                 userId
