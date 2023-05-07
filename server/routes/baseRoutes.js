@@ -139,7 +139,7 @@ router
         }
         let user=undefined;
         try{
-            user=await users.getUserByUID(userId)
+            user=await users.getUserByFirebaseId(userId)
         }
         catch(e){
             console.log(e)
