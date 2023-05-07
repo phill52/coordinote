@@ -26,7 +26,7 @@ const createEvent = async (eventName, domainDates, location, description, attend
         throw "Unable to add event to events collection";
     const userCollection = await users()
     const updatedUser = await userCollection.updateOne(
-        {firebaseId: userId},
+        {_id: userId},
         {$push: {createdEvents:insertEvent.insertedId}}
     )
     if(updatedUser.modifiedCount < 1){
