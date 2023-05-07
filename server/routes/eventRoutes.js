@@ -121,7 +121,7 @@ router
         }*/
         try{
             newEvent=await events.createEvent(req.body.name, req.body.location, req.body.description, req.body.domainDates,
-            req.body.attendees,req.body.image,req.currentUser.uid);
+            req.body.image,req.currentUser.uid);
         }
         catch(e){
             console.log(e)

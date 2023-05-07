@@ -90,6 +90,9 @@ const checkArray = function checkArray(array, arrName, elemType, minArrayLength 
         if(elemType == 'number') {
             checkInt(num, `Within ${arrName}, ${elem}`);
         }
+        if(elemType == 'id') {
+            checkId(elem, `Within ${arrName}, ${elem}`);
+        }
     }
 };
 
@@ -107,8 +110,6 @@ const checkId = function checkId(id, varName) {
     // apparently this is a better check than ObjectId.isValid(), according to
     // https://stackoverflow.com/questions/13850819/can-i-determine-if-a-string-is-a-mongodb-objectid
     if(id != new ObjectId(id)) throw `Error: ID is not a valid ObjectId.`;
-    
-    return id;
 };
 
 function checkUsername(username,notCreating){
