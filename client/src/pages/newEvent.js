@@ -41,6 +41,7 @@ const NewEvent= ()=>{
     const [fileUrl,setFileUrl] = useState('');
     const [fileForm,setFileFormValue]=useState(null);
     const [inputTaken,setInputTaken] = useState(false);
+    const [eventId,setEventId] = useState('');
     const datesEqual = (dte1,dte2) =>{
         if(!(dte1<dte2)){
             if(!(dte1>dte2)){
@@ -275,7 +276,18 @@ useEffect(()=>{
         }
             let oput={name:eventName,location:location,domainDates:domDates,description:eventDescription,image:fileInput,attendees:[]}
             const header=await createToken();
+            if(window.location.hostname==='localhost'){
         await axios.post('http://localhost:3001/api/yourpage/events/createEvent',{name:eventName,location:location,domainDates:domDates,description:eventDescription,image:fileUrl,attendees:[]},{headers:{'Content-Type':'application/json',
+        authorization:header.headers.Authorization}})
+        .then(function (response){
+            console.log(response);
+            setEventId(response.data._id);
+        })
+        .catch(function (error){
+            console.log(error);
+        });}
+        else{
+            await axios.post('https://coordinote.us/api/yourpage/events/createEvent',{name:eventName,location:location,domainDates:domDates,description:eventDescription,image:fileUrl,attendees:[]},{headers:{'Content-Type':'application/json',
         authorization:header.headers.Authorization}})
         .then(function (response){
             console.log(response);
@@ -283,6 +295,7 @@ useEffect(()=>{
         .catch(function (error){
             console.log(error);
         });
+        }
         }
         catch(e){
             console.log(e);
@@ -303,6 +316,7 @@ setFileIsIn(true);
 console.log(formData)
 const header=await createToken();
 try{
+    if(window.location.hostname==='localhost'){
 await axios.post('http://localhost:3001/api/yourpage/events/imageTest',formData,{headers:{'Content-Type':'multipart/form-data',
 authorization:header.headers.Authorization}})
 .then(function (response){
@@ -313,6 +327,19 @@ authorization:header.headers.Authorization}})
     console.log(error);
 });
 console.log('WHY WONT I WORK')
+    }
+    else{
+        await axios.post('https://coordinote.us/api/yourpage/events/imageTest',formData,{headers:{'Content-Type':'multipart/form-data',
+authorization:header.headers.Authorization}})
+.then(function (response){
+    console.log(response);
+    setFileUrl(response.data.imageUrl);
+})
+.catch(function (error){
+    console.log(error);
+});
+console.log('WHY WONT I WORK')
+    }
 }
 catch(e){
 console.log(e);
@@ -333,48 +360,52 @@ if(error){
 }
 else{
     if(dateTimeLock){
+        if(window.location.hostname==='localhost'){
         return(
             <div>
                 <h1 className='currentDay'>All Done!</h1>
+                <h1 className='currentDay'>The link to your event is</h1>
+                <h2 className='currentDay'>{`http://localhost:3000/event/${eventId}`}</h2>
                 {console.log(output)}
             </div>
-        )
+        )}
     }
     else{
     if(!nameSet){
                 return(
-                <div className='Login-page'>
-                    <form className='login-form' onSubmit={handleSubmit}>
-                    <br />
-                    <label className='login-label'>
-                        <h1>Event Name: </h1>
-                    <input className="login-input" id='eventName' onChange={(e)=>{setEventName(e.target.value)}} placeholder='Enter Name' required />
+            <div className='Login-page'>
+                <form className='login-form' onSubmit={handleSubmit}>
+                <br />
+                <label className='login-label'>
+                <h1>Event Name: </h1>
+                <input className="login-input" id='eventInput' onChange={(e)=>{setEventName(e.target.value)
+                console.log(e)}} placeholder='event name' required />
+                </label>
+                <br />
+                <label className='login-label'>
+                <h1>Event Description: </h1>
+                    <input className="login-input" id='descriptionInput' onChange={(e)=>{setDescription(e.target.value)}} placeholder='Enter Description' required />
+                </label>
+                <br />
+                <label className='login-label'>
+                <h1>Event Location: </h1>
+                    <input className="login-input" id='locationInput' onChange={(e)=>{setLocation(e.target.value)}} placeholder='Enter Location' required/>
+                </label>
+                <br />
+                <label className='login-label'>
+                        {'Event Image: '}
+                        <input type='file' accept='image/png, image/jpeg, image/jpg' required className='login-input' id='imageInput' onChange={(e)=>{
+                            console.log(e)
+                            setInputTaken(true)
+                            setFileFormValue(e)}} />
                     </label>
                     <br />
-                    <label className='login-label'>
-                        <h1>Event Description: </h1>
-                        <input className="login-input" id='descriptionInput' onChange={(e)=>{setDescription(e.target.value)}} placeholder='Enter Description' required />
-                    </label>
-                    <br />
-                    <label className='login-label'>
-                        <h1>Event Location: </h1>
-                        <input className="login-input" id='locationInput' onChange={(e)=>{setLocation(e.target.value)}} placeholder='Enter Location' required/>
-                    </label>
-                    <br />
-                    <label className='login-label'>
-                            {'Event Image: '}
-                            <input type='file' accept='image/png, image/jpeg, image/jpg' required className='login-input' id='imageInput' onChange={(e)=>{
-                                console.log(e)
-                                setInputTaken(true)
-                                setFileFormValue(e)}} />
-                        </label>
-                        <br />
-                    <div className='flex justify-center'>
-                    <button type='submit' onClick={handleSubmit}>Lock Event Info</button>
-                    </div>
-                    </form>
-                    <p>{errMsg}</p>
+                <div className='flex justify-center'>
+                <button type='submit' onClick={handleSubmit}>Lock Event Info</button>
                 </div>
+                </form>
+                <p>{errMsg}</p>
+            </div>
         )
         
     }
@@ -386,52 +417,52 @@ else{
             if(clickedDay.length>datesAndTimes.length){
             return(
                 <div className='flex flex-col align-center justify-center'>
-                    <div className='login-form'>
-                        <h2 className='login-label'>Event Name</h2>
-                        <p className='left'>{eventName}</p>
-                        <h2 className='login-label'>Event Description</h2>
-                        <p className='left'>{eventDescription}</p>
-                        <h2 className='login-label'>Event Location</h2>
-                        <p className='left'>{location}</p>
-                    </div>
                     <div>
-                        <Calendar minDetail={'decade'} tileDisabled={disableAll} className='smallCal' value = {new Date()} tileClassName={tileClass} ></Calendar>
-                        <br />
-                        <h1 className='currentDay'>{clickedDay[arrIndex].toDateString()}</h1>
-                        <br />
-                        {Tselect}
-                    </div>
+                        <div className='login-form'>
+                             <h2 className='login-label'>Event Name</h2>
+                             <p className='left'>{eventName}</p>
+                             <h2 className='login-label'>Event Description</h2>
+                             <p className='left'>{eventDescription}</p>
+                             <h2 className='login-label'>Event Location</h2>
+                             <p className='left'>{location}</p>
+        </div>
+    <Calendar minDetail={'decade'} tileDisabled={disableAll} className='smallCal' value = {new Date()} tileClassName={tileClass} ></Calendar>
+    {console.log(allDates)}
+    </div>
+    <br />
+    <h1 className='currentDay'>{clickedDay[arrIndex].toDateString()}</h1>
+    <br />
+    {Tselect}
                 </div>
-                )
+            )
         }
         else{
             return(
                 <div className='flex flex-col align-center justify-center'>
-                    <div className='login-form'>
-                        <h2 className='login-label'>Event Name</h2>
-                        <p className='left'>{eventName}</p>
-                        <h2 className='login-label'>Event Description</h2>
-                        <p className='left'>{eventDescription}</p>
-                        <h2 className='login-label'>Event Location</h2>
-                        <p className='left'>{location}</p>
-                    </div>
                     <div>
-                        <Calendar minDetail={'decade'} tileDisabled={disableAll} className='smallCal' value = {new Date()} tileClassName={tileClass} ></Calendar>
-                        {console.log(allDates)}
-                    </div>
-                    <div>
-                        <br />
-                        <h1 className='currentDay'>{clickedDay[arrIndex].toDateString()}</h1>
-                        <br />
-                        {Tselect}
-                        <button onClick={()=>{lockDateTime(true)}}>Lock dates and times</button>
-                    </div>
+                        <div className='login-form'>
+                             <h2 className='login-label'>Event Name</h2>
+                             <p className='left'>{eventName}</p>
+                             <h2 className='login-label'>Event Description</h2>
+                             <p className='left'>{eventDescription}</p>
+                             <h2 className='login-label'>Event Location</h2>
+                             <p className='left'>{location}</p>
+        </div>
+    <Calendar minDetail={'decade'} tileDisabled={disableAll} className='smallCal' value = {new Date()} tileClassName={tileClass} ></Calendar>
+    {console.log(allDates)}
+    </div>
+    <br />
+    <h1 className='currentDay'>{clickedDay[arrIndex].toDateString()}</h1>
+    <br />
+    {Tselect}
+    <button onClick={()=>{lockDateTime(true)}}>Lock dates and times</button>
+
                 </div>)
-            }
+        }
         }
         else if(clickedDay.length>datesAndTimes.length){
         if(arrIndex===0){
-return(<div>
+return(<div className='flex flex-col align-center justify-center'>
     <div>
     <div className='login-form'>
             <h2 className='login-label'>Event Name</h2>
@@ -456,7 +487,7 @@ return(<div>
 
 </div>);}
 else if(arrIndex===(clickedDay.length-1)){
-    return(<div>
+    return(<div className='flex flex-col align-center justify-center'>
         <div>
         <div className='login-form'>
             <h2 className='login-label'>Event Name</h2>
@@ -483,7 +514,7 @@ else if(arrIndex===(clickedDay.length-1)){
     </div>);
 }
 else{
-    return(<div>
+    return(<div className='flex flex-col align-center justify-center'>
         <div>
         <div className='login-form'>
             <h2 className='login-label'>Event Name</h2>
@@ -516,7 +547,7 @@ else{
 }
 else{
            if(arrIndex===0){
-return(<div>
+return(<div className='flex flex-col align-center justify-center'>
     <div>
     <div className='login-form'>
             <h2 className='login-label'>Event Name</h2>
@@ -546,7 +577,7 @@ return(<div>
         
 </div>);}
 else if(arrIndex===(clickedDay.length-1)){
-    return(<div>
+    return(<div className='flex flex-col align-center justify-center'>
         <div>
         <div className='login-form'>
             <h2 className='login-label'>Event Name</h2>
@@ -575,7 +606,7 @@ else if(arrIndex===(clickedDay.length-1)){
     </div>);
 }
 else{
-    return(<div>
+    return(<div className='flex flex-col align-center justify-center'>
         <div>
         <div className='login-form'>
             <h2 className='login-label'>Event Name</h2>
@@ -611,7 +642,7 @@ else{
 }
 else{
     if(clickedDay.length>0){
-    return(<div>
+    return(<div className='flex flex-col align-center justify-center'>
         <div className='login-form'>
             <h2 className='login-label'>Event Name</h2>
         <p className='left'>{eventName}</p>
@@ -633,7 +664,7 @@ else{
     </div>);
 }
 else{
-    return(<div>
+    return(<div className='flex flex-col align-center justify-center'>
         <div>
         <div className='login-form'>
             <h2 className='login-label'>Event Name</h2>
