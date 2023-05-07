@@ -27,46 +27,34 @@ const disableAll = ({dates}) =>{
     return true;
 }
 return(
-<div>
-<h1 className='titleText'>Welcome to Coordinote</h1>
-<br />
-<br />
-<br />
-<br />
-<h2 className='howItWorks'>How it works</h2>
-<br />
-<br />
-<div className='inputPage'>
-    <h3 className='right'>Enter a name, brief description, location, and add an image for your event</h3>
-    <div className='Login-page'>
+    <div className='centered-container'>
+        <h1 className='titleText pb-10'>Welcome to Coordinote</h1>
+        <h2 className='font-bold text-l dark-green-100 pb-5'>A scheduling platform to plan your events</h2>
+        <h2 className='font-bold light-green-100 pb-2.5'>How it works</h2>
+        <h3 className='text-center pb-4'>Enter a name, brief description, location, and add an image for your event</h3>
         <div className='login-form'>
-        <label className='homepageLabel'>
-                    {'Event Input: '}
+            <label className='homepageLabel'>
+                {'Event Input: '}
                 <p className="homepageInput" >I'm an event name </p>
-                </label>
-        <label className='homepageLabel'>
-                    {'Event Description: '}
-                    <p className="homepageInput">I'm a brief description</p>
-                </label>
-                <label className='homepageLabel'>
-                    {'Location Input: '}
-                    <p className="homepageInput">1255 Hempstead Turnpike</p>
-                </label>
-                <label className='homepageLabel'>
-                        {'Event Image: '}
-                        <p className='homepageInput'>I am an image input</p>
-                    </label>
-
+            </label>
+            <label className='homepageLabel'>
+                {'Event Description: '}
+                <p className="homepageInput">I'm a brief description</p>
+            </label>
+            <label className='homepageLabel'>
+                {'Location Input: '}
+                <p className="homepageInput">1255 Hempstead Turnpike</p>
+            </label>
+            <label className='homepageLabel'>
+                {'Event Image: '}
+                <p className='homepageInput'>I am an image input</p>
+            </label>
+        </div>
+        <div className='calContain'>
+            <h3 className='light-green-200 pb-4'>Pick the possible dates for your event</h3>
+            <Calendar minDetail={'month'} value = {new Date(2023,4,1,0,0,0,0)} tileClassName={tileClass} tileDisabled={disableAll}/>
         </div>
     </div>
-</div>
-
-<div className='calContain'>
-<Calendar minDetail={'month'} value = {new Date(2023,4,1,0,0,0,0)} tileClassName={tileClass} tileDisabled={disableAll}/>
-<h3>Pick the dates on which you are avalible</h3>
-
-</div>
-</div>
-)
+    )
 }
 export default Homepage;

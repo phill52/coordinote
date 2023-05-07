@@ -10,6 +10,10 @@ import events from './data/events.js'
 import path from 'path'
 import decodeIDToken from './authenticateToken.js';
 import {fileURLToPath} from 'url';
+import { Server } from 'socket.io';
+import http from 'http';
+  
+
 const __filename = fileURLToPath(import.meta.url);
 // import {initializeApp} from 'firebase/app';
 // import { getAnalytics } from "firebase/analytics";
@@ -64,6 +68,19 @@ app.use('/api/yourpage/events/imageTest',async(req,res,next)=>{
 })
 
 app.use('/api/yourpage/events/createEvent',async(req,res,next) => {
+    next();
+})
+
+app.use('/api/user/:id',async(req,res,next) => {
+    res.header('Access-Control-Allow-Origin', '*');
+    res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization, Custom-Header');
+    next();
+})
+
+app.use('/api/fireuser',async(req,res,next) => {
+    console.log(req.headers)
+    res.header('Access-Control-Allow-Origin', '*');
+    res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization, Custom-Header');
     next();
 })
 
@@ -132,36 +149,37 @@ app.use('/api/yourpage/events/myEvents/:userId',async (req,res,next)=>{
 //     next()
 // })
 
-app.use('/api/login',(req,res,next) => {
-    if(req.session.user){
-        return res.redirect('/yourpage')
-    }
-    else{
-        next()
-    }
-})
+// app.use('/api/login',(req,res,next) => {
+//     if(req.session.user){
+//         return res.redirect('/yourpage')
+//     }
+//     else{
+//         next()
+//     }
+// })
 
-app.use('/api/register',(req,res,next) => {
-    if(req.session.user){
-        return res.redirect('/yourpage')
-    }
-    else{
-        next();
-    }
-})
+// app.use('/api/register',(req,res,next) => {
+//     if(req.session.user){
+//         return res.redirect('/yourpage')
+//     }
+//     else{
+//         next();
+//     }
+// })
 
 // https://stackoverflow.com/questions/27117337/exclude-route-from-express-middleware
-var unless = function(path, middleware) {
-    return function(req, res, next) {
-        if (path === req.path) {
-            return next();
-        } else {
+var unless = function(paths, middleware) {
+    return function(req,res,next) {
+        if (req.path.startsWith('/api') && !paths.includes(req.path)) {
             return middleware(req, res, next);
+        } else {
+            return next();
         }
-    };
+    }
 };
-// Initialize Firebase, unless signup
-app.use(unless('/api/signup', decodeIDToken));
+// Initialize Firebase, unless for unprotected routes
+const exclude = ['/api/signup', '/api/users/:id'];
+app.use(unless(exclude, decodeIDToken));
 
 const getAuthToken = (req, res, next) => {
     if (req.headers.authorization &&
@@ -230,8 +248,53 @@ const main = async() => {
     const db = await connection.dbConnection();
 }
 
+const server = http.createServer(app);
+let io = new Server(server);
 
-app.listen(3001, () => {
+
+io.on('connection', async (socket) => {
+    console.log('new client connected', socket.id);
+  
+    socket.on('user_join', async (name, room) => {
+      console.log('A user joined their name is ' + name);
+      console.log('The user joined room ' + room);
+      socket.join(room);
+      // socket.broadcast.emit('user_join', name);
+      let evnt = await events.getEventById(room);
+      let tempArr= evnt.chatLogs;
+      io.to(room).emit('user_join', tempArr);
+    });
+  
+    socket.on('message', async ({name, message, room}) => {
+      console.log(name, message, room, socket.id);
+      let evnt = await events.getEventById(room);
+      let tempArr= evnt.chatLogs;
+      tempArr=[...tempArr,{name:name, message:message}];
+      let noErr=true;
+      try{
+      await events.updateChatLogs(room,tempArr);
+      console.log('hi')
+      }
+      catch(e){
+        noErr=false
+      }
+      if(noErr){
+
+      io.to(room).emit('message', {name:name, message:message});
+      console.log('no error')
+      }
+      else{
+        io.to(room).emit('message',{name,message})
+        console.log('error');
+      }
+    });
+  
+    socket.on('disconnect', () => {
+      console.log('Disconnect Fired');
+    });
+  });
+
+server.listen(3001, () => {
     console.log("We've now got a server!");
     console.log('Your routes will be running on http://localhost:3001');
 });

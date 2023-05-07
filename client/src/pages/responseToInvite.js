@@ -1,14 +1,15 @@
 import 'react-clock/dist/Clock.css';
 import 'react-datetime-picker/dist/DateTimePicker.css';
 import TimeSelector from '../components/TimeSelector';
-import React, {useState, useEffect} from 'react';
+import React, {useState, useRef, useEffect} from 'react';
 import Calendar from 'react-calendar';
 import axios from 'axios'
 import {Link, useParams,useNavigate} from 'react-router-dom';
 import {auth, createToken } from '../fire';
 import TimeViewer from '../components/TimeViewer';
 import {Card,CardHeader,CardMedia,CardContent,CardActionArea,Accordion,AccordionSummary,Typography,Grid, unstable_createMuiStrictModeTheme} from '@mui/material';
-
+import io from 'socket.io-client';
+import Chat from '../components/chat';
 
 
 const ResponseToInvite = (props) => {
@@ -37,14 +38,24 @@ const [deleteConfirm,setDeleteConfirm]=useState(false);
 const [deleteMsg,setDeleteMsg] = useState('');
 const [errMsg,setErrMsg] = useState('');
 const [reloadIt,setReloadIt]= useState(false);
+const [chatOption,setChatOption] = useState(false);
 const nav=useNavigate();
 useEffect(()=>{
     async function formData(){
         try{
             const header=await createToken();
             console.log(header)
-        let {data}=await axios.get(`http://localhost:3001/api/yourpage/events/${id}`,{headers:{'Content-Type':'application/json',
+            let data ={};
+        if(window.location.hostname==='localhost'){
+        let response=await axios.get(`http://localhost:3001/api/yourpage/events/${id}`,{headers:{'Content-Type':'application/json',
         authorization:header.headers.Authorization}});
+        data=response.data;
+        }
+        else{
+            let response = await axios.get(`https://coordinote.us/api/yourpage/events/${id}`,{headers:{'Content-Type':'application/json',
+            authorization:header.headers.Authorization}});
+            data=response.data
+        }
         console.log(data)
         setEventData(data);
         setLoading(false)
@@ -111,8 +122,18 @@ useEffect(()=>{
 async function bestDatesRequest(){
     try{
         let header= await createToken();
-    let {data}=await axios.get(`http://localhost:3001/api/yourpage/events/bestTimes/${id}`,{headers:{'Content-Type':'application/json',
+        let data={};
+        if(window.location.hostname==='localhost'){
+    let response=await axios.get(`http://localhost:3001/api/yourpage/events/bestTimes/${id}`,{headers:{'Content-Type':'application/json',
         authorization:header.headers.Authorization}});
+        data=response.data;
+    }
+    else{
+        let response=await axios.get(`https://coordinote.us/api/yourpage/events/bestTimes/${id}`,{headers:{'Content-Type':'application/json',
+        authorization:header.headers.Authorization}});
+        data=response.data;
+    }
+
         setBestDates(data);
         console.log(data);
         setError(false)
@@ -125,14 +146,24 @@ async function bestDatesRequest(){
 async function getTimesRequest(){
     try{
         let header= await createToken();
-    let {data}=await axios.get(`http://localhost:3001/api/yourpage/events/${id}`,{headers:{'Content-Type':'application/json',
+        let data={};
+        if(window.location.hostname==='localhost'){
+    let response=await axios.get(`http://localhost:3001/api/yourpage/events/${id}`,{headers:{'Content-Type':'application/json',
     authorization:header.headers.Authorization}});
+    data=response.data;
+        }
+        else{
+            let response=await axios.get(`https://coordinote.us/api/yourpage/events/${id}`,{headers:{'Content-Type':'application/json',
+    authorization:header.headers.Authorization}});
+    data=response.data;
+        }
     console.log(data)
     setEventData(data);
     setCurDate(new Date(data.domainDates[0].date))
     setError(false)
     }
     catch(e){
+        console.log(e)
         setError(true);
     }
 }
@@ -148,6 +179,7 @@ useEffect(()=>{
             }
             catch(e){
                 setError(true);
+                console.log(e)
             }
         }
     }formData()
@@ -156,9 +188,18 @@ useEffect(()=>{
 useEffect(()=>{
     async function formData(){
         try{
+            let data=[];
         const header=await createToken();
-        let {data}=await axios.get(`http://localhost:3001/api/yourpage/events/bestTimes/${id}`,{headers:{'Content-Type':'application/json',
+        if(window.location.hostname==='localhost'){
+        let response=await axios.get(`http://localhost:3001/api/yourpage/events/bestTimes/${id}`,{headers:{'Content-Type':'application/json',
         authorization:header.headers.Authorization}});
+            data=response.data;
+    }
+    else{
+        let response=await axios.get(`https://coordinote.us/api/yourpage/events/bestTimes/${id}`,{headers:{'Content-Type':'application/json',
+        authorization:header.headers.Authorization}});
+            data=response.data;
+    }
         setBestDates(data);
         console.log(data);
         }
@@ -167,39 +208,6 @@ useEffect(()=>{
         }
     }formData()
 },[id])
-const cardBuilder= (event) =>{
-    return (
-        <Grid sx={{backgroundColor:'none'}} item xs={12} sm={7} md={5} lg={4} xl={3} key ={eventData._id}>
-        <Card sx={{backgroundColor:'transparent'}}>
-            <CardContent>
-            <Typography
-                sx={{
-                    borderBottom: '1px solid #1e8678',
-                    fontWeight: 'bold'
-                  }}
-                  gutterBottom
-                  variant='body1'
-                  component='div'
-                  >
-                    <label className='homepageLabel'>
-                        Event Name
-                    <h1 className='makeBlack'>{eventData.name}</h1>
-                    </label>
-                    <label className='homepageLabel'>
-                        Event Description
-                    <h2 className='makeBlack'>{eventData.description}</h2>
-                    </label>
-                    <label className='homepageLabel'>
-                        Event Location
-                    <p className='makeBlack'>{eventData.location}</p>
-                    </label>
-                </Typography>
-        <TimeViewer date={new Date(event.date)} startTime={new Date(event.time.start)} endTime={new Date(event.time.end)} attendees={eventData.attendees} ></TimeViewer>
-        </CardContent>
-        </Card>
-        </Grid>
-        )
-}
 useEffect(()=>{
     async function formData(){
         if(!error){
@@ -259,8 +267,10 @@ useEffect(()=>{
         if(deleteConfirm){
             let header = await createToken();
             let oput = {userId:uid};
+            if(window.location.hostname==='localhost'){
             await axios.delete(`http://localhost:3001/api/yourpage/events/${id}`,{headers:{'Content-Type':'application/json',
             authorization:header.headers.Authorization}})
+
             .then(function (response){
                 console.log(response);
                 
@@ -270,6 +280,21 @@ useEffect(()=>{
             .catch(function (error){
                 console.log(error);
             });
+        }
+        else{
+            await axios.delete(`https://coordinote.us/api/yourpage/events/${id}`,{headers:{'Content-Type':'application/json',
+            authorization:header.headers.Authorization}})
+
+            .then(function (response){
+                console.log(response);
+                
+                nav('/',{replace:true})
+
+            })
+            .catch(function (error){
+                console.log(error);
+            });
+        }
    
         }
     }formData()
@@ -344,7 +369,8 @@ useEffect(()=>{
         try{
             const header=await createToken();
             console.log(header);
-            await axios.post('http://localhost:3001/api/api/updateAvailability',oput,{headers:{'Content-Type':'application/json',
+            if(window.location.hostname==='localhost'){
+            await axios.post('http://localhost:3001/api/updateAvailability',oput,{headers:{'Content-Type':'application/json',
             authorization:header.headers.Authorization}})
             .then(function (response){
                 console.log(response);
@@ -358,6 +384,23 @@ useEffect(()=>{
                 setPickDates(true);
                 setFinished(false);
             });
+        }
+        else{
+            await axios.post('https://coordinote.us/api/updateAvailability',oput,{headers:{'Content-Type':'application/json',
+            authorization:header.headers.Authorization}})
+            .then(function (response){
+                console.log(response);
+                setReloadIt(true);
+                setPickDates(false);
+                setFinished(false);
+                console.log(datesAndTimes);
+            })
+            .catch(function (error){
+                console.log(error);
+                setPickDates(true);
+                setFinished(false);
+            });
+        }
             }
             catch(e){
 
@@ -627,6 +670,15 @@ else{
 }
 }
 }
+else if(chatOption){
+return(
+    <div>
+        <Calendar minDetail={'month'} tileDisabled={()=>{return true}} className='smallCal' value = {new Date()} tileClassName={({date})=>{return tileClassBuilder(date,eventData)}}></Calendar>
+        <Chat id={id} ></Chat>
+        <button className='App-link' onClick={()=>{setChatOption(false)}}>Go Back</button>
+    </div>
+)
+}
 else{
     return(
         <div>
@@ -635,6 +687,8 @@ else{
     <button className='App-link' onClick={()=>{setPickDates(true)}}>Pick Your Dates</button>
     <br />
     <button className='App-link' onClick={()=>{setViewEventPage(true)}}>View the event page</button>
+    <br />
+    <button className='App-link' onClick={()=>{setChatOption(true)}}>Chat</button>
 
     </div>
     );

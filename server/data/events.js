@@ -37,13 +37,14 @@ const createEvent = async function (eventName, location, description, domainDate
     const userCollection = await users();
 
     let newEvent = {
-        name: eventName,
-        domainDates: domainDates,
-        location: location,
-        description: description,
-        attendees: attendees,
-        image: image,
-        creatorID: userId
+        name:eventName,
+        domainDates:domainDates,
+        location:location,
+        description,description,
+        attendees:attendees,
+        image:image,
+        creatorID:userId,
+        chatLogs:[]
     }
 
     // Add event to events collection
@@ -62,6 +63,25 @@ const createEvent = async function (eventName, location, description, domainDate
 
     return await getEventById(insertEvent.insertedId.toString());
 }
+
+const updateChatLogs = async (eventId,newChatLog) =>{
+    const eventCollection = await events();
+    console.log(eventId)
+    try{
+    const updatedEvent= await eventCollection.updateOne(
+        {_id:new ObjectId(eventId)},
+        {$set: {chatLogs:newChatLog}}
+    ) 
+    console.log(updatedEvent);
+    return await getEventById(eventId);
+    }
+catch(e){
+console.log('Error, not able to update chat');
+throw "Error"
+
+}
+}
+
 
 //replaces fields in event document with the ones pass in as parameters
 const updateEvent = async(eventId, eventName, location, description, domainDates, attendees , image, creatorId) => {
@@ -83,7 +103,8 @@ const updateEvent = async(eventId, eventName, location, description, domainDates
             "location":location?location:oldEvent.location, 
             "description":description?description:oldEvent.description,
             "attendees":attendees?attendees:oldEvent.attendees,
-            "image":image?attendees:oldEvent.image
+            "image":image?attendees:oldEvent.image,
+            "chatLogs":oldEvent.chatLogs
         }}
     )
     if(editedEvent.modifiedCount==0 && editedEvent.matchedCount==0){
@@ -388,5 +409,6 @@ export default {
     getAttendeeAvailability,
     addAttendeeAvailabilityNewDay,
     addEventDate,
-    removeEventDate
+    removeEventDate,
+    updateChatLogs
 }

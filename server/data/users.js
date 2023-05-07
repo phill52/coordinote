@@ -36,7 +36,8 @@ const createUser = async function (username, userId) {
         username: username,
         picture: "",
         createdEvents: [],
-        attendedEvents:[]
+        attendedEvents:[],
+        picture: "https://coordinote.s3.amazonaws.com/defaultPFP.png"
     }
 
     // Insert into database
@@ -117,7 +118,7 @@ const checkUsernameUnique = async function (username) {
     return true;
 }
 
-const addUserPicture = async function (userId, picture) {
+const setUserPicture = async function (userId, picture) {
     // Validation
     validation.checkNumOfArgs(arguments, 2);
     validation.checkIsProper(userId, 'string', 'userId');
@@ -173,6 +174,6 @@ export default {
     getUserByUID,
     getUserById,
     checkUsernameUnique,
-    addUserPicture,
+    setUserPicture,
     getUserEvents
 }
