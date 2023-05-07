@@ -1,7 +1,7 @@
 import 'react-clock/dist/Clock.css';
 import 'react-datetime-picker/dist/DateTimePicker.css';
 import TimeSelector from '../components/TimeSelector';
-import React, {useState, useRef, useEffect} from 'react';
+import React, {useState, useRef, useEffect, useContext} from 'react';
 import Calendar from 'react-calendar';
 import axios from 'axios'
 import {Link, useParams,useNavigate} from 'react-router-dom';
@@ -10,12 +10,14 @@ import TimeViewer from '../components/TimeViewer';
 import {Card,CardHeader,CardMedia,CardContent,CardActionArea,Accordion,AccordionSummary,Typography,Grid, unstable_createMuiStrictModeTheme} from '@mui/material';
 import io from 'socket.io-client';
 import Chat from '../components/chat';
+import AuthContext from '../AuthContext';
 
 
 const ResponseToInvite = (props) => {
     const {id} = useParams(); 
     let card=null;
-    const uid='6449858e039651db9d8beed2';
+    // const uid='6449858e039651db9d8beed2';
+const [uid, setUid]=useState('');
 const [eventData,setEventData]=useState(null);
 const [curDate,setCurDate] = useState(new Date());
 const [loading,setLoading] = useState(true);
@@ -39,6 +41,21 @@ const [deleteMsg,setDeleteMsg] = useState('');
 const [errMsg,setErrMsg] = useState('');
 const [reloadIt,setReloadIt]= useState(false);
 const [chatOption,setChatOption] = useState(false);
+const [availableAttendees, setAvailableAttendees] = useState([]);
+const [unavailableAttendees, setUnavailableAttendees] = useState([]);
+
+
+
+const {mongoUser, loadingMongo} = useContext(AuthContext);
+
+useEffect(()=>{
+    if (mongoUser) {
+        setUid(mongoUser._id);
+    } 
+}, [mongoUser])
+
+
+
 const nav=useNavigate();
 useEffect(()=>{
     async function formData(){
@@ -410,6 +427,18 @@ useEffect(()=>{
     }
 }formData()
 },[finish])
+
+
+if (loadingMongo) {
+    return (
+        <div>
+            <p>
+                Loading
+            </p>
+        </div>
+    )
+} 
+
 const tileClassBuilder = (date,event)=>{
     for(let x=0;x<event.domainDates.length;x++){
         for(let y=0;y<bestDates.length;y++){

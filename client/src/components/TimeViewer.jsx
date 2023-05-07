@@ -4,6 +4,9 @@ const TimeViewer = (props) => {
   const {startTime,endTime,date,attendees} = props;
   const attendeeCount=attendees.length;
   const [timeSlots, setTimeSlots] = useState([]);
+  const [attendeesAtTime, setAttendeesAtTime] = useState([]);
+  const [unavailableAttendeesAtTime, setUnavailableAttendeesAtTime] = useState([]);
+  const [checkedTime, setCheckedTime] = useState(null);
   //console.log(date)
   function formatAMPM(date) {
     let hours = date.getHours();
@@ -37,7 +40,8 @@ const TimeViewer = (props) => {
      console.log(startTime)
       const formattedTime = formatAMPM(startTime);
       const insertedStartTime = new Date(startTime);
-      let attendeesAvailable=0;
+      let attendeesAvailable=[];
+      let attendeesUnavailable=[];
       for(let indx in attendees){
         let attendee=attendees[indx]
         //console.log(attendee)
@@ -54,13 +58,15 @@ const TimeViewer = (props) => {
             }
           }
           if (available){
-             attendeesAvailable++;
+            attendeesAvailable.push(attendee)
             // console.log('i should work');
           }
       }}
-
-      const color = `rgb(255, 140, 0, ${attendeesAvailable/attendeeCount})`;
-      slots.push({ time: formattedTime, comparableTime: insertedStartTime, attendeesAvailable: attendeesAvailable});
+      attendeesUnavailable = attendees.filter(attendee => !attendeesAvailable.includes(attendee));
+      console.log(attendeesAvailable);
+      const color = `rgb(255, 140, 0, ${attendeesAvailable.length/attendeeCount})`;
+      slots.push({ time: formattedTime, comparableTime: insertedStartTime, attendeesAvailable: attendeesAvailable,
+      attendeesUnavailable: attendeesUnavailable, color: color});
       startTime.setMinutes(startTime.getMinutes() + 30);
     }
     console.log(slots);
@@ -80,8 +86,8 @@ const TimeViewer = (props) => {
     <div className="time-selector">
       <ul className="time-range">
           {timeSlots.map((slot, index) => { 
-            let color = `rgb(255, 140, 0, ${slot.attendeesAvailable/attendeeCount})`;
-            if((slot.attendeesAvailable/attendeeCount)===1){
+            let color = `rgb(255, 140, 0, ${slot.attendeesAvailable.length/attendeeCount})`;
+            if((slot.attendeesAvailable.length/attendeeCount)===1){
               color='rgb(124,252,0)'
             }
             if(slot.attendeesAvailable===0){
@@ -99,12 +105,50 @@ const TimeViewer = (props) => {
             <li className="row" key={slot.time}>
             <div className="time-label">{slot.time}</div>
             <div
-              className={`time-slot`}
+              className={`time-slot
+              ${slot.comparableTime == checkedTime ? "viewer-select" : ""}`}
               style={{"backgroundColor":color}}
+              onClick={() => {
+                console.log("UNAVAILABLE: ", slot.attendeesUnavailable)
+                if (slot.comparableTime == checkedTime) {
+                  setCheckedTime(null);
+                  setAttendeesAtTime([]);
+                  setUnavailableAttendeesAtTime([]);
+                } else {
+                  setCheckedTime(slot.comparableTime);
+                  setAttendeesAtTime(slot.attendeesAvailable);
+                  setUnavailableAttendeesAtTime(slot.attendeesUnavailable);
+                }
+              }
+              }
             />
         </li>
         )}})}        
       </ul>
+      {checkedTime &&
+      <div className="attendees">
+        <ul>
+          Attendees Available at {formatAMPM(checkedTime)}:
+          {attendeesAtTime.map((attendee) => {
+            return (
+              <li key={attendee._id}>
+                {attendee._id}
+              </li>
+            );
+          })}
+        </ul>
+        <ul>
+          Attendees Unavailable at {formatAMPM(checkedTime)}:
+          {unavailableAttendeesAtTime.map((attendee) => {
+            return (
+              <li key={attendee._id}>
+                {attendee._id}
+              </li>
+            );
+          })}
+        </ul>
+      </div>
+      }
     </div>
   );
 };
