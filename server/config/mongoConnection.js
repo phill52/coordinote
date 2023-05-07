@@ -8,7 +8,7 @@ const settings = {
 }
 
 import dotenv from 'dotenv';
-dotenv.config({path:'../.env'});
+dotenv.config({path:'.env'});
 const uri = process.env.DB_URL
 let _connection = undefined;
 let _db = undefined;
