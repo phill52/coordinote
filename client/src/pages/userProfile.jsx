@@ -17,7 +17,15 @@ const Profile = () => {
     async function formData(){
       const header=await createToken();
       try{
-        const data = await axios.get(`http://localhost:3001/api/user/${id}`,{headers:{'Content-Type':'application/json','Authorization':header.headers.Authorization}})
+        let data={};
+        if(window.location.hostname==='localhost'){
+        const response = await axios.get(`http://localhost:3001/api/user/${id}`,{headers:{'Content-Type':'application/json','Authorization':header.headers.Authorization}})
+        data=response;
+        }
+        else{
+          const response = await axios.get(`https://coordinote.us/api/user/${id}`,{headers:{'Content-Type':'application/json','Authorization':header.headers.Authorization}})
+          data=response;
+        }
         setLoading(false);
         setErr(false);
         setUserData(data.data)

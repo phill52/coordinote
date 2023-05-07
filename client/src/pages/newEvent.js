@@ -294,6 +294,15 @@ useEffect(()=>{
         })
         .catch(function (error){
             console.log(error);
+        });}
+        else{
+            await axios.post('https://coordinote.us/api/yourpage/events/createEvent',{name:eventName,location:location,domainDates:domDates,description:eventDescription,image:fileUrl,attendees:[]},{headers:{'Content-Type':'application/json',
+        authorization:header.headers.Authorization}})
+        .then(function (response){
+            console.log(response);
+        })
+        .catch(function (error){
+            console.log(error);
         });
         }
         }

@@ -23,6 +23,7 @@ const MyEvents = ({invited}) => {
         try{
         const header=await createToken();
         console.log(header.headers);
+        if(window.location.hostname==='localhost'){
         await axios.get(`http://localhost:3001/api/yourpage/events/myEvents`,{headers:{'Content-Type':'application/json','Authorization':header.headers.Authorization}})
         .then(function (response){
           setLoading(false)
@@ -34,7 +35,21 @@ const MyEvents = ({invited}) => {
           console.log(error)
           setErr(true);
           setLoading(false)
-        });
+        });}
+        else{
+          await axios.get(`https://coordinote.us/api/yourpage/events/myEvents`,{headers:{'Content-Type':'application/json','Authorization':header.headers.Authorization}})
+          .then(function (response){
+            setLoading(false)
+            setErr(false)
+            if (invited) setUserEvents(response.data.attended); 
+            else setUserEvents(response.data.events);
+          })
+          .catch(function (error){
+            console.log(error)
+            setErr(true);
+            setLoading(false)
+          });
+        }
         }
         catch(e){
           setErr(true);

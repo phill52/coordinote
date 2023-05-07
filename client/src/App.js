@@ -20,7 +20,7 @@ function App() {
   const [loadingUser, setLoadingUser] = useState(true);
   const [currentUser, setCurrentUser] = useState(null);
   const [mongoUser, setMongoUser] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [loadingMongo, setLoadingMongo] = useState(true);
   useEffect(() => { //firebase useEffect
     const unsubscribe = auth.onAuthStateChanged((user) => {
       if (user) {
@@ -43,12 +43,17 @@ function App() {
       let data;
       if (currentUser) {
         try{
+          if(window.location.hostname==='localhost'){
           data = await axios.get('http://localhost:3001/api/fireuser',{headers:{'Content-Type':'application/json', authorization:header.headers.Authorization}});
+          }
+          else{
+            data = await axios.get('https://coordinote.us/api/fireuser',{headers:{'Content-Type':'application/json', authorization:header.headers.Authorization}})
+          }
           setMongoUser({
             username: data.data.username,
             _id: data.data._id,
           });
-          setLoading(false);
+          setLoadingMongo(false);
         }
         catch(e){
           console.log(e);
@@ -89,7 +94,7 @@ function App() {
   }
   
   return (
-    <AuthContext.Provider value={{currentUser, setCurrentUser, mongoUser, loading}}>
+    <AuthContext.Provider value={{currentUser, setCurrentUser, mongoUser, loadingMongo}}>
     <Router className='router'>
     <div className="App">
       <Header />
