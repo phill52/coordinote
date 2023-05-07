@@ -343,3 +343,7 @@ body{
 .dark-green-100{
   color: #183A1D;
 }
+
+.viewer-select {
+  border: black 3px solid;
+}

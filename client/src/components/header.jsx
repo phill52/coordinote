@@ -5,13 +5,13 @@ import AuthContext from '../AuthContext';
 import {Link} from 'react-router-dom';
 
 const Header = () => {
-  const {mongoUser, currentUser, loading} = React.useContext(AuthContext);
+  const {mongoUser, currentUser, loadingMongo} = React.useContext(AuthContext);
   const signOut = () => {
     auth.signOut()
     window.location.reload(false)
   };
 
-  if (loading){
+  if (currentUser&&loadingMongo){
     return (
       <header className='header'>
         <p>...</p>

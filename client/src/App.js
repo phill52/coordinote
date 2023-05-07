@@ -20,7 +20,7 @@ function App() {
   const [loadingUser, setLoadingUser] = useState(true);
   const [currentUser, setCurrentUser] = useState(null);
   const [mongoUser, setMongoUser] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [loadingMongo, setLoadingMongo] = useState(true);
   useEffect(() => { //firebase useEffect
     const unsubscribe = auth.onAuthStateChanged((user) => {
       if (user) {
@@ -53,7 +53,7 @@ function App() {
             username: data.data.username,
             _id: data.data._id,
           });
-          setLoading(false);
+          setLoadingMongo(false);
         }
         catch(e){
           console.log(e);
@@ -94,7 +94,7 @@ function App() {
   }
   
   return (
-    <AuthContext.Provider value={{currentUser, setCurrentUser, mongoUser, loading}}>
+    <AuthContext.Provider value={{currentUser, setCurrentUser, mongoUser, loadingMongo}}>
     <Router className='router'>
     <div className="App">
       <Header />
