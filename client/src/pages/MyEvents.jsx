@@ -75,10 +75,11 @@ const MyEvents = ({invited}) => {
       return CardBuilder(event);
     });
 
-    if (card.length === 0) {
+    if (card.length === 0){
+      const msg = invited ? "You have not been invited to any events yet!" : "You have not created any events yet!";
       return (
         <div>
-          <h1>You have not created any events yet!</h1>
+          <h1>{msg}</h1>
         </div>
       );
     }
