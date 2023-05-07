@@ -41,6 +41,7 @@ const NewEvent= ()=>{
     const [fileUrl,setFileUrl] = useState('');
     const [fileForm,setFileFormValue]=useState(null);
     const [inputTaken,setInputTaken] = useState(false);
+    const [lastPageReached,setLastReached] = useState(false);
     const datesEqual = (dte1,dte2) =>{
         if(!(dte1<dte2)){
             if(!(dte1>dte2)){
@@ -50,7 +51,6 @@ const NewEvent= ()=>{
         return false;
     }
     useEffect(()=>{
-        console.log(curDate)
         let tempArr=[...clickedDay];
         if(!firstLoad){
         if(arrayIncludes(tempArr,dates)){
@@ -79,9 +79,7 @@ const NewEvent= ()=>{
                  if(datesEqual(curDate,clickedDay[x])){
                     index=x;
                  }
-                    
-                    console.log(clickedDay[x])
-                    console.log(curDate)
+
                 }
                 let times = [];
                 if(((datesAndTimes.length)<=index)||(index===-1)){
@@ -93,19 +91,15 @@ const NewEvent= ()=>{
                   //  setCurTimes(datesAndTimes[index])
                   
                     times=datesAndTimes[index].time;
-                    console.log(times)
                 }
-                console.log(curDate);
                 if(datesEqual(new Date(new Date().toDateString()),new Date(curDate.toDateString()))){
                 setTselect(<TimeSelectorTwoAnchors className='centered' startTime={new Date(curDate.getFullYear(), curDate.getMonth(), curDate.getDate(), new Date().getHours(), 0, 0, 0)} endTime={new Date(curDate.getFullYear(), curDate.getMonth(), curDate.getDate(), 23, 59, 59, 0)} value = {times} date= {clickedDay[arrIndex]} change={setCurTimes}/>)
                 }
                 else{
                     setTselect(<TimeSelectorTwoAnchors className='centered' startTime={new Date(curDate.getFullYear(), curDate.getMonth(), curDate.getDate(), 0, 0, 0, 0)} endTime={new Date(curDate.getFullYear(), curDate.getMonth(), curDate.getDate(), 23,59, 59, 0)} value = {times} date= {clickedDay[arrIndex]} change={setCurTimes}/>)
                 }
-                console.log(curTimes)
             }
             catch(e){
-                console.log(e);
             }
         }fetchData()
     },[curDate])
@@ -132,13 +126,11 @@ const NewEvent= ()=>{
                 setCurDate(clickedDay[0]);
             }
             catch(e){
-                console.log(e);
             }
         }fetchData()
     },[dateLock])
     useEffect(()=>{
         async function fetchData(){
-        console.log(curTimes)
         let index=-1;
                 for(let x=0;x<clickedDay.length;x++){
                     if(!(clickedDay[x]<curDate)){
@@ -146,8 +138,6 @@ const NewEvent= ()=>{
                         index=x;
                         }
                     }
-                    console.log(clickedDay[x])
-                    console.log(curDate)
                 }
                 let tempArr=[...datesAndTimes];
                 tempArr[index]=curTimes;
@@ -156,7 +146,6 @@ const NewEvent= ()=>{
         }fetchData()
     },[curTimes])
     useEffect(()=>{
-        console.log(datesAndTimes);
     },[datesAndTimes])
 /*useEffect(()=>{
     async function fetchData(){
@@ -206,13 +195,10 @@ useEffect(()=>{
             while(curr < end){
                 newDates=[...newDates,new Date(curr)];
                 curr.setDate(curr.getDate()+1)
-                console.log(rangedate[0]);
-                console.log(curr)
             }
             setAllDates(newDates);
         }
         catch(e){
-            console.log(e);
         }
     }fetchData()
     //console.log(allDates)
@@ -279,68 +265,52 @@ useEffect(()=>{
         await axios.post('http://localhost:3001/api/yourpage/events/createEvent',{name:eventName,location:location,domainDates:domDates,description:eventDescription,image:fileUrl,attendees:[]},{headers:{'Content-Type':'application/json',
         authorization:header.headers.Authorization}})
         .then(function (response){
-            console.log(response);
         })
         .catch(function (error){
-            console.log(error);
         });}
         else{
             await axios.post('https://coordinote.us/api/yourpage/events/createEvent',{name:eventName,location:location,domainDates:domDates,description:eventDescription,image:fileUrl,attendees:[]},{headers:{'Content-Type':'application/json',
         authorization:header.headers.Authorization}})
         .then(function (response){
-            console.log(response);
         })
         .catch(function (error){
-            console.log(error);
         });
         }
         }
         catch(e){
-            console.log(e);
         }
 
     }}fetchData()
 },[dateTimeLock])
 useEffect(()=>{
 async function handleFileInput(){
-    console.log(fileForm)
     if(inputTaken){
     if((document.querySelector('input[type="file"]').files.length!==0)){
 const formData = new FormData();
-console.log(document.querySelector('input[type="file"]').files[0])
 formData.append("image",document.querySelector('input[type="file"]').files[0],document.querySelector('input[type="file"]').files[0].name)
-console.log(formData.getAll('image')[0]);
 setFileIsIn(true);
-console.log(formData)
 const header=await createToken();
 try{
     if(window.location.hostname==='localhost'){
 await axios.post('http://localhost:3001/api/yourpage/events/imageTest',formData,{headers:{'Content-Type':'multipart/form-data',
 authorization:header.headers.Authorization}})
 .then(function (response){
-    console.log(response);
     setFileUrl(response.data.imageUrl);
 })
 .catch(function (error){
-    console.log(error);
 });
-console.log('WHY WONT I WORK')
     }
     else{
         await axios.post('https://coordinote.us/api/yourpage/events/imageTest',formData,{headers:{'Content-Type':'multipart/form-data',
 authorization:header.headers.Authorization}})
 .then(function (response){
-    console.log(response);
     setFileUrl(response.data.imageUrl);
 })
 .catch(function (error){
-    console.log(error);
 });
-console.log('WHY WONT I WORK')
     }
 }
 catch(e){
-console.log(e);
 }
     }
     else{
@@ -361,7 +331,6 @@ else{
         return(
             <div>
                 <h1 className='currentDay'>All Done!</h1>
-                {console.log(output)}
             </div>
         )
     }
@@ -371,9 +340,9 @@ else{
             <div className='Login-page'>
                 <form className='login-form' onSubmit={handleSubmit}>
                 <label className='login-label'>
-                    {'Event Input: '}
-                <input className="login-input" id='eventInput' onChange={(e)=>{setEventName(e.target.value)
-                console.log(e)}} placeholder='event name' required />
+                    {'Event Name: '}
+                <input className="login-input" id='nameInput' onChange={(e)=>{setEventName(e.target.value)
+                }} placeholder='event name' required />
                 </label>
                 <br />
                 <label className='login-label'>
@@ -389,7 +358,6 @@ else{
                 <label className='login-label'>
                         {'Event Image: '}
                         <input type='file' accept='image/png, image/jpeg, image/jpg' required className='login-input' id='imageInput' onChange={(e)=>{
-                            console.log(e)
                             setInputTaken(true)
                             setFileFormValue(e)}} />
                     </label>
@@ -405,250 +373,78 @@ else{
     }
     else{
     if(dateLock){
+        if(clickedDay.length===1&&!lastPageReached){
+            setLastReached(true)
+        }
+
         let tmpDte=new Date(rangedate[1]);
         tmpDte.setDate(tmpDte.getDate()-1);
-        if(clickedDay.length===1){
-            if(clickedDay.length>datesAndTimes.length){
             return(
-                <div>
                     <div>
-                        <div className='login-form'>
-                             <h2 className='login-label'>Event Name</h2>
-                             <p className='left'>{eventName}</p>
-                             <h2 className='login-label'>Event Description</h2>
-                             <p className='left'>{eventDescription}</p>
-                             <h2 className='login-label'>Event Location</h2>
-                             <p className='left'>{location}</p>
-        </div>
-    <Calendar minDetail={'decade'} tileDisabled={disableAll} className='smallCal' value = {new Date()} tileClassName={tileClass} ></Calendar>
-    {console.log(allDates)}
-    </div>
-    <br />
-    <h1 className='currentDay'>{clickedDay[arrIndex].toDateString()}</h1>
-    <br />
-    {Tselect}
-                </div>
-            )
-        }
-        else{
-            return(
-                <div>
-                    <div>
-                        <div className='login-form'>
-                             <h2 className='login-label'>Event Name</h2>
-                             <p className='left'>{eventName}</p>
-                             <h2 className='login-label'>Event Description</h2>
-                             <p className='left'>{eventDescription}</p>
-                             <h2 className='login-label'>Event Location</h2>
-                             <p className='left'>{location}</p>
-        </div>
-    <Calendar minDetail={'decade'} tileDisabled={disableAll} className='smallCal' value = {new Date()} tileClassName={tileClass} ></Calendar>
-    {console.log(allDates)}
-    </div>
-    <br />
-    <h1 className='currentDay'>{clickedDay[arrIndex].toDateString()}</h1>
-    <br />
-    {Tselect}
-    <button onClick={()=>{lockDateTime(true)}}>Lock dates and times</button>
-
-                </div>)
-        }
-        }
-        else if(clickedDay.length>datesAndTimes.length){
-        if(arrIndex===0){
-return(<div>
-    <div>
-    <div className='login-form'>
-            <h2 className='login-label'>Event Name</h2>
-        <p className='left'>{eventName}</p>
-        <h2 className='login-label'>Event Description</h2>
-        <p className='left'>{eventDescription}</p>
-        <h2 className='login-label'>Event Location</h2>
-        <p className='left'>{location}</p>
-        </div>
-    <Calendar minDetail={'decade'} tileDisabled={disableAll} className='smallCal' value = {new Date()} tileClassName={tileClass} ></Calendar>
-    {console.log(allDates)}
-    </div>
-    <br />
-    <h1 className='currentDay'>{clickedDay[arrIndex].toDateString()}</h1>
-    <button onClick={
-        ()=>{
-            setArrIndex(arrIndex+1)
-            setCurDate(clickedDay[arrIndex+1])}}>Next</button>
-    {Tselect}
-    <br />
-    {console.log(curDate)}
-
-</div>);}
-else if(arrIndex===(clickedDay.length-1)){
-    return(<div>
-        <div>
-        <div className='login-form'>
-            <h2 className='login-label'>Event Name</h2>
-        <p className='left'>{eventName}</p>
-        <h2 className='login-label'>Event Description</h2>
-        <p className='left'>{eventDescription}</p>
-        <h2 className='login-label'>Event Location</h2>
-        <p className='left'>{location}</p>
-        </div>
-        <Calendar minDetail={'decade'} className='smallCal' value = {new Date()} tileDisabled={disableAll} tileClassName={tileClass} ></Calendar>
-        {console.log(allDates)}
-        </div>
-        <br />
-        <h1 className='currentDay'>{clickedDay[arrIndex].toDateString()}</h1>
-        <button onClick={
-            ()=>{
-                setArrIndex(arrIndex-1)
-                setCurDate(clickedDay[arrIndex-1])}}>previous</button>
-        {Tselect}
-        <br />
-        {console.log(curDate)}
-
-            
-    </div>);
-}
-else{
-    return(<div>
-        <div>
-        <div className='login-form'>
-            <h2 className='login-label'>Event Name</h2>
-        <p className='left'>{eventName}</p>
-        <h2 className='login-label'>Event Description</h2>
-        <p className='left'>{eventDescription}</p>
-        <h2 className='login-label'>Event Location</h2>
-        <p className='left'>{location}</p>
-        </div>
-        <Calendar minDetail={'decade'} tileDisabled={disableAll} className='smallCal' value = {new Date()} tileClassName={tileClass} ></Calendar>
-        {console.log(allDates)}
-        </div>
-        <br />
-        <h1 className='currentDay'>{clickedDay[arrIndex].toDateString()}</h1>
-        <button onClick={
-            ()=>{
-                setArrIndex(arrIndex-1)
-                setCurDate(clickedDay[arrIndex-1])}}>previous</button>
-
-<button onClick={
-        ()=>{
-            setArrIndex(arrIndex+1)
-            setCurDate(clickedDay[arrIndex+1])}}>Next</button>
-        {Tselect}
-        <br />
-        {console.log(curDate)}
-            
-    </div>);
-}
-}
-else{
-           if(arrIndex===0){
-return(<div>
-    <div>
-    <div className='login-form'>
-            <h2 className='login-label'>Event Name</h2>
-        <p className='left'>{eventName}</p>
-        <h2 className='login-label'>Event Description</h2>
-        <p className='left'>{eventDescription}</p>
-        <h2 className='login-label'>Event Location</h2>
-        <p className='left'>{location}</p>
-        </div>
-    <Calendar minDetail={'decade'} tileDisabled={disableAll} className='smallCal' value = {new Date()} tileClassName={tileClass} ></Calendar>
-    {console.log(allDates)}
-    </div>
-    <br />
-    <h1 className='currentDay'>{clickedDay[arrIndex].toDateString()}</h1>
-    <button onClick={
-        ()=>{
-            setArrIndex(arrIndex+1)
-            setCurDate(clickedDay[arrIndex+1])}}>Next</button>
-    {Tselect}
-    <br />
-        <br />
-        <form action=''>
-        <button onClick={()=>{lockDateTime(true)}}>Lock dates and times</button>
-        </form>
-    <br />
-    {console.log(curDate)}
-        
-</div>);}
-else if(arrIndex===(clickedDay.length-1)){
-    return(<div>
-        <div>
-        <div className='login-form'>
-            <h2 className='login-label'>Event Name</h2>
-        <p className='left'>{eventName}</p>
-        <h2 className='login-label'>Event Description</h2>
-        <p className='left'>{eventDescription}</p>
-        <h2 className='login-label'>Event Location</h2>
-        <p className='left'>{location}</p>
-        </div>
-        <Calendar minDetail={'decade'} className='smallCal' value = {new Date()} tileClassName={tileClass} ></Calendar>
-        {console.log(allDates)}
-        </div>
-        <br />
-        <h1 className='currentDay'>{clickedDay[arrIndex].toDateString()}</h1>
-        <button onClick={
-            ()=>{
-                setArrIndex(arrIndex-1)
-                setCurDate(clickedDay[arrIndex-1])}}>previous</button>
-        {Tselect}
-        <br />
-        <br />
-        <button onClick={()=>{lockDateTime(true)}}>Lock dates and times</button>
-        <br />
-        {console.log(curDate)}
-            
-    </div>);
-}
-else{
-    return(<div>
-        <div>
-        <div className='login-form'>
-            <h2 className='login-label'>Event Name</h2>
-        <p className='left'>{eventName}</p>
-        <h2 className='login-label'>Event Description</h2>
-        <p className='left'>{eventDescription}</p>
-        <h2 className='login-label'>Event Location</h2>
-        <p className='left'>{location}</p>
-        </div>
-        <Calendar minDetail={'decade'} className='smallCal' value = {new Date()} tileClassName={tileClass} ></Calendar>
-        {console.log(allDates)}
-        </div>
-        <br />
-        <h1 className='currentDay'>{clickedDay[arrIndex].toDateString()}</h1>
-        <button onClick={
-            ()=>{
-                setArrIndex(arrIndex-1)
-                setCurDate(clickedDay[arrIndex-1])}}>previous</button>
-
-<button onClick={
-        ()=>{
-            setArrIndex(arrIndex+1)
-            setCurDate(clickedDay[arrIndex+1])}}>Next</button>
-        {Tselect}
-        <br />
-        <br />
-        <button onClick={()=>{lockDateTime(true)}}>Lock dates and times</button>
-        {console.log(curDate)}
-            
-    </div>);
-}
-}
+                        <div>
+                        <div className='postit-note'>
+                            <h2 className='light-green-100'>Event Name</h2>
+                            <p>{eventName}</p>
+                            <h2 className='light-green-100'>Event Description</h2>
+                            <p>{eventDescription}</p>
+                            <h2 className='light-green-100'>Event Location</h2>
+                            <p>{location}</p>
+                        </div>
+                                <Calendar minDetail={'decade'} tileDisabled={disableAll} className='smallCal' value = {new Date()} tileClassName={tileClass} ></Calendar>
+                            </div>
+                            <br />
+                            <h1 className='currentDay'>{clickedDay[arrIndex].toDateString()}</h1>
+                            <div className="button-date-container">
+                                <button
+                                    className="button-left"
+                                    onClick={() => {
+                                        setArrIndex(arrIndex - 1);
+                                        setCurDate(clickedDay[arrIndex - 1]);
+                                    }}
+                                    disabled={arrIndex === 0} // Disable the button if arrIndex is 0
+                                >
+                                    &#9664; {/* Left triangle */}
+                                </button>
+                                <h1 className="currentDay">{clickedDay[arrIndex].toLocaleDateString("en-US")}</h1>
+                                <button
+                                className="button-right"
+                                onClick={() => {
+                                    if(arrIndex===(clickedDay.length-2)){
+                                        setLastReached(true);
+                                    }
+                                }}
+                                disabled={arrIndex === (clickedDay.length-1)} // Disable the button if arrIndex is the last element
+                                >
+                                &#9654; {/* Right triangle */}
+                                </button>
+                            </div>
+                            {console.log("is last page reached?",lastPageReached) }
+                            {Tselect}
+                            <br />
+                            <br />
+                            {lastPageReached && (
+                                <form action="">
+                                <button onClick={() => { lockDateTime(true) }}>Lock dates and times</button>
+                                </form>
+                            )}
+                            <br />
+                            </div>
+                    );
 }
 else{
     if(clickedDay.length>0){
     return(<div>
-        <div className='login-form'>
-            <h2 className='login-label'>Event Name</h2>
-        <p className='left'>{eventName}</p>
-        <h2 className='login-label'>Event Description</h2>
-        <p className='left'>{eventDescription}</p>
-        <h2 className='login-label'>Event Location</h2>
-        <p className='left'>{location}</p>
+        <div className='postit-note'>
+            <h2 className='light-green-100'>Event Name</h2>
+            <p>{eventName}</p>
+            <h2 className='light-green-100'>Event Description</h2>
+            <p>{eventDescription}</p>
+            <h2 className='light-green-100'>Event Location</h2>
+            <p>{location}</p>
         </div>
         <div>
         <Calendar minDetail={'decade'} className='smallCal' tileDisabled={tileDisabled} value = {new Date()} onChange={setDates} tileClassName={tileClass} ></Calendar>
         </div>
-        {console.log(clickedDay)}
         
         <br />
         <button onClick={()=>{
@@ -660,17 +456,17 @@ else{
 else{
     return(<div>
         <div>
-        <div className='login-form'>
-            <h2 className='login-label'>Event Name</h2>
-        <p className='left'>{eventName}</p>
-        <h2 className='login-label'>Event Description</h2>
-        <p className='left'>{eventDescription}</p>
-        <h2 className='login-label'>Event Location</h2>
-        <p className='left'>{location}</p>
-        </div><div>
+        <div className='postit-note'>
+            <h2 className='light-green-100'>Event Name</h2>
+            <p>{eventName}</p>
+            <h2 className='light-green-100'>Event Description</h2>
+            <p>{eventDescription}</p>
+            <h2 className='light-green-100'>Event Location</h2>
+            <p>{location}</p>
+        </div>
+        <div>
         <Calendar minDetail={'decade'} className='smallCal' tileDisabled={tileDisabled} value = {new Date()} onChange={setDates} tileClassName={tileClass} ></Calendar>
         </div>
-        {console.log(clickedDay)}
         </div>
         <br />
         

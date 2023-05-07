@@ -3,8 +3,9 @@
   }
 .App {
   text-align: center;
-  background-color: #8faf9a;
-
+  background-color: #fefbe9; 
+  content: '';
+  background-image: linear-gradient(0deg, rgba(0, 0, 0, 0.1) 1px, transparent 1px);
 }
 
 .render-chat {
@@ -14,10 +15,6 @@
 	box-shadow: 0px 3px 24px -8px rgba(0, 0, 0, 0.75);
 }
 
-.router {
-  background-color: #8faf9a;
-
-}
 .imTheBest{
   background-color: rgb(124,252,0);
 }
@@ -29,7 +26,12 @@
 
 .App-body {
   background-color: #fefbe9; 
-	font-family: Palatino,Palatino Linotype,Palatino LT STD,Book Antiqua,Georgia,serif; 
+	font-family: 'Coming Soon', cursive;
+  content: '';
+  background-image: linear-gradient(0deg, rgba(0, 0, 0, 0.1) 1px, transparent 1px);
+  background-size: 100% 2.5em; /* Set the spacing of the notebook lines */
+  z-index: -1;
+  min-height: 100vh;
 }
 
 @media (prefers-reduced-motion: no-preference) {
@@ -40,8 +42,11 @@
 body{
   height: 100%;
   width: 100%;
-  background-color: #8faf9a;
-  color: #183a1d;
+  background-color: #fefbe9; 
+	font-family: 'Coming Soon', cursive;
+  content: '';
+  background-image: linear-gradient(0deg, rgba(0, 0, 0, 0.1) 1px, transparent 1px);
+  background-size: 100% 2.5em; /* Set the spacing of the notebook lines */
 }
 
 .currentDay{
@@ -191,15 +196,40 @@ body{
 }
 
 .time-slot {
+  position: relative;
   cursor: pointer;
   padding: 8px;
+  border-radius: 0.25rem;
   border-right: 1px solid black;
   border-left: 1px solid black;
   border-bottom: 1px solid black;
   width: 20rem;
   height: 20px;
-  background-color:rgb(215, 215, 215);
+  background-color: rgb(215, 215, 215);
 }
+
+.time-slot::before,
+.time-slot::after {
+  content: '';
+  position: absolute;
+  width: 2px;
+  background-color: rgba(0, 0, 0, 0.3); /* Slightly transparent black */
+}
+
+.time-slot::before {
+  left: -0.33rem;
+  top: 0;
+  height: 50%;
+  transform: skewX(-45deg);
+}
+
+.time-slot::after {
+  left: -0.33rem;
+  bottom: 0;
+  height: 50%;
+  transform: skewX(45deg);
+}
+
 .top-slot{
   border-top: 1px solid black;
 }
@@ -346,4 +376,65 @@ body{
 
 .viewer-select {
   border: black 3px solid;
+}
+
+
+.button-date-container {
+  display: inline-block;
+  position: relative;
+  width: 23rem; /* Set the container width */
+}
+
+.button-date-container button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 24px;
+}
+
+.button-left {
+  position: absolute;
+  left: 0; /* Move the left button to the left edge of the container */
+  top: 50%;
+  transform: translateY(-50%);
+  color: #6FBC4B;
+}
+
+.button-right {
+  position: absolute;
+  right: 0; /* Move the right button to the right edge of the container */
+  top: 50%;
+  transform: translateY(-50%);
+  color: #6FBC4B;
+}
+
+.button-left:disabled {
+  color: #0D1709;
+  cursor: not-allowed;
+}
+
+.button-right:disabled {
+  color: #0D1709;
+  cursor: not-allowed;
+}
+
+.currentDay {
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+
+.postit-note {
+  background-color: #fefabc;
+  border: 1px solid #ffcc66;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  font-size: 24px;
+  padding: 20px;
+  position: relative;
+  width: 250px;
+  -webkit-transform: rotate(-6deg);
+  -moz-transform: rotate(-6deg);
+  -o-transform: rotate(-6deg);
+  -ms-transform: rotate(-6deg);
+  transform: rotate(-6deg);
 }
