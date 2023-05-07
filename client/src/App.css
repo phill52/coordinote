@@ -438,3 +438,51 @@ body{
   -ms-transform: rotate(-6deg);
   transform: rotate(-6deg);
 }
+
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 100;
+}
+
+.side-menu {
+  position: fixed;
+  top: 0;
+  right: -300px;
+  width: 300px;
+  height: 100%;
+  background-color: #f9f9f9;
+  box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2);
+  padding: 1rem;
+  z-index: 200;
+  transition: right 0.3s;
+}
+
+.side-menu.open {
+  right: 0;
+}
+
+.side-menu a,
+.side-menu button {
+  display: block;
+  padding: 12px 0;
+  text-decoration: none;
+  color: black;
+}
+
+.side-menu a:hover {
+  background-color: #f1f1f1;
+}
+
+.close-button {
+  border: none;
+  background-color: transparent;
+  font-size: 24px;
+  cursor: pointer;
+  float: right;
+}
