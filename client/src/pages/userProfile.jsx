@@ -5,6 +5,7 @@ import { useParams } from 'react-router';
 import axios from 'axios';
 import { Image } from 'react';
 import AuthContext from '../AuthContext';
+import ChangeProfilePic from '../components/changeProfilePic';
 const Profile = () => {
   const [loading, setLoading] = useState(true);
   const [error, setErr] = useState(false);
@@ -12,9 +13,11 @@ const Profile = () => {
   const [userData, setUserData] = useState(null);
   const {id} = useParams();
   const {mongoUser} = React.useContext(AuthContext);
-
+  const [changePicture,setChangePicture] = useState(false);
+  const [forceChange,setForceChange] = useState(true);
   useEffect(() => {
     async function formData(){
+      if(forceChange){
       const header=await createToken();
       try{
         let data={};
@@ -39,8 +42,10 @@ const Profile = () => {
         setLoading(false);
         setErr(true);
       }
-    }formData()
-  },[mongoUser]);
+      setForceChange(false);
+    }
+  }formData()
+  },[mongoUser,forceChange]);
 
   if (loading) {
     return (
@@ -55,13 +60,29 @@ const Profile = () => {
       </div>
     );
   } else {
+    if(!changePicture){
     return (
       <div>   
         <p>{userData.username}</p>
         <img src={userData.picture}/> 
-        {isMyPage && <button>Change Profile Picture</button>}
+        {console.log(isMyPage)}
+        
+        {isMyPage && <button onClick={()=>{setChangePicture(true)}}>Change Profile Picture</button>}
       </div>
     );
+  }
+  else{
+    return(
+      <div>
+    <p>{userData.username}</p>
+    <img src={userData.picture}/> 
+    {console.log('im here 2')}
+    <ChangeProfilePic uid={id} change={setForceChange} done={setChangePicture} />
+    <button onClick={()=>{setChangePicture(false)}}>Go Back</button>
+    </div>
+    )
+
+  }
   }
 };
 

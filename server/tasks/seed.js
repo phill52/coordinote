@@ -4,39 +4,30 @@ import events from '../data/events.js';
 
 const main = async() => {
     const db = await connection.dbConnection();
-
-    try {
-        let confirmation;
-        confirmation = await users.createUser("Username1", "uid111111111");
-        console.log(confirmation);
-        confirmation = await users.createUser("Username2", "uid222222222");
-        console.log(confirmation);
-        confirmation = await users.createUser("Username3", "uid333333333");
-        console.log(confirmation);
-        console.log("Created users.");
-    } catch(error) {
-        console.log(`${error} Users may already exist.`);
-
-    }
-
     let user1;
     let user2;
     let user3;
+
     try {
-        user1 = await users.getUserByName("Username1");
-        user1._id = user1._id.toString();
-        console.log(user1);
-        user2 = await users.getUserByUID("uid222222222");
-        user2._id = user2._id.toString();
-        console.log(user2);
-        user3 = await users.getUserByName("Username3");
-        user3._id = user3._id.toString();
-        console.log(user3);
-        console.log("Grabbed users.");
-    } catch (error) {
-        console.log(`${error}. Problems exist as users could not be found or created.`);
-        return;
+        user1 = await users.createUser("User 1", "uid111111111");
+        user2 = await users.createUser("User 2", "uid222222222");
+        user3 = await users.createUser("User 3", "uid333333333");
+        console.log("Created users.");
+    } catch(error) {
+        console.log(`${error} Users may already exist.`);
+        try {
+            user1 = await users.getUserByName("User 1");
+            user2 = await users.getUserByName("User 2");
+            user3 = await users.getUserByName("User 3");
+            console.log("Grabbed users.");
+        } catch (error) {
+            console.log(`${error}. Problems exist as users could not be found or created.`);
+            return;
+        }
     }
+    console.log(user1);
+    console.log(user2);
+    console.log(user3);
 
     let event1;
     let event2;
@@ -45,8 +36,6 @@ const main = async() => {
     try {
         event1 = await events.createEvent(
             "Base Event 1",
-            "ur moms house",
-            "Quick trip to moms",
             [{
                 date: "2023-01-01T00:00:00.000Z",
                 time: {
@@ -54,14 +43,13 @@ const main = async() => {
                     end: "2023-01-01T00:30:00.000Z"
                 }
             }],
+            "ur mom's house",
+            "Quick trip to mom's!",
+            [],
             "https://coordinote.s3.amazonaws.com/MomsHouse",
-            user1.firebaseId);
-        event1._id = event1._id.toString();
-        console.log(event1);
+            user1._id);
         event2 = await events.createEvent(
             "Base Event 2",
-            "Las Vegas Nevada",
-            "Taking a business trip",
             [{
                 date: "2023-01-02T00:00:00.000Z",
                 time: {
@@ -83,14 +71,13 @@ const main = async() => {
                     end: "2023-01-04T16:00:00.000Z"
                 }
             }],
+            "Las Vegas, Nevada",
+            "Taking a 'business' trip.",
+            [],
             "https://coordinote.s3.amazonaws.com/LasVegas",
-            user2.firebaseId);
-        event2._id = event2._id.toString();
-        console.log(event2);
+            user2._id);
         event3 = await events.createEvent(
             "Base Event 3",
-            "Normaltown No",
-            "Just a normal event at a normal place during a normal time",
             [{
                 date: "2023-01-04T15:00:00.000Z",
                 time: {
@@ -98,13 +85,14 @@ const main = async() => {
                     end: "2023-01-04T19:00:00.000Z"
                 }
             }],
+            "Normaltown, No",
+            "Just a normal event at a normal place during a normal time...",
+            [],
             "https://coordinote.s3.amazonaws.com/Normaltown",
-            user3.firebaseId);
-        event3._id = event3._id.toString();
-        console.log(event3);
+            user3._id);
         console.log("Created events.");
     } catch(error) {
-        console.log(`${error}`);
+        console.log(`${error}. Events may already exist.`);
     }
 
     try {
@@ -134,14 +122,11 @@ const main = async() => {
             });
         console.log("Added attendees to events.")
     } catch (error) {
-        console.log(`${error}.`);
+        console.log(`${error}.`)
     }
-    try {
-        console.log(await events.getAttendees(event1._id));
-    } catch (error) {
-        console.log(`${error}.`);
-    }
+
     console.log("Seeded database.");
+
 }
 
 main();
