@@ -132,7 +132,7 @@ const TimeViewer = (props) => {
           {attendeesAtTime.map((attendee) => {
             return (
               <li key={attendee._id}>
-                {attendee._id}
+                {attendee.username}
               </li>
             );
           })}
@@ -142,7 +142,7 @@ const TimeViewer = (props) => {
           {unavailableAttendeesAtTime.map((attendee) => {
             return (
               <li key={attendee._id}>
-                {attendee._id}
+                {attendee.username}
               </li>
             );
           })}
