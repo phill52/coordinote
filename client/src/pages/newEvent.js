@@ -42,6 +42,7 @@ const NewEvent= ()=>{
     const [fileForm,setFileFormValue]=useState(null);
     const [inputTaken,setInputTaken] = useState(false);
     const [lastPageReached,setLastReached] = useState(false);
+    const [eventId,setEventId] = useState('');
     const datesEqual = (dte1,dte2) =>{
         if(!(dte1<dte2)){
             if(!(dte1>dte2)){
@@ -328,17 +329,19 @@ if(error){
 }
 else{
     if(dateTimeLock){
+        if(window.location.hostname==='localhost'){
         return(
             <div>
                 <h1 className='currentDay'>All Done!</h1>
             </div>
-        )
+        )}
     }
     else{
     if(!nameSet){
                 return(
             <div className='Login-page'>
                 <form className='login-form' onSubmit={handleSubmit}>
+                <br />
                 <label className='login-label'>
                     {'Event Name: '}
                 <input className="login-input" id='nameInput' onChange={(e)=>{setEventName(e.target.value)
@@ -346,12 +349,12 @@ else{
                 </label>
                 <br />
                 <label className='login-label'>
-                    {'Event Description: '}
+                <h1>Event Description: </h1>
                     <input className="login-input" id='descriptionInput' onChange={(e)=>{setDescription(e.target.value)}} placeholder='Enter Description' required />
                 </label>
                 <br />
                 <label className='login-label'>
-                    {'Location Input: '}
+                        <h1>Event Location: </h1>
                     <input className="login-input" id='locationInput' onChange={(e)=>{setLocation(e.target.value)}} placeholder='Enter Location' required/>
                 </label>
                 <br />
@@ -456,15 +459,14 @@ else{
 else{
     return(<div>
         <div>
-        <div className='postit-note'>
-            <h2 className='light-green-100'>Event Name</h2>
-            <p>{eventName}</p>
-            <h2 className='light-green-100'>Event Description</h2>
-            <p>{eventDescription}</p>
-            <h2 className='light-green-100'>Event Location</h2>
-            <p>{location}</p>
-        </div>
-        <div>
+        <div className='login-form'>
+            <h2 className='login-label'>Event Name</h2>
+        <p className='left'>{eventName}</p>
+        <h2 className='login-label'>Event Description</h2>
+        <p className='left'>{eventDescription}</p>
+        <h2 className='login-label'>Event Location</h2>
+        <p className='left'>{location}</p>
+        </div><div>
         <Calendar minDetail={'decade'} className='smallCal' tileDisabled={tileDisabled} value = {new Date()} onChange={setDates} tileClassName={tileClass} ></Calendar>
         </div>
         </div>
