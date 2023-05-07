@@ -130,6 +130,7 @@ const TimeViewer = (props) => {
         <ul>
           Attendees Available at {formatAMPM(checkedTime)}:
           {attendeesAtTime.map((attendee) => {
+            console.log(attendee);
             return (
               <li key={attendee._id}>
                 {attendee.username}
