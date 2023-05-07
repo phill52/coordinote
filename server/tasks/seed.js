@@ -54,7 +54,6 @@ const main = async() => {
                     end: "2023-01-01T00:30:00.000Z"
                 }
             }],
-            [],
             "https://coordinote.s3.amazonaws.com/MomsHouse",
             user1.firebaseId);
         event1._id = event1._id.toString();
@@ -84,7 +83,6 @@ const main = async() => {
                     end: "2023-01-04T16:00:00.000Z"
                 }
             }],
-            [],
             "https://coordinote.s3.amazonaws.com/LasVegas",
             user2.firebaseId);
         event2._id = event2._id.toString();
@@ -100,7 +98,6 @@ const main = async() => {
                     end: "2023-01-04T19:00:00.000Z"
                 }
             }],
-            [],
             "https://coordinote.s3.amazonaws.com/Normaltown",
             user3.firebaseId);
         event3._id = event3._id.toString();
@@ -145,7 +142,6 @@ const main = async() => {
         console.log(`${error}.`);
     }
     console.log("Seeded database.");
-
 }
 
 main();

@@ -85,18 +85,18 @@ const getUserByUID = async function (userId) {
     return user;
 }
 
-const getUserById = async function (userId) {
+const getUserById = async function (mongoId) {
     // Validation
     validation.checkNumOfArgs(arguments, 1);
-    validation.checkIsProper(userId, 'string', 'userId');
-    validation.checkId(userId);
+    validation.checkIsProper(mongoId, 'string', 'mongoId');
+    validation.checkId(mongoId);
 
     // Cleaning
-    userId = xss(userId).trim();
+    mongoId = xss(mongoId).trim();
 
     const userCollection = await users();
-    const user = await userCollection.findOne({_id: new ObjectId(userId)});
-    if (!user) throw `Error: No user found with _id '${userId}'.`;
+    const user = await userCollection.findOne({_id: new ObjectId(mongoId)});
+    if (!user) throw `Error: No user found with _id '${mongoId}'.`;
 
     return user;
 }
