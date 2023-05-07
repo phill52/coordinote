@@ -130,9 +130,10 @@ const TimeViewer = (props) => {
         <ul>
           Attendees Available at {formatAMPM(checkedTime)}:
           {attendeesAtTime.map((attendee) => {
+            console.log(attendee);
             return (
               <li key={attendee._id}>
-                {attendee._id}
+                {attendee.username}
               </li>
             );
           })}
@@ -142,7 +143,7 @@ const TimeViewer = (props) => {
           {unavailableAttendeesAtTime.map((attendee) => {
             return (
               <li key={attendee._id}>
-                {attendee._id}
+                {attendee.username}
               </li>
             );
           })}

@@ -49,11 +49,14 @@ const [unavailableAttendees, setUnavailableAttendees] = useState([]);
 const {mongoUser, loadingMongo} = useContext(AuthContext);
 
 useEffect(()=>{
+    console.log('hello')
     if (mongoUser) {
         setUid(mongoUser._id);
+        console.log('hello')
     } 
 }, [mongoUser])
 
+console.log(mongoUser)
 
 
 const nav=useNavigate();

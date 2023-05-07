@@ -59,7 +59,7 @@ const createEvent = async function (eventName, location, description, domainDate
     if(!updatedUser.acknowledged || !updatedUser.modifiedCount)
         throw `Could not add event ${eventName} to user with id ${userId}.`
 
-    return await getEventById(insertEvent.insertedId.toString());
+    return await getEventById(insertEvent.insertedId);
 }
 
 const updateChatLogs = async function (eventId, chatLog) {
@@ -201,9 +201,11 @@ const getAttendees = async function getAttendees(eventId) {
 
 const getIndex = async function (id1, arr) {
     validation.checkNumOfArgs(arguments, 2);
+    validation.checkId(id1);
+    validation.checkArray(arr, 'arr', 'object');
 
     let index = -1;
-    console.log(arr)
+
     for(let x = 0; x < arr.length; x++){
         console.log(arr[x]);
         if(arr[x]._id.toString() === id1.toString()){
@@ -235,19 +237,23 @@ const addAttendee = async (eventId, newAttendee) => {
 
     const user = await userFunctions.getUserByMongoId(newAttendee._id);
     if (!user) throw `No user found with id ${newAttendee._id}.`;
+
     const eventCollection=await events();
     const updatedEvent=await eventCollection.updateOne(
         {_id:new ObjectId(eventId)},
         {$push:{"attendees":{_id:new ObjectId(newAttendee._id), username: user.username, availability:newAttendee.availability}}}
-    )
+    );
+
     if(!updatedEvent.modifiedCount){
         throw `Unable to add attendee ${newAttendee} to event ${eventId}`
     }
+
     const userCollection=await users();
     const updatedUser = await userCollection.updateOne(
         {_id:new ObjectId(newAttendee._id)},
         {$push: {attendedEvents:new ObjectId(eventId)}}
-    )
+    );
+
     if(updatedUser.modifiedCount<1){
         throw "Unable to add this event to your account"
     }
@@ -266,6 +272,7 @@ const upsertAttendee=async(eventId,newAttendee) => {
             action='addAttendee'
         }
     }
+    console.log(action)
     if(action=='addAttendee'){
         attendee=newAttendee;
         return await addAttendee(eventId,newAttendee)
