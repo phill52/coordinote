@@ -120,8 +120,10 @@ router
             return;
         }*/
         try{
+            let usr= await users.getUserByFirebaseId(req.currentUser.uid);
+
             newEvent=await events.createEvent(req.body.name,req.body.domainDates,req.body.location,req.body.description,
-            req.body.attendees,req.body.image,req.currentUser.uid);
+            req.body.attendees,req.body.image,usr._id);
         }
         catch(e){
             console.log(e)
@@ -191,7 +193,9 @@ router
         return;
     })
     .delete(async(req,res) => {         //  delete      /yourpage/events/:id
-        let eventId=undefined; let userId='6449858e039651db9d8beed2';
+        let eventId=undefined; //let userId='6449858e039651db9d8beed2';
+        let usr= await users.getUserByFirebaseId(req.currentUser.uid);
+        let userId = usr._id;
         try{
             //userId=validation.checkId(req.session.user.userId)
             eventId=validation.checkId(req.params.id)

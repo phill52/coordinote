@@ -41,6 +41,7 @@ const NewEvent= ()=>{
     const [fileUrl,setFileUrl] = useState('');
     const [fileForm,setFileFormValue]=useState(null);
     const [inputTaken,setInputTaken] = useState(false);
+    const [eventId,setEventId] = useState('');
     const datesEqual = (dte1,dte2) =>{
         if(!(dte1<dte2)){
             if(!(dte1>dte2)){
@@ -280,6 +281,7 @@ useEffect(()=>{
         authorization:header.headers.Authorization}})
         .then(function (response){
             console.log(response);
+            setEventId(response.data._id);
         })
         .catch(function (error){
             console.log(error);
@@ -358,31 +360,35 @@ if(error){
 }
 else{
     if(dateTimeLock){
+        if(window.location.hostname==='localhost'){
         return(
             <div>
                 <h1 className='currentDay'>All Done!</h1>
+                <h1 className='currentDay'>The link to your event is</h1>
+                <h2 className='currentDay'>{`http://localhost:3000/event/${eventId}`}</h2>
                 {console.log(output)}
             </div>
-        )
+        )}
     }
     else{
     if(!nameSet){
                 return(
             <div className='Login-page'>
                 <form className='login-form' onSubmit={handleSubmit}>
+                <br />
                 <label className='login-label'>
-                    {'Event Input: '}
+                <h1>Event Name: </h1>
                 <input className="login-input" id='eventInput' onChange={(e)=>{setEventName(e.target.value)
                 console.log(e)}} placeholder='event name' required />
                 </label>
                 <br />
                 <label className='login-label'>
-                    {'Event Description: '}
+                <h1>Event Description: </h1>
                     <input className="login-input" id='descriptionInput' onChange={(e)=>{setDescription(e.target.value)}} placeholder='Enter Description' required />
                 </label>
                 <br />
                 <label className='login-label'>
-                    {'Location Input: '}
+                        <h1>Event Location: </h1>
                     <input className="login-input" id='locationInput' onChange={(e)=>{setLocation(e.target.value)}} placeholder='Enter Location' required/>
                 </label>
                 <br />
@@ -410,7 +416,7 @@ else{
         if(clickedDay.length===1){
             if(clickedDay.length>datesAndTimes.length){
             return(
-                <div>
+                <div className='flex flex-col align-center justify-center'>
                     <div>
                         <div className='login-form'>
                              <h2 className='login-label'>Event Name</h2>
@@ -432,7 +438,7 @@ else{
         }
         else{
             return(
-                <div>
+                <div className='flex flex-col align-center justify-center'>
                     <div>
                         <div className='login-form'>
                              <h2 className='login-label'>Event Name</h2>
@@ -456,7 +462,7 @@ else{
         }
         else if(clickedDay.length>datesAndTimes.length){
         if(arrIndex===0){
-return(<div>
+return(<div className='flex flex-col align-center justify-center'>
     <div>
     <div className='login-form'>
             <h2 className='login-label'>Event Name</h2>
@@ -481,7 +487,7 @@ return(<div>
 
 </div>);}
 else if(arrIndex===(clickedDay.length-1)){
-    return(<div>
+    return(<div className='flex flex-col align-center justify-center'>
         <div>
         <div className='login-form'>
             <h2 className='login-label'>Event Name</h2>
@@ -508,7 +514,7 @@ else if(arrIndex===(clickedDay.length-1)){
     </div>);
 }
 else{
-    return(<div>
+    return(<div className='flex flex-col align-center justify-center'>
         <div>
         <div className='login-form'>
             <h2 className='login-label'>Event Name</h2>
@@ -541,7 +547,7 @@ else{
 }
 else{
            if(arrIndex===0){
-return(<div>
+return(<div className='flex flex-col align-center justify-center'>
     <div>
     <div className='login-form'>
             <h2 className='login-label'>Event Name</h2>
@@ -571,7 +577,7 @@ return(<div>
         
 </div>);}
 else if(arrIndex===(clickedDay.length-1)){
-    return(<div>
+    return(<div className='flex flex-col align-center justify-center'>
         <div>
         <div className='login-form'>
             <h2 className='login-label'>Event Name</h2>
@@ -600,7 +606,7 @@ else if(arrIndex===(clickedDay.length-1)){
     </div>);
 }
 else{
-    return(<div>
+    return(<div className='flex flex-col align-center justify-center'>
         <div>
         <div className='login-form'>
             <h2 className='login-label'>Event Name</h2>
@@ -636,7 +642,7 @@ else{
 }
 else{
     if(clickedDay.length>0){
-    return(<div>
+    return(<div className='flex flex-col align-center justify-center'>
         <div className='login-form'>
             <h2 className='login-label'>Event Name</h2>
         <p className='left'>{eventName}</p>
@@ -658,7 +664,7 @@ else{
     </div>);
 }
 else{
-    return(<div>
+    return(<div className='flex flex-col align-center justify-center'>
         <div>
         <div className='login-form'>
             <h2 className='login-label'>Event Name</h2>
