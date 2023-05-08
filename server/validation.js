@@ -102,9 +102,10 @@ const checkArray = function checkArray(array, arrName, elemType, minArrayLength 
 
 const checkId = function checkId(id, varName) {
     if (!id) throw `Error: You must provide a ${varName}.`;
+    id = id.toString();
     // apparently this is a better check than ObjectId.isValid(), according to
     // https://stackoverflow.com/questions/13850819/can-i-determine-if-a-string-is-a-mongodb-objectid
-    if(id != new ObjectId(id)) throw `Error: ID is not a valid ObjectId.`;
+    if(id != new ObjectId(id)) throw `Error: ${varName} is not a valid ObjectId.`;
     return id;
 };
 
@@ -151,14 +152,11 @@ const checkDomainDates = function checkDomainDates(domainDates) {
         if (!domainDate) throw `Error: You must provide domainDate.`;
         if (typeof domainDate !== 'object') throw `Error: domainDate must be an object.`;
         if (!domainDate.date) throw `Error: domainDate must have a date.`;
-        if (typeof domainDate.date !== 'string') throw `Error: date must be a string.`;
         if (new Date(domainDate.date) == 'Invalid Date') throw `Error: date must be a valid date.`;
         if (!domainDate.time) throw `Error: domainDate must have a time.`;
         if (typeof domainDate.time !== 'object') throw `Error: time must be an object.`;
         if (!domainDate.time.start) throw `Error: time must have a start.`;
         if (!domainDate.time.end) throw `Error: time must have an end.`;
-        if (typeof domainDate.time.start !== 'string') throw `Error: start must be a string.`;
-        if (typeof domainDate.time.end !== 'string') throw `Error: end must be a string.`;
         if (new Date(domainDate.time.start) == 'Invalid Date') throw `Error: start must be a valid date.`;
         if (new Date(domainDate.time.end) == 'Invalid Date') throw `Error: end must be a valid date.`;
         if (new Date(domainDate.time.start) > new Date(domainDate.time.end)) throw `Error: start must be before end.`;

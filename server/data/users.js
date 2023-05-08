@@ -120,8 +120,6 @@ const setUserPicture = async function (mongoId, picture) {
     // Validation
     validation.checkNumOfArgs(arguments, 2);
     validation.checkId(mongoId, 'mongoId');
-    validation.checkIsProper(picture, 'string', 'picture');
-    validation.checkString(picture, 'picture', 1, 100, true, true, false, true);
     validation.checkImage(picture);
 
     // Cleaning

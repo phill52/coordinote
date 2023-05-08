@@ -9,6 +9,7 @@ import validation from '../validation.js'
 router
     .route('/')
     .get(async (req, res) => {
+        console.log('/ get')
         if(req.session && req.session.user){
             return res.status(200).json(req.session);
         }
@@ -17,9 +18,11 @@ router
 
 router.route('/signup')
     .get(async (req, res) => {
+        console.log('/signup get')
         res.json({Get: "/signup"})
     })
     .post(async (req, res) => {
+        console.log('/signup post')
         let {username, uid} = req.body;
         let createdUser = false;    
         console.log(req.body);
@@ -43,6 +46,7 @@ router.route('/signup')
 
 router.route('/checkUsername')
     .post(async (req, res) => {
+        console.log('/checkUsername post')
         let {username} = req.body;
         let usernameExists = false;
         // Validation
@@ -66,6 +70,7 @@ router.route('/checkUsername')
 router
     .route('/yourpage')
     .get(async (req, res) => {
+        console.log('/yourpage get')
         let u=undefined;
         try{
             u=validation.checkId(req.session.user.userId)
@@ -82,6 +87,7 @@ router
 router
     .route('/updateAvailability')
     .post(async(req,res) => {
+        console.log('/updateAvailability post')
         let eventId=undefined; let updatedEvent=undefined;
         try{
             eventId=validation.checkId(req.body.eventId)
@@ -94,6 +100,7 @@ router
         let uid = req.currentUser.uid;
         let user;
         try {
+            console.log(uid)
             user = await users.getUserByFirebaseId(uid);
         } catch (e) {
             console.log(e);
@@ -120,6 +127,7 @@ router
 router
     .route('/logout')
     .get(async(req,res) => {
+        console.log('/logout get')
         if(!req.session.user) res.redirect ('/')
         req.session.destroy()
         res.redirect('/')
@@ -128,6 +136,7 @@ router
 router
     .route('/user/:id') 
     .get(async(req,res)=> {
+        console.log('user/:id get')
         let userId=undefined;
         try{
             userId=validation.checkId(req.params.id)
@@ -139,7 +148,8 @@ router
         }
         let user=undefined;
         try{
-            user=await users.getUserByFirebaseId(userId)
+            console.log(userId)
+            user=await users.getUserByMongoId(userId)
         }
         catch(e){
             console.log(e)
@@ -150,10 +160,12 @@ router
         return;
     })
     .post(async(req,res) => {
+        console.log('user/:id post')
         let userId=undefined; let picture=undefined;
+        console.log(req.body)
         try{
             userId=validation.checkId(req.params.id)
-            picture=validation.checkPicture(req.body.picture)
+            picture=validation.checkImage(req.body.picture)
         }
         catch(e){
             console.log(e)
@@ -176,14 +188,16 @@ router
 router
     .route('/fireuser')
     .get(async(req,res) => {
-        console.log("i am called")
+        console.log("/fireuser get")
         let uid=req.currentUser.uid
         let user=undefined;
         try{
+            console.log(uid)
             user=await users.getUserByFirebaseId(uid)
         }
         catch(e){
             console.log(e)
+            console.log("error in fireuser")
             res.send(e)
             return
         }

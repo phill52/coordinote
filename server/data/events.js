@@ -21,15 +21,14 @@ const createEvent = async function (eventName, location, description, domainDate
     validation.checkDomainDates(domainDates);
     validation.checkIsProper(image, 'string', 'image');
     validation.checkImage(image);
-    validation.checkIsProper(userId, 'string', 'userId');
-    validation.checkString(userId, 'userId', 1, 100, true, true, false, false);
+    validation.checkId(userId, 'userId');
 
+    console.log(`userId: ${userId}`)
     // Cleaning
     eventName = xss(eventName).trim();
     location = xss(location).trim();
     description = xss(description).trim();
     image = xss(image).trim();
-    userId = xss(userId).trim();
 
     const eventCollection = await events();
     const userCollection = await users();
@@ -52,7 +51,7 @@ const createEvent = async function (eventName, location, description, domainDate
 
     // Add event to corresponding user
     const updatedUser = await userCollection.updateOne(
-        {firebaseId: userId},
+        {_id: new ObjectId(userId)},
         {$push: {createdEvents: insertEvent.insertedId}}
     );
 
@@ -146,6 +145,7 @@ const getEventById = async function (eventId) {
     // Validation
     validation.checkNumOfArgs(arguments, 1);
     validation.checkId(eventId, 'eventId');
+
     const eventCollection = await events();
 
     const event = await eventCollection.findOne({_id: new ObjectId(eventId)})
@@ -162,16 +162,16 @@ const deleteEvent = async function (eventId, userId) {
 
     const eventCollection = await events();
     const userCollection = await users();
-    let attendees = await getAttendees(eventId);
-    const deleteEvent = await eventCollection.deleteOne({_id: new ObjectId(eventId)})
 
-    if(!deleteEvent.acknowledged || !deleteEvent.deletedCount) {
-        throw "Unable to delete event"
-    }
+    let attendees = await getAttendees(eventId);
+    const deleteEvent = await eventCollection.deleteOne({_id: new ObjectId(eventId)});
+    if(!deleteEvent.acknowledged || !deleteEvent.deletedCount)
+        throw "Error: Could not delete event.";
+
     const updatedUser = await userCollection.updateOne(
         {_id: new ObjectId(userId)},
         {$pull: {"createdEvents": new ObjectId(eventId)}}
-    )
+    );
     if(!updatedUser.acknowledged || !updatedUser.modifiedCount) {
         throw "Event not removed from user"
     }
@@ -207,7 +207,9 @@ const getIndex = async function (id1, arr) {
     let index = -1;
 
     for(let x = 0; x < arr.length; x++){
-        console.log(arr[x]);
+        console.log(x,arr[x]);
+        console.log(arr[x]._id.toString())
+        console.log(id1.toString())
         if(arr[x]._id.toString() === id1.toString()){
             index = x;
         }
@@ -262,6 +264,8 @@ const addAttendee = async (eventId, newAttendee) => {
 }
 //if the attendee does not currently exist for that event, add it. If it does, update its availability
 const upsertAttendee=async(eventId,newAttendee) => {
+    validation.checkId(eventId);
+    validation.checkNotNull(newAttendee)
     let attendee=undefined; let action=undefined;
     try{
         attendee=await getAttendeeById(eventId,newAttendee._id)
@@ -298,6 +302,8 @@ const removeAttendee=async(eventId,attendeeId) => {
 }
 
 function unwindStartToEnd(start,end){       //given a starting date and ending date, return a range of half hour increments
+    validation.checkNotNull(start);
+    validation.checkNotNull(end);
     let startDate=new Date(start);
     let endDate=new Date(end);
     let dateArr=[]
@@ -310,7 +316,8 @@ function unwindStartToEnd(start,end){       //given a starting date and ending d
     return dateArr;
 }
 //Takes array of attendees. Returns array of date objects when the most attendees can meet
-function findCommonDates(attendees){        
+function findCommonDates(attendees){ 
+    validation.checkNotNull(attendees);       
     let datesObj={}
     for(let attendee of attendees){     //for each attendee
         for(let availableDate of attendee.availability){       //get their availability
@@ -351,6 +358,7 @@ const getEventDates=async(eventId) => {
 
 const updateEventDates=async(eventId,dates) => {
     validation.checkId(eventId);
+    validation.checkNotNull(dates);
     const eventCollection=await events();
     const updatedEvent=await eventCollection.updateOne(
         {_id:new ObjectId(eventId)},
@@ -365,6 +373,7 @@ const updateEventDates=async(eventId,dates) => {
 const updateAttendeeAvailability=async(eventId,attendeeId,newAvailability) => {
     validation.checkId(eventId)
     validation.checkId(attendeeId)
+    validation.checkNotNull(newAvailability)
     const eventCollection=await events();
     const updatedEvent=await eventCollection.updateOne(
         {_id:new ObjectId(eventId)},
@@ -411,6 +420,7 @@ const addAttendeeAvailabilityNewDay=async(eventId,attendeeId,availability) => {
 //adds a date object (date, start time, and end time) to the event. Possibly redundant
 const addEventDate=async(eventId,newDate) => {
     validation.checkId(eventId);
+    validation.checkNotNull(newDate);
     const eventCollection=await events();
     const updatedEvent=await eventCollection.updateOne(
         {_id:new ObjectId(eventId)},
@@ -424,6 +434,7 @@ const addEventDate=async(eventId,newDate) => {
 //will remove anything under domainDates that matches dateToRemove. Possibly redundant
 const removeEventDate=async(eventId,dateToRemove) => {      
     validation.checkId(eventId);
+    validation.checkNotNull(dateToRemove);
     const eventCollection=await events();
     const updatedEvent=await eventCollection.updateOne(
         {_id:new ObjectId(eventId)},
