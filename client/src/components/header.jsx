@@ -9,7 +9,7 @@ const Header = () => {
   const [open, setOpen] = useState(false);
   const signOut = () => {
     auth.signOut()
-    window.location.reload(false)
+    window.location.href = '/';
   };
 
   if (currentUser&&loadingMongo){
