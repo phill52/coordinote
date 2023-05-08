@@ -41,7 +41,7 @@ router
     }
     catch(e){
         console.log(e)
-        res.json({Error:e}).status(400)
+        res.status(400).json({Error:e})
         return
     }
     let event=undefined;
@@ -62,7 +62,7 @@ router
         res.json({"Error, did not properly recieve common dates":e}).status(500);
         return
     }
-    res.json(bestTimes);
+    res.status(200).json(bestTimes);
 })
 
 router
@@ -98,7 +98,7 @@ router
     .post('/imageTest',upload.single('image'),  async (req, res) => {
         console.log('/imageTest post')
         if (req.file) {
-            return res.json({ imageUrl: req.file.location });
+            return res.status(200).json({ imageUrl: req.file.location });
         }
     }, (error, req, res, next) => {
         console.log(error)
@@ -139,7 +139,7 @@ router
             res.json({"Error":`Could not create event: ${e}`}).status(400)
             return
         }
-        res.json(newEvent)
+        res.status(200).json(newEvent)
         return;
     }, (error, req, res, next) => {
         console.log(error)
@@ -168,7 +168,7 @@ router
             res.json({"Error retrieving event":e}).status(500)
             return
         }
-        res.json(event)
+        res.status(200).json(event)
         return;
     })
     .patch(async(req,res) => {          //      patch /yourpage/events/:id
@@ -199,7 +199,7 @@ router
             console.log(e)
             res.send(e).status(400)
         }
-        res.json(updatedEvent)
+        res.status(200).json(updatedEvent)
         return;
     })
     .delete(async(req,res) => {         //  delete      /yourpage/events/:id

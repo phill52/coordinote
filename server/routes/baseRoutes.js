@@ -13,19 +13,19 @@ router
         if(req.session && req.session.user){
             return res.status(200).json(req.session);
         }
-        res.json({Get: "/"})
+        res.status(200).json({Get: "/"})
     })
 
 router.route('/signup')
     .get(async (req, res) => {
         console.log('/signup get')
-        res.json({Get: "/signup"})
+        res.status(200).json({Get: "/signup"})
     })
     .post(async (req, res) => {
         console.log('/signup post')
         let {username, uid} = req.body;
         let createdUser = false;    
-        console.log(req.body);
+
         // Validation
         try {
             username = validation.checkUsername(username);
@@ -77,10 +77,10 @@ router
         }
         catch(e){
             console.log(e)
-            res.send(e)
+            res.status(400).send(e)
             return
         }
-        return res.json({User:"This is your page"})
+        return res.status(200).json({User:"This is your page"})
     });
 
 
@@ -100,7 +100,6 @@ router
         let uid = req.currentUser.uid;
         let user;
         try {
-            console.log(uid)
             user = await users.getUserByFirebaseId(uid);
         } catch (e) {
             console.log(e);
@@ -108,10 +107,10 @@ router
             return;
         }
         uid = user._id;
-        console.log("uid",uid);
+
         let availability = req.body.attendee;
-        console.log(req.body);
         availability._id=uid;
+
         try {
             console.dir(req.body,{depth:null});
             updatedEvent=await events.upsertAttendee(eventId,availability);
@@ -121,16 +120,16 @@ router
             res.status(500).send(e)
             return;
         }
-        return res.json(updatedEvent);
+        return res.status(200).json(updatedEvent);
     })
 
 router
     .route('/logout')
     .get(async(req,res) => {
         console.log('/logout get')
-        if(!req.session.user) res.redirect ('/')
+        if(!req.session.user) res.status(400).redirect('/')
         req.session.destroy()
-        res.redirect('/')
+        res.status(200).redirect('/')
     });
 
 router
@@ -143,34 +142,31 @@ router
         }
         catch(e){
             console.log(e)
-            res.send(e)
+            res.status(400).send(e)
             return
         }
         let user=undefined;
         try{
-            console.log(userId)
             user=await users.getUserByMongoId(userId)
         }
         catch(e){
             console.log(e)
-            res.send(e)
+            res.status(400).send(e)
             return
         }
-        res.json(user)
+        res.status(200).json(user)
         return;
     })
     .post(async(req,res) => {
         console.log('user/:id post')
         let userId=undefined; let {picture}=req.body;
-        console.log(picture);
-        console.log(req.body)
         try{
             userId=validation.checkId(req.params.id)
             validation.checkImage(picture)
         }
         catch(e){
             console.log(e)
-            res.send(e)
+            res.status(400).send(e)
             return
         }
         let user=undefined;
@@ -179,10 +175,10 @@ router
         }
         catch(e){
             console.log(e)
-            res.send(e)
+            res.status(400).send(e)
             return;
         }
-        res.json(user);
+        res.status(200).json(user);
         return;
     })
 
@@ -193,17 +189,15 @@ router
         let uid=req.currentUser.uid
         let user=undefined;
         try{
-            console.log(uid)
             user=await users.getUserByFirebaseId(uid)
         }
         catch(e){
             console.log(e)
-            console.log("error in fireuser")
-            res.send(e)
+            res.status(400).send(e)
             return
         }
-        console.log(user);
-        res.json(user)
+
+        res.status(200).json(user)
         return;
     })
 

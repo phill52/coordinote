@@ -23,7 +23,6 @@ const createEvent = async function (eventName, location, description, domainDate
     validation.checkImage(image);
     validation.checkId(userId, 'userId');
 
-    console.log(`userId: ${userId}`)
     // Cleaning
     eventName = xss(eventName).trim();
     location = xss(location).trim();
@@ -207,9 +206,6 @@ const getIndex = async function (id1, arr) {
     let index = -1;
 
     for(let x = 0; x < arr.length; x++){
-        console.log(x,arr[x]);
-        console.log(arr[x]._id.toString())
-        console.log(id1.toString())
         if(arr[x]._id.toString() === id1.toString()){
             index = x;
         }
@@ -228,7 +224,7 @@ const getAttendeeById = async(eventId, attendeeId) => {
     )
 
     let index = await getIndex(attendeeId,attendee.attendees);
-    console.log(index);
+
     if(index===-1) throw `Unable to find attendee ${attendeeId} in event ${eventId}`
     return attendee.attendees[index];
 }
@@ -276,7 +272,7 @@ const upsertAttendee=async(eventId,newAttendee) => {
             action='addAttendee'
         }
     }
-    console.log(action)
+
     if(action=='addAttendee'){
         attendee=newAttendee;
         return await addAttendee(eventId,newAttendee)
