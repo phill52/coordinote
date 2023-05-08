@@ -218,6 +218,7 @@ router
             return
         }
         try{
+            console.log("delete route")
             await events.deleteEvent(eventId,userId)
         }
         catch(e){

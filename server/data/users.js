@@ -153,11 +153,12 @@ const getUsersEvents = async function (mongoId) {
     for(let i in user.createdEvents) {
         eventsArray.push(await eventFunctions.getEventById(user.createdEvents[i]));
     }
+    eventsArray.reverse()
     let attendedArray=[];
     for(let i in user.attendedEvents) {
         attendedArray.push(await eventFunctions.getEventById(user.attendedEvents[i]))
     }
-    
+    attendedArray.reverse()
     return {events: eventsArray, attended: attendedArray};
 }
 

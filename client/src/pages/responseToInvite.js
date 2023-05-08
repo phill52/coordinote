@@ -668,8 +668,8 @@ else {
         <Calendar minDetail={'month'} tileDisabled={()=>{return true}} className='smallCal' value = {new Date()} tileClassName={({date})=>{return tileClassBuilder(date,eventData)}}></Calendar>
         {eventPgGrid}
         <br />
-        <Chat id={id} ></Chat>
         <button className='App-link' onClick={()=>{setDeleteWarn(true)}}>Delete the event</button>
+        <Chat id={id} ></Chat>
         </div>)
     }
 else{

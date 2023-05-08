@@ -27,7 +27,7 @@ function Chat(){
         console.log(chat)
         console.log('The server has sent some data to all clients in the room');
         console.log('hello?')
-        setChat([...chat, {name, message}]);
+        setChat([{name, message},...chat]);
       });
       socketRef.current.on('user_join', function (newChat) {
         setChat(newChat);
@@ -47,12 +47,14 @@ function Chat(){
       let msgEle = document.getElementById('message');
       console.log(id)
       console.log([msgEle.name], msgEle.value);
-      setState({...state, [msgEle.name]: msgEle.value});
-      socketRef.current.emit('message', {
-        name: state.name,
-        message: msgEle.value,
-        room: id
-      });
+      if(msgEle.value.trim()) {
+        setState({...state, [msgEle.name]: msgEle.value});
+        socketRef.current.emit('message', {
+          name: state.name,
+          message: msgEle.value,
+          room: id
+        });
+      }
       e.preventDefault();
       setState({message: '', name: state.name});
       msgEle.value = '';
@@ -64,9 +66,9 @@ function Chat(){
       console.log(chat);
       return chat.map(({name, message}, index) => (
         <div key={index}>
-          <h3>
+          <h2>
             {name}: <span>{message}</span>
-          </h3>
+          </h2>
         </div>
       ));
     };
@@ -74,11 +76,7 @@ function Chat(){
     return (
       <div>
           <div className='card'>
-            <div className='render-chat'>
-              <h1>Chat Log</h1>
-              {renderChat()}
-            </div>
-            <form onSubmit={onMessageSubmit}>
+          <form onSubmit={onMessageSubmit}>
               <h1>Messenger</h1>
               <div>
                 <input
@@ -90,6 +88,11 @@ function Chat(){
               </div>
               <button>Send Message</button>
             </form>
+            <div className='render-chat'>
+              <h1>Chat Log</h1>
+              {renderChat()}
+            </div>
+
           </div>
       </div>
     );
