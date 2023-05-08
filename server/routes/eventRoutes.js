@@ -175,7 +175,7 @@ router
         console.log('/:id patch')
         let eventId=undefined; let userId=undefined;
         try{
-            userId=validation.checkId(req.session.user.userId)
+            userId=validation.checkId(req.body.userId)
             eventId=validation.checkId(req.params.id)
         }
         catch(e){

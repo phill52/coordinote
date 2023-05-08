@@ -62,8 +62,8 @@ function Chat(){
     };
   
     const renderChat = () => {
-      console.log('In render chat');
-      console.log(chat);
+      // console.log('In render chat');
+      // console.log(chat);
       return chat.map(({name, message}, index) => (
         <div key={index}>
           <h2>

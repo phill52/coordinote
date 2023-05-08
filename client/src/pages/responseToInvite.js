@@ -44,20 +44,20 @@ const [reloadIt,setReloadIt]= useState(false);
 const [chatOption,setChatOption] = useState(false);
 const [availableAttendees, setAvailableAttendees] = useState([]);
 const [unavailableAttendees, setUnavailableAttendees] = useState([]);
-
+const [eventDataForm, setEventDataForm] = useState()
 
 
 const {mongoUser, loadingMongo} = useContext(AuthContext);
 
 useEffect(()=>{
-    console.log('hello')
+    // console.log('hello')
     if (mongoUser) {
         setUid(mongoUser._id);
-        console.log('hello')
+        // console.log('hello')
     } 
 }, [mongoUser])
 
-console.log(mongoUser)
+// console.log(mongoUser)
 
 
 const nav=useNavigate();
@@ -65,7 +65,7 @@ useEffect(()=>{
     async function formData(){
         try{
             const header=await createToken();
-            console.log(header)
+            // console.log(header)
             let data ={};
         if(window.location.hostname==='localhost'){
         let response=await axios.get(`http://localhost:3001/api/yourpage/events/${id}`,{headers:{'Content-Type':'application/json',
@@ -77,7 +77,7 @@ useEffect(()=>{
             authorization:header.headers.Authorization}});
             data=response.data
         }
-        console.log(data)
+        // console.log(data)
         setEventData(data);
         setLoading(false)
         setError(false)
@@ -113,7 +113,7 @@ useEffect(()=>{
                         </label>
                     </Typography>
     {data.domainDates.map((event)=>{
-        console.log(event);
+        // console.log(event);
 
         return (
             <Grid sx={{backgroundColor:'none'}} item xs={12} sm={7} md={5} lg={4} xl={3} key ={event.date.start}>
@@ -156,7 +156,7 @@ async function bestDatesRequest(){
     }
 
         setBestDates(data);
-        console.log(data);
+        // console.log(data);
         setError(false)
         }
         catch(e){
@@ -178,7 +178,7 @@ async function getTimesRequest(){
     authorization:header.headers.Authorization}});
     data=response.data;
         }
-    console.log(data)
+    // console.log(data)
     setEventData(data);
     setCurDate(new Date(data.domainDates[0].date))
     setError(false)
@@ -222,7 +222,7 @@ useEffect(()=>{
             data=response.data;
     }
         setBestDates(data);
-        console.log(data);
+        // console.log(data);
         }
         catch(e){
             console.log(e);
@@ -248,7 +248,7 @@ useEffect(()=>{
                   flexDirection: 'row'
                 }}>
     {eventData.domainDates.map((event)=>{
-        console.log(event);
+        // console.log(event);
         return (
             <Grid sx={{backgroundColor:'none'}} item xs={12} sm={7} md={5} lg={4} xl={3} key ={event.date.end}>
             <Card sx={{backgroundColor:'white'}}>
@@ -284,6 +284,7 @@ useEffect(()=>{
 },[deleteTheEventWarn])
 
 useEffect(()=>{
+    console.log("del?")
     async function formData(){
         if(deleteConfirm){
             let header = await createToken();
@@ -293,7 +294,7 @@ useEffect(()=>{
             authorization:header.headers.Authorization}})
 
             .then(function (response){
-                console.log(response);
+                // console.log(response);
                 
                 nav('/',{replace:true})
 
@@ -307,7 +308,7 @@ useEffect(()=>{
             authorization:header.headers.Authorization}})
 
             .then(function (response){
-                console.log(response);
+                // console.log(response);
                 
                 nav('/',{replace:true})
 
@@ -328,7 +329,7 @@ useEffect(()=>{
         setDatesAndTimes(tempArr);
     }formData()
 },[curTimes])
-console.log(eventData)
+// console.log(eventData)
 const arrayIncludes = (arr,element) =>{
     for(let x=0;x<arr.length;x++){
       if(datesEqual(arr[x],element)){
@@ -382,24 +383,24 @@ useEffect(()=>{
 
 
     }
-        console.log(availability);
+        // console.log(availability);
         let oput={eventId:id,attendee:{_id:uid,availability:availability}};
         //change the attendee id to uid later 
-        console.log(oput)
+        // console.log(oput)
         if(goHere){
         try{
             const header=await createToken();
-            console.log(header);
+            // console.log(header);
             if(window.location.hostname==='localhost'){
             await axios.post('http://localhost:3001/api/updateAvailability',oput,{headers:{'Content-Type':'application/json',
             authorization:header.headers.Authorization}})
             .then(function (response){
-                console.log(response);
+                // console.log(response);
                 setReloadIt(true);
                 setPickDates(false);
                 setFinished(false);
                 nav(`/event/${id}`);
-                console.log(datesAndTimes);
+                // console.log(datesAndTimes);
             })
             .catch(function (error){
                 console.log(error);
@@ -411,12 +412,12 @@ useEffect(()=>{
             await axios.post('https://coordinote.us/api/updateAvailability',oput,{headers:{'Content-Type':'application/json',
             authorization:header.headers.Authorization}})
             .then(function (response){
-                console.log(response);
+                // console.log(response);
                 setReloadIt(true);
                 setPickDates(false);
                 setFinished(false);
                 nav(`/event/${id}`);
-                console.log(datesAndTimes);
+                // console.log(datesAndTimes);
             })
             .catch(function (error){
                 console.log(error);
@@ -480,6 +481,45 @@ const disableDates = ({date})=>{
     }
     return false
 }
+const onUpdateEvent = async(e) => {
+    e.preventDefault()
+    let newName=document.getElementById('newName').value.trim()
+    let newDescription=document.getElementById('newDescription').value.trim()
+    let newLocation=document.getElementById('newLocation').value.trim()
+    let url;
+    if(window.location.hostname==='localhost'){
+        url=`http://localhost:3001/api/yourpage/events/${eventData._id}`
+    }
+    else{
+        url=`http://coordionote.us/api/yourpage/events/${eventData._id}`
+    }
+    try{
+        const header=await createToken();
+        await axios.patch(url,{name:newName,location:newLocation,description:newDescription,userId:uid},{headers:{'Content-Type':'application/json',
+        authorization:header.headers.Authorization}})
+        .then(function (response){
+            // console.log("response:",response);
+            setReloadIt(true);
+            setPickDates(false);
+            setFinished(false);
+            nav(`/event/${id}`);
+            // console.log(datesAndTimes);
+        })
+        .catch(function (error){
+            console.log(error);
+            setPickDates(true);
+            setFinished(false);
+        });
+    }
+    catch(e){
+        console.log(e)
+    }
+    document.getElementById('newName').value=''
+    document.getElementById('newDescription').value=''
+    document.getElementById('newLocation').value=''
+
+}
+
 if(loading){
     return(
         <div>
@@ -503,7 +543,7 @@ return(
     <div>
 
          <Calendar minDetail={'month'} className='smallCal' value = {new Date()} tileClassName={setClass} tileDisabled={disableDates} ></Calendar>
-         {console.log(curDate)}
+         {/* {console.log(curDate)} */}
          {tSelect}
          <p>{errMsg}</p>
          <button onClick={()=>{setFinished(true)}}>Done</button>
@@ -517,13 +557,13 @@ else{
     <div>
 
          <Calendar minDetail={'month'} className='smallCal' value = {new Date()} tileClassName={setClass} tileDisabled={disableDates} ></Calendar>
-         {console.log(curDate)}
+         {/* {console.log(curDate)} */}
          <h1>{curDate.toDateString()}</h1>
          <button onClick={()=>{setArrIndex(arrIndex+1)
         setCurDate(new Date(eventData.domainDates[arrIndex+1].date))
         setDaysSet(daysSet+1)
         }}>Next</button>
-         {console.log(curDate.toLocaleString("en-US", {timeZone: "America/New_York"}).split('T'))}
+         {/* {console.log(curDate.toLocaleString("en-US", {timeZone: "America/New_York"}).split('T'))} */}
          {tSelect}
          
     </div>)
@@ -538,7 +578,7 @@ else{
          <button onClick={()=>{setArrIndex(arrIndex-1)
         setCurDate(new Date(eventData.domainDates[arrIndex-1].date))
         }}>Previous</button>
-         {console.log(curDate)}
+         {/* {console.log(curDate)} */}
          {tSelect}
          <p>{errMsg}</p>
          <button onClick={()=>{setFinished(true)}}>Done</button>
@@ -557,7 +597,7 @@ else{
         <button onClick={()=>{setArrIndex(arrIndex+1)
                 setDaysSet(daysSet+1)
         setCurDate(new Date(eventData.domainDates[arrIndex+1].date))}}>Next</button>
-         {console.log(curDate)}
+         {/* {console.log(curDate)} */}
          {tSelect}
     </div>
         )
@@ -569,12 +609,12 @@ else{
     <div>
 
          <Calendar minDetail={'month'} className='smallCal' value = {new Date()} tileClassName={setClass} tileDisabled={disableDates} ></Calendar>
-         {console.log(curDate)}
+         {/* {console.log(curDate)} */}
          <h1>{curDate.toDateString()}</h1>
          <button onClick={()=>{setArrIndex(arrIndex+1)
         setCurDate(new Date(eventData.domainDates[arrIndex+1].date))
         }}>Next</button>
-         {console.log(curDate)}
+         {/* {console.log(curDate)} */}
          {tSelect}
          <p>{errMsg}</p>
          <button onClick={()=>{setFinished(true)}}>Done</button>
@@ -589,7 +629,7 @@ else{
          <button onClick={()=>{setArrIndex(arrIndex-1)
         setCurDate(new Date(eventData.domainDates[arrIndex-1].date))
         }}>Previous</button>
-         {console.log(curDate)}
+         {/* {console.log(curDate)} */}
          {tSelect}
          <p>{errMsg}</p>
          <button onClick={()=>{setFinished(true)}}>Done</button>
@@ -607,7 +647,7 @@ else{
         }}>Previous</button>
         <button onClick={()=>{setArrIndex(arrIndex+1)
         setCurDate(new Date(eventData.domainDates[arrIndex+1].date))}}>Next</button>
-         {console.log(curDate)}
+         {/* {console.log(curDate)} */}
          {tSelect}
          <p>{errMsg}</p>
          <button className='App-link' onClick={()=>{setFinished(true)}}>Done</button>
@@ -664,6 +704,18 @@ else {
                             <p className='makeBlack'>{eventData.location}</p>
                             </label>
                             <br />
+                            <label className='homepageLabel'>
+                                <form className='updateEventForm' onSubmit={onUpdateEvent}>
+                                    <label for='newName'>New Name: </label>
+                                    <input className='input-background' name='newName' id='newName' variant='outlined' placeholder='New name...'></input>&nbsp;
+                                    <label for='newName'>New Description: </label>
+                                    <input className='input-background' name='newDescription' id='newDescription' variant='outlined' placeholder='New description...'></input>&nbsp;
+                                    <label for='newName'>New Location: </label>
+                                    <input className='input-background' name='newLocation' id='newLocation' variant='outlined' placeholder='New location...'></input>&nbsp;
+                                    <br />
+                                    <button type='submit'>UPDATE EVENT</button>
+                                </form>
+                            </label>
                 </div>
         <Calendar minDetail={'month'} tileDisabled={()=>{return true}} className='smallCal' value = {new Date()} tileClassName={({date})=>{return tileClassBuilder(date,eventData)}}></Calendar>
         {eventPgGrid}
@@ -675,7 +727,7 @@ else {
 else{
     return(
         <div>
-            <Link onClick={setDeleteWarn(false)} to={`/event/response/${id}`} >Put in your times</Link>
+            <Link onClick={()=>{setDeleteWarn(false)}} to={`/event/response/${id}`} >Put in your times</Link>
             <div className='whiteBackground'>
             <label className='homepageLabel'>
                             Event Name
