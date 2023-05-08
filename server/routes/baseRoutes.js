@@ -161,11 +161,12 @@ router
     })
     .post(async(req,res) => {
         console.log('user/:id post')
-        let userId=undefined; let picture=undefined;
+        let userId=undefined; let {picture}=req.body;
+        console.log(picture);
         console.log(req.body)
         try{
             userId=validation.checkId(req.params.id)
-            picture=validation.checkImage(req.body.picture)
+            validation.checkImage(picture)
         }
         catch(e){
             console.log(e)

@@ -134,7 +134,8 @@ function checkPassword(password,notCreating){       //2nd parameter differentiat
     return password
 }
 
-const checkImage = function checkImage(image) {
+const checkImage = (image) => {
+    console.log(image)
     if (!image) throw `Error: You must provide a image.`;
     if (typeof image !== 'string') throw `Error: image must be a string.`;
     image = image.trim();
