@@ -298,7 +298,7 @@ span.cursor-pointer {
 
 
 .react-calendar__month-view__days__day--weekend {
-  color: #d10000;
+  color: #000000;
 }
 
 .react-calendar__month-view__days__day--neighboringMonth {
@@ -366,9 +366,9 @@ span.cursor-pointer {
   font-weight: bold;
 }
 .titleText{
-  font-size: xx-large;
+  font-size: xxx-large;
   font-weight:bolder;
-  color: #F0A04B;
+  color: #F06200;
 }
 
 .calContain{

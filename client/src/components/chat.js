@@ -79,11 +79,13 @@ function Chat(){
           <form onSubmit={onMessageSubmit}>
               <h1>Messenger</h1>
               <div>
+                <label for='message'></label>
                 <input
                   name='message'
                   id='message'
                   variant='outlined'
                   label='Message'
+                  placeholder='New message...'
                 />
               </div>
               <button>Send Message</button>

@@ -708,9 +708,9 @@ else {
                                 <form className='updateEventForm' onSubmit={onUpdateEvent}>
                                     <label for='newName'>New Name: </label>
                                     <input className='input-background' name='newName' id='newName' variant='outlined' placeholder='New name...'></input>&nbsp;
-                                    <label for='newName'>New Description: </label>
+                                    <label for='newDescription'>New Description: </label>
                                     <input className='input-background' name='newDescription' id='newDescription' variant='outlined' placeholder='New description...'></input>&nbsp;
-                                    <label for='newName'>New Location: </label>
+                                    <label for='newLocation'>New Location: </label>
                                     <input className='input-background' name='newLocation' id='newLocation' variant='outlined' placeholder='New location...'></input>&nbsp;
                                     <br />
                                     <button type='submit'>UPDATE EVENT</button>
