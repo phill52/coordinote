@@ -6,6 +6,7 @@ import {Link} from 'react-router-dom';
 
 const Header = () => {
   const {mongoUser, currentUser, loadingMongo} = React.useContext(AuthContext);
+  const [open, setOpen] = useState(false);
   const signOut = () => {
     auth.signOut()
     window.location.reload(false)
@@ -19,16 +20,39 @@ const Header = () => {
     )
   }
   console.log("MONGO USER", mongoUser)
+  const closeMenu = () => {
+    setOpen(false);
+  };
 
   if (currentUser) {
   return (
     <header className='header'>
         <Link to='/' className='text-3xl transition duration-300 transform hover:scale-110 font-bold'>CoordiNote</Link>
-        <Link to='/newEvent'>New Event</Link>
-        <Link to='/createdEvents'>My Events</Link>
-        <Link to='/invitedEvents'>Invited Events</Link>
-        <Link to={`/user/${mongoUser._id}`}>Profile</Link>
-        <button onClick={signOut}>Sign Out</button>
+          <span class="material-symbols-outlined" className='cursor-pointer' onClick={()=>setOpen(a=>!a)}>
+            menu
+          </span>
+          {open && (
+          <div className="overlay" onClick={closeMenu}>
+            <div className={`side-menu${open ? " open" : ""}`}>
+              <button className="close-button" onClick={closeMenu}>
+                &times;
+              </button>
+              <Link to="/newEvent" onClick={closeMenu}>
+                New Event
+              </Link>
+              <Link to="/createdEvents" onClick={closeMenu}>
+                My Events
+              </Link>
+              <Link to="/invitedEvents" onClick={closeMenu}>
+                Invited Events
+              </Link>
+              <Link to={`/user/${mongoUser._id}`} onClick={closeMenu}>
+                Profile
+              </Link>
+              <button onClick={signOut}>Sign Out</button>
+            </div>
+          </div>
+        )}
       </header>
   );}
   else {
