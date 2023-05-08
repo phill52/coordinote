@@ -415,6 +415,9 @@ else{
                                     if(arrIndex===(clickedDay.length-2)){
                                         setLastReached(true);
                                     }
+                                    setArrIndex(arrIndex + 1);
+                                    setCurDate(clickedDay[arrIndex + 1]);
+
                                 }}
                                 disabled={arrIndex === (clickedDay.length-1)} // Disable the button if arrIndex is the last element
                                 >
