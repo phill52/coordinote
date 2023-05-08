@@ -287,6 +287,10 @@ useEffect(()=>{
 async function handleFileInput(){
     if(inputTaken){
     if((document.querySelector('input[type="file"]').files.length!==0)){
+        let file=document.querySelector('input[type="file"]').files[0];
+        if((file.type==='image/jpg')||(file.type==='image/png')||(file.type==='image/jpeg')||(file.type==='image/heic')){
+
+        
 const formData = new FormData();
 formData.append("image",document.querySelector('input[type="file"]').files[0],document.querySelector('input[type="file"]').files[0].name)
 setFileIsIn(true);
@@ -313,6 +317,10 @@ authorization:header.headers.Authorization}})
 }
 catch(e){
 }
+        }
+    else{
+        setErrMsg('Error, file must be of type JPG, JPEG, or PNG.');
+    }
     }
     else{
         setErrMsg("Error, incorrect upload of image");

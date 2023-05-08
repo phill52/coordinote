@@ -9,6 +9,20 @@ const [submitForm,setFormSubmit] = useState(false);
 const [fileUrl,setFileUrl] = useState('');
 const [errMsg,setErrMsg] = useState('');
 const [error,setErr] = useState(false);
+
+const formSubmit = (e) =>{
+    e.preventDefault();
+    let file=document.getElementById('imageInput').files[0];
+    if((file.type==='image/jpg')||(file.type==='image/png')||(file.type==='image/jpeg')||(file.type==='image/heic')){
+        setFormSubmit(true);
+        console.log('hello')
+    }
+    else{
+        console.log(file.type)
+        setErrMsg('Error, only jpgs, pngs, and jpegs allowed');
+    }
+}
+
 useEffect(()=>{
     async function fileUpload(){
         console.log(submitForm);
@@ -108,14 +122,15 @@ if(error){
 else{
     return(
         <div>
+                <form onSubmit={formSubmit}>
                     <label className='login-label'>
                         {'Event Image: '}
                         <input type='file' accept='image/png, image/jpeg, image/jpg' required className='login-input' id='imageInput' onChange={(e)=>{
                             console.log(e)}}
                              />
                     </label>
-                    <button onClick={()=>{setFormSubmit(true)}}>Submit the image</button>
-
+                    <button type='submit'>Submit the image</button>
+                    </form>
                     <p>{errMsg}</p>
 
         </div>
