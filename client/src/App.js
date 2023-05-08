@@ -103,8 +103,9 @@ function App() {
           <Route path='/newEvent' element={<ProtectedRoute Component={<NewEvent/>}/> }/>
           <Route path='/login' element={<UnloggedRoute Component={<LoginPage />}/>} />
           <Route path='/signup' element={<UnloggedRoute Component={<SignupPage/>}/>} />
-          <Route path='/email-verification' element={<EmailVerificationLanding/>} />
-          <Route path='/event/:id' element={<ResponseToInvite />} />
+          <Route path='/email-verification' element={<UnloggedRoute Component={<EmailVerificationLanding/>} />} />
+          <Route path='/event/:id' element={<ProtectedRoute Component={<ResponseToInvite selecting={false} />}  />} />
+          <Route path = '/event/response/:id' element={<ProtectedRoute Component={<ResponseToInvite selecting={true} />} />} />
           <Route path='/' element={<Homepage />} />
           <Route path='/*' element={<p>404 not found</p>}></Route> {/* TODO: make a 404 page */}
           {/* <Route path='/myEvent/:uId' element={<MyEvents />} /> */}

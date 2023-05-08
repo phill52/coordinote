@@ -14,6 +14,7 @@ import AuthContext from '../AuthContext';
 
 
 const ResponseToInvite = (props) => {
+    const {selecting} = props;
     const {id} = useParams(); 
     let card=null;
     // const uid='6449858e039651db9d8beed2';
@@ -269,7 +270,7 @@ useEffect(()=>{
         setTSelect(<TimeSelector className='centered' value={times} startTime={new Date(eventData.domainDates[arrIndex].time["start"])} endTime={new Date(eventData.domainDates[arrIndex].time["end"])} date={curDate} change={setCurTimes} />)
     }
     }formData()
-},[curDate,eventData,pickDates,viewEventPage])
+},[curDate,eventData,selecting])
 
 useEffect(()=>{
     async function formData(){
@@ -397,6 +398,7 @@ useEffect(()=>{
                 setReloadIt(true);
                 setPickDates(false);
                 setFinished(false);
+                nav(`/event/${id}`);
                 console.log(datesAndTimes);
             })
             .catch(function (error){
@@ -413,6 +415,7 @@ useEffect(()=>{
                 setReloadIt(true);
                 setPickDates(false);
                 setFinished(false);
+                nav(`/event/${id}`);
                 console.log(datesAndTimes);
             })
             .catch(function (error){
@@ -494,7 +497,7 @@ else if(error){
     )
 }
 else{
-    if(pickDates){
+    if(selecting){
     if(eventData.domainDates.length===1){
 return(
     <div>
@@ -614,10 +617,11 @@ else{
 }
 }
 }
-else if(viewEventPage){
+else {
     if(eventData.creatorID!==uid){
     return(
         <div>
+            <Link to={`/event/response/${id}`} >Put in your times</Link>
             <div className='whiteBackground'>
             <label className='homepageLabel'>
                             Event Name
@@ -637,12 +641,13 @@ else if(viewEventPage){
             </div>
     <Calendar minDetail={'month'} tileDisabled={()=>{return true}} className='smallCal' value = {new Date()} tileClassName={({date})=>{return tileClassBuilder(date,eventData)}}></Calendar>
     {eventPgGrid}
-    <button className='App-link' onClick={()=>{setViewEventPage(false)}}>Go Back</button>
+    <Chat id={id} ></Chat>
     </div>)}
     else{
         if(!deleteTheEventWarn){
         return(
             <div>
+                <Link to={`/event/response/${id}`} >Put in your times</Link>
                 <div className='whiteBackground'>
                 <label className='homepageLabel'>
                                 Event Name
@@ -663,14 +668,14 @@ else if(viewEventPage){
         <Calendar minDetail={'month'} tileDisabled={()=>{return true}} className='smallCal' value = {new Date()} tileClassName={({date})=>{return tileClassBuilder(date,eventData)}}></Calendar>
         {eventPgGrid}
         <br />
+        <Chat id={id} ></Chat>
         <button className='App-link' onClick={()=>{setDeleteWarn(true)}}>Delete the event</button>
-
-        <button className='App-link' onClick={()=>{setViewEventPage(false)}}>Go Back</button>
         </div>)
     }
 else{
     return(
         <div>
+            <Link onClick={setDeleteWarn(false)} to={`/event/response/${id}`} >Put in your times</Link>
             <div className='whiteBackground'>
             <label className='homepageLabel'>
                             Event Name
@@ -695,35 +700,9 @@ else{
     <button className='App-link' onClick={()=>{setDeleteWarn(false)}}>Do not delete the event</button>
     <button className='App-link' onClick={()=>{setDeleteConfirm(true)}}>Confirm Delete</button>
     <br />
-    <button className='App-link' onClick={()=>{setViewEventPage(false)
-    setDeleteWarn(false);
-    }}>Go Back</button>
     </div>)
 }
 }
-}
-else if(chatOption){
-return(
-    <div>
-        <Calendar minDetail={'month'} tileDisabled={()=>{return true}} className='smallCal' value = {new Date()} tileClassName={({date})=>{return tileClassBuilder(date,eventData)}}></Calendar>
-        <Chat id={id} ></Chat>
-        <button className='App-link' onClick={()=>{setChatOption(false)}}>Go Back</button>
-    </div>
-)
-}
-else{
-    return(
-        <div>
-<Calendar minDetail={'month'} tileDisabled={()=>{return true}} className='smallCal' value = {new Date()} tileClassName={({date})=>{return tileClassBuilder(date,eventData)}}></Calendar>
-<br />
-    <button className='App-link' onClick={()=>{setPickDates(true)}}>Pick Your Dates</button>
-    <br />
-    <button className='App-link' onClick={()=>{setViewEventPage(true)}}>View the event page</button>
-    <br />
-    <button className='App-link' onClick={()=>{setChatOption(true)}}>Chat</button>
-
-    </div>
-    );
 }
 }
 }
