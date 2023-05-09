@@ -455,8 +455,16 @@ span.cursor-pointer {
   -ms-transform: rotate(-6deg);
   transform: rotate(-6deg);
 }
+.containEventPage{
+  display:block
+}
+.floatR{
+  float:right
+}
 
-
+.floatL{
+  float:left
+}
 .overlay {
   position: fixed;
   top: 0;

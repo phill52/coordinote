@@ -12,6 +12,7 @@ import { Button } from '@mui/material';
 import { formatDate } from 'react-calendar/dist/cjs/shared/dateFormatter';
 import axios from 'axios'
 import {createToken } from '../fire';
+import { checkString, checkDomainDates } from '../validate'; 
 
 const NewEvent= ()=>{
     const [dates,setDates]=useState(new Date());
@@ -43,6 +44,8 @@ const NewEvent= ()=>{
     const [inputTaken,setInputTaken] = useState(false);
     const [lastPageReached,setLastReached] = useState(false);
     const [eventId,setEventId] = useState('');
+    const [valid,setValid]=useState(true);
+    const [validErrMsg,setValidErrMsg] = useState ('');
     const datesEqual = (dte1,dte2) =>{
         if(!(dte1<dte2)){
             if(!(dte1>dte2)){
@@ -94,10 +97,10 @@ const NewEvent= ()=>{
                     times=datesAndTimes[index].time;
                 }
                 if(datesEqual(new Date(new Date().toDateString()),new Date(curDate.toDateString()))){
-                setTselect(<TimeSelectorTwoAnchors className='centered' startTime={new Date(curDate.getFullYear(), curDate.getMonth(), curDate.getDate(), new Date().getHours(), 0, 0, 0)} endTime={new Date(curDate.getFullYear(), curDate.getMonth(), curDate.getDate(), 23, 59, 59, 0)} value = {times} date= {clickedDay[arrIndex]} change={setCurTimes}/>)
+                setTselect(<TimeSelectorTwoAnchors className='centered' startTime={new Date(curDate.getFullYear(), curDate.getMonth(), curDate.getDate(), new Date().getHours(), 0, 0, 0)} endTime={new Date(curDate.getFullYear(), curDate.getMonth(), curDate.getDate(), 23, 59, 59, 0)} value = {times} date= {clickedDay[arrIndex]} change={setCurTimes} invalid={setValid}/>)
                 }
                 else{
-                    setTselect(<TimeSelectorTwoAnchors className='centered' startTime={new Date(curDate.getFullYear(), curDate.getMonth(), curDate.getDate(), 0, 0, 0, 0)} endTime={new Date(curDate.getFullYear(), curDate.getMonth(), curDate.getDate(), 23,59, 59, 0)} value = {times} date= {clickedDay[arrIndex]} change={setCurTimes}/>)
+                    setTselect(<TimeSelectorTwoAnchors className='centered' startTime={new Date(curDate.getFullYear(), curDate.getMonth(), curDate.getDate(), 0, 0, 0, 0)} endTime={new Date(curDate.getFullYear(), curDate.getMonth(), curDate.getDate(), 23,59, 59, 0)} value = {times} date= {clickedDay[arrIndex]} change={setCurTimes} invalid={setValid}/>)
                 }
             }
             catch(e){
@@ -168,8 +171,17 @@ catch(e){
 const handleSubmit = (event) =>{
     event.preventDefault();
     if((eventName!=='')&&(eventDescription!=='')&&(location!=='')&&(fileIsIn)){
-        setErrMsg('');
+        try{
+            checkString(eventName,'Event Name',1,40,true,true,true,true);
+            checkString(eventDescription,'Event Description',1,1000,true,true,true,true);
+            checkString(location,'Event Location',1,100,true,true,true,true);
+            setErrMsg('');
     setNameSet(true)
+        }
+        catch(e){
+            setErrMsg(e);
+        }
+        
     }
     else{
         setErrMsg('Error: all input parameters must be filled out');
@@ -252,7 +264,8 @@ const disableAll = ({date,view})=>{
 }
 useEffect(()=>{
     async function fetchData(){
-        if(dateTimeLock){
+        console.log(valid)
+        if((dateTimeLock)&&(valid)){
         let tempObj={...output};
         setOutput({name:eventName,location:location,domainDates:datesAndTimes,description:eventDescription,image:fileInput});
         try{
@@ -260,13 +273,15 @@ useEffect(()=>{
         for(let x=0;x<datesAndTimes.length;x++){
             domDates=[...domDates,{date:datesAndTimes[x].date,time:{start:datesAndTimes[x].time[0],end:datesAndTimes[x].time[1]}}];
         }
+        try{
+            checkDomainDates(domDates)
             let oput={name:eventName,location:location,domainDates:domDates,description:eventDescription,image:fileInput,attendees:[]}
             const header=await createToken();
             if(window.location.hostname==='localhost'){
         await axios.post('http://localhost:3001/api/yourpage/events/createEvent',{name:eventName,location:location,domainDates:domDates,description:eventDescription,image:fileUrl,attendees:[]},{headers:{'Content-Type':'application/json',
         authorization:header.headers.Authorization}})
         .then(function (response){
-            // console.log(response)
+            setEventId(response.data._id);
         })
         .catch(function (error){
         });}
@@ -274,6 +289,7 @@ useEffect(()=>{
             await axios.post('https://coordinote.us/api/yourpage/events/createEvent',{name:eventName,location:location,domainDates:domDates,description:eventDescription,image:fileUrl,attendees:[]},{headers:{'Content-Type':'application/json',
         authorization:header.headers.Authorization}})
         .then(function (response){
+            setEventId(response.data._id)
         })
         .catch(function (error){
         });
@@ -281,8 +297,25 @@ useEffect(()=>{
         }
         catch(e){
         }
+    }
+    catch(e){
+        setErrMsg(e)
+        lockDateTime(false);
+    }
 
-    }}fetchData()
+    }
+else{
+    setValidErrMsg('Select two times first');
+    let times = datesAndTimes[arrIndex].time
+    if(datesEqual(new Date(new Date().toDateString()),new Date(curDate.toDateString()))){
+        setTselect(<TimeSelectorTwoAnchors className='centered' startTime={new Date(curDate.getFullYear(), curDate.getMonth(), curDate.getDate(), new Date().getHours(), 0, 0, 0)} endTime={new Date(curDate.getFullYear(), curDate.getMonth(), curDate.getDate(), 23, 59, 59, 0)} value = {times} date= {clickedDay[arrIndex]} change={setCurTimes} invalid={setValid}/>)
+        }
+        else{
+            setTselect(<TimeSelectorTwoAnchors className='centered' startTime={new Date(curDate.getFullYear(), curDate.getMonth(), curDate.getDate(), 0, 0, 0, 0)} endTime={new Date(curDate.getFullYear(), curDate.getMonth(), curDate.getDate(), 23,59, 59, 0)} value = {times} date= {clickedDay[arrIndex]} change={setCurTimes} invalid={setValid}/>)
+        }
+    lockDateTime(false);
+}
+}fetchData()
 },[dateTimeLock])
 useEffect(()=>{
 async function handleFileInput(){
@@ -302,6 +335,7 @@ await axios.post('http://localhost:3001/api/yourpage/events/imageTest',formData,
 authorization:header.headers.Authorization}})
 .then(function (response){
     setFileUrl(response.data.imageUrl);
+    console.log(response.data.imageUrl)
 })
 .catch(function (error){
 });
@@ -342,8 +376,19 @@ else{
         return(
             <div>
                 <h1 className='currentDay'>All Done!</h1>
+                <h2>Your event link is:</h2>
+                <h2 className='currentDay'>{`http://localhost:3000/event/${eventId}`}</h2>
             </div>
         )}
+        else{
+            return(
+                <div>
+                    <h1 className='currentDay'>All Done!</h1>
+                    <h2>Your event link is:</h2>
+                    <h2 className='currentDay'>{`https://coordinote.us/event/${eventId}`}</h2>
+                </div>
+            )
+        }
     }
     else{
     if(!nameSet){
@@ -442,6 +487,10 @@ else{
                                 <button onClick={() => { lockDateTime(true) }}>Lock dates and times</button>
                                 </form>
                             )}
+                            {!valid && (
+                            <p>{validErrMsg}</p>
+
+                            )}
                             <br />
                             </div>
                     );
@@ -471,13 +520,13 @@ else{
 else{
     return(<div>
         <div>
-        <div className='login-form'>
-            <h1 className='login-label'>Event Name</h1>
-        <p className='left'>{eventName}</p>
-        <h2 className='login-label'>Event Description</h2>
-        <p className='left'>{eventDescription}</p>
-        <h2 className='login-label'>Event Location</h2>
-        <p className='left'>{location}</p>
+        <div className='postit-note'>
+            <h2 className='light-green-100'>Event Name</h2>
+            <p>{eventName}</p>
+            <h2 className='light-green-100'>Event Description</h2>
+            <p>{eventDescription}</p>
+            <h2 className='light-green-100'>Event Location</h2>
+            <p>{location}</p>
         </div><div>
         <Calendar minDetail={'decade'} className='smallCal' tileDisabled={tileDisabled} value = {new Date()} onChange={setDates} tileClassName={tileClass} ></Calendar>
         </div>
