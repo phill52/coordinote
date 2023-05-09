@@ -284,7 +284,6 @@ useEffect(()=>{
 },[deleteTheEventWarn])
 
 useEffect(()=>{
-    console.log("del?")
     async function formData(){
         if(deleteConfirm){
             let header = await createToken();
@@ -295,7 +294,9 @@ useEffect(()=>{
 
             .then(function (response){
                 // console.log(response);
-                
+                if(response && response.data && response.data.deleted==true){
+                    alert(`Event '${eventData.name}' deleted successfully!`)
+                }
                 nav('/',{replace:true})
 
             })
@@ -309,7 +310,9 @@ useEffect(()=>{
 
             .then(function (response){
                 // console.log(response);
-                
+                if(response && response.data && response.data.deleted==true){
+                    alert(`Event '${eventData.name}' deleted successfully!`)
+                }
                 nav('/',{replace:true})
 
             })

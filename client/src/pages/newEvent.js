@@ -394,7 +394,7 @@ else{
                     <div>
                         <div>
                         <div className='postit-note'>
-                            <h2 className='light-green-100'>Event Name</h2>
+                            <h1 className='light-green-100'>Event Name</h1>
                             <p>{eventName}</p>
                             <h2 className='light-green-100'>Event Description</h2>
                             <p>{eventDescription}</p>
@@ -449,7 +449,7 @@ else{
     if(clickedDay.length>0){
     return(<div>
         <div className='postit-note'>
-            <h2 className='light-green-100'>Event Name</h2>
+            <h1 className='light-green-100'>Event Name</h1>
             <p>{eventName}</p>
             <h2 className='light-green-100'>Event Description</h2>
             <p>{eventDescription}</p>
@@ -471,7 +471,7 @@ else{
     return(<div>
         <div>
         <div className='login-form'>
-            <h2 className='login-label'>Event Name</h2>
+            <h1 className='login-label'>Event Name</h1>
         <p className='left'>{eventName}</p>
         <h2 className='login-label'>Event Description</h2>
         <p className='left'>{eventDescription}</p>

@@ -412,7 +412,7 @@ span.cursor-pointer {
   left: 0; /* Move the left button to the left edge of the container */
   top: 50%;
   transform: translateY(-50%);
-  color: #6FBC4B;
+  color: #008c33;
 }
 
 .button-right {
@@ -420,7 +420,7 @@ span.cursor-pointer {
   right: 0; /* Move the right button to the right edge of the container */
   top: 50%;
   transform: translateY(-50%);
-  color: #6FBC4B;
+  color: #008c33;
 }
 
 .button-left:disabled {
