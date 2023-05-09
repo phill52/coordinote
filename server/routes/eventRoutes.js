@@ -64,7 +64,7 @@ router
         let userId=undefined;
         let user=undefined;
         try {
-            console.log(uid)
+            // console.log(uid)
             user = await users.getUserByFirebaseId(uid);
         } catch (e) {
             console.log(e);
@@ -81,7 +81,7 @@ router
             console.log(e)
             return;
         }
-        console.log(userEvents)
+        // console.log(userEvents)
         return res.status(200).json(userEvents)
     })
 router
@@ -215,7 +215,7 @@ router
     .post(upload.single('image'), async(req,res) => {           //events post route, when you make a new event
         console.log('/createEvent post')
         if(!req.body) {res.sendStatus(400); return;}
-        console.log(req.body)
+        // console.log(req.body)
         let newEvent=undefined; let userId=undefined;
        /* try{
             userId=validation.checkId(req.session.user.userId)
@@ -225,16 +225,16 @@ router
             return;
         }*/
         try{
-            console.log(req.currentUser.uid)
+            // console.log(req.currentUser.uid)
             let usr= await users.getUserByFirebaseId(req.currentUser.uid);
 
-            console.log(usr)
-            newEvent=await events.createEvent(req.body.name, req.body.domainDates, req.body.location, req.body.description,
-                req.body.attendees,req.body.image,usr._id);
+            // console.log(usr)
+            newEvent=await events.createEvent(req.body.name, req.body.location, req.body.description, req.body.domainDates,
+                req.body.image,usr._id);
         }
         catch(e){
             console.log(e)
-            console.log("here")
+            // console.log("here")
             res.json({"Error":`Could not create event: ${e}`}).status(400)
             return
         }
@@ -274,7 +274,7 @@ router
         console.log('/:id patch')
         let eventId=undefined; let userId=undefined;
         try{
-            userId=validation.checkId(req.session.user.userId)
+            userId=validation.checkId(req.body.userId)
             eventId=validation.checkId(req.params.id)
         }
         catch(e){
@@ -304,7 +304,7 @@ router
     .delete(async(req,res) => {         //  delete      /yourpage/events/:id
         let eventId=undefined; //let userId='6449858e039651db9d8beed2';
         console.log('/:id delete')
-        console.log(req.currentUser.uid)
+        // console.log(req.currentUser.uid)
         let usr= await users.getUserByFirebaseId(req.currentUser.uid);
         let userId = usr._id;
         try{

@@ -12,7 +12,7 @@ import { Button } from '@mui/material';
 import { formatDate } from 'react-calendar/dist/cjs/shared/dateFormatter';
 import axios from 'axios'
 import {createToken } from '../fire';
-import { checkString } from '../validate'; 
+import { checkString, checkDomainDates } from '../validate'; 
 
 const NewEvent= ()=>{
     const [dates,setDates]=useState(new Date());
@@ -44,6 +44,8 @@ const NewEvent= ()=>{
     const [inputTaken,setInputTaken] = useState(false);
     const [lastPageReached,setLastReached] = useState(false);
     const [eventId,setEventId] = useState('');
+    const [valid,setValid]=useState(true);
+    const [validErrMsg,setValidErrMsg] = useState ('');
     const datesEqual = (dte1,dte2) =>{
         if(!(dte1<dte2)){
             if(!(dte1>dte2)){
@@ -95,10 +97,10 @@ const NewEvent= ()=>{
                     times=datesAndTimes[index].time;
                 }
                 if(datesEqual(new Date(new Date().toDateString()),new Date(curDate.toDateString()))){
-                setTselect(<TimeSelectorTwoAnchors className='centered' startTime={new Date(curDate.getFullYear(), curDate.getMonth(), curDate.getDate(), new Date().getHours(), 0, 0, 0)} endTime={new Date(curDate.getFullYear(), curDate.getMonth(), curDate.getDate(), 23, 59, 59, 0)} value = {times} date= {clickedDay[arrIndex]} change={setCurTimes}/>)
+                setTselect(<TimeSelectorTwoAnchors className='centered' startTime={new Date(curDate.getFullYear(), curDate.getMonth(), curDate.getDate(), new Date().getHours(), 0, 0, 0)} endTime={new Date(curDate.getFullYear(), curDate.getMonth(), curDate.getDate(), 23, 59, 59, 0)} value = {times} date= {clickedDay[arrIndex]} change={setCurTimes} invalid={setValid}/>)
                 }
                 else{
-                    setTselect(<TimeSelectorTwoAnchors className='centered' startTime={new Date(curDate.getFullYear(), curDate.getMonth(), curDate.getDate(), 0, 0, 0, 0)} endTime={new Date(curDate.getFullYear(), curDate.getMonth(), curDate.getDate(), 23,59, 59, 0)} value = {times} date= {clickedDay[arrIndex]} change={setCurTimes}/>)
+                    setTselect(<TimeSelectorTwoAnchors className='centered' startTime={new Date(curDate.getFullYear(), curDate.getMonth(), curDate.getDate(), 0, 0, 0, 0)} endTime={new Date(curDate.getFullYear(), curDate.getMonth(), curDate.getDate(), 23,59, 59, 0)} value = {times} date= {clickedDay[arrIndex]} change={setCurTimes} invalid={setValid}/>)
                 }
             }
             catch(e){
@@ -262,7 +264,8 @@ const disableAll = ({date,view})=>{
 }
 useEffect(()=>{
     async function fetchData(){
-        if(dateTimeLock){
+        console.log(valid)
+        if((dateTimeLock)&&(valid)){
         let tempObj={...output};
         setOutput({name:eventName,location:location,domainDates:datesAndTimes,description:eventDescription,image:fileInput});
         try{
@@ -270,6 +273,8 @@ useEffect(()=>{
         for(let x=0;x<datesAndTimes.length;x++){
             domDates=[...domDates,{date:datesAndTimes[x].date,time:{start:datesAndTimes[x].time[0],end:datesAndTimes[x].time[1]}}];
         }
+        try{
+            checkDomainDates(domDates)
             let oput={name:eventName,location:location,domainDates:domDates,description:eventDescription,image:fileInput,attendees:[]}
             const header=await createToken();
             if(window.location.hostname==='localhost'){
@@ -292,8 +297,25 @@ useEffect(()=>{
         }
         catch(e){
         }
+    }
+    catch(e){
+        setErrMsg(e)
+        lockDateTime(false);
+    }
 
-    }}fetchData()
+    }
+else{
+    setValidErrMsg('Select two times first');
+    let times = datesAndTimes[arrIndex].time
+    if(datesEqual(new Date(new Date().toDateString()),new Date(curDate.toDateString()))){
+        setTselect(<TimeSelectorTwoAnchors className='centered' startTime={new Date(curDate.getFullYear(), curDate.getMonth(), curDate.getDate(), new Date().getHours(), 0, 0, 0)} endTime={new Date(curDate.getFullYear(), curDate.getMonth(), curDate.getDate(), 23, 59, 59, 0)} value = {times} date= {clickedDay[arrIndex]} change={setCurTimes} invalid={setValid}/>)
+        }
+        else{
+            setTselect(<TimeSelectorTwoAnchors className='centered' startTime={new Date(curDate.getFullYear(), curDate.getMonth(), curDate.getDate(), 0, 0, 0, 0)} endTime={new Date(curDate.getFullYear(), curDate.getMonth(), curDate.getDate(), 23,59, 59, 0)} value = {times} date= {clickedDay[arrIndex]} change={setCurTimes} invalid={setValid}/>)
+        }
+    lockDateTime(false);
+}
+}fetchData()
 },[dateTimeLock])
 useEffect(()=>{
 async function handleFileInput(){
@@ -375,7 +397,7 @@ else{
                 <form className='login-form' onSubmit={handleSubmit}>
                 <br />
                 <label className='login-label'>
-                    {'Event Name: '}
+                    {'Event Name: '} <br />
                 <input className="login-input" id='nameInput' onChange={(e)=>{setEventName(e.target.value)
                 }} placeholder='event name' required />
                 </label>
@@ -418,7 +440,7 @@ else{
                     <div>
                         <div>
                         <div className='postit-note'>
-                            <h2 className='light-green-100'>Event Name</h2>
+                            <h1 className='light-green-100'>Event Name</h1>
                             <p>{eventName}</p>
                             <h2 className='light-green-100'>Event Description</h2>
                             <p>{eventDescription}</p>
@@ -465,6 +487,10 @@ else{
                                 <button onClick={() => { lockDateTime(true) }}>Lock dates and times</button>
                                 </form>
                             )}
+                            {!valid && (
+                            <p>{validErrMsg}</p>
+
+                            )}
                             <br />
                             </div>
                     );
@@ -473,7 +499,7 @@ else{
     if(clickedDay.length>0){
     return(<div>
         <div className='postit-note'>
-            <h2 className='light-green-100'>Event Name</h2>
+            <h1 className='light-green-100'>Event Name</h1>
             <p>{eventName}</p>
             <h2 className='light-green-100'>Event Description</h2>
             <p>{eventDescription}</p>

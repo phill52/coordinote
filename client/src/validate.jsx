@@ -43,4 +43,19 @@ const checkString = function checkString(strVal, varName = '', minLength = 0, ma
     throw `Error: ${varName} must only be numeric.`;
 };
 
-export { validatePassword, validateEmail, checkString};
+const checkDomainDates = function checkDomainDates(domainDates) {
+  for (let domainDate of domainDates) {
+      if (!domainDate) throw `Error: You must provide domainDate.`;
+      if (typeof domainDate !== 'object') throw `Error: domainDate must be an object.`;
+      if (!domainDate.date) throw `Error: domainDate must have a date.`;
+      if (new Date(domainDate.date) == 'Invalid Date') throw `Error: date must be a valid date.`;
+      if (!domainDate.time) throw `Error: domainDate must have a time.`;
+      if (typeof domainDate.time !== 'object') throw `Error: time must be an object.`;
+      if (!domainDate.time.start) throw `Error: time must have a start.`;
+      if (!domainDate.time.end) throw `Error: time must have an end.`;
+      if (new Date(domainDate.time.start) == 'Invalid Date') throw `Error: start must be a valid date.`;
+      if (new Date(domainDate.time.end) == 'Invalid Date') throw `Error: end must be a valid date.`;
+      if (new Date(domainDate.time.start) > new Date(domainDate.time.end)) throw `Error: start must be before end.`;
+  }
+}
+export { validatePassword, validateEmail, checkString, checkDomainDates};

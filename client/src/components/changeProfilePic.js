@@ -25,14 +25,14 @@ const formSubmit = (e) =>{
 
 useEffect(()=>{
     async function fileUpload(){
-        console.log(submitForm);
+        // console.log(submitForm);
         if(submitForm){
         if((document.querySelector('input[type="file"]').files.length!==0)){
             const formData = new FormData();
-            console.log(document.querySelector('input[type="file"]').files[0])
+            // console.log(document.querySelector('input[type="file"]').files[0])
             formData.append("image",document.querySelector('input[type="file"]').files[0],document.querySelector('input[type="file"]').files[0].name)
-            console.log(formData.getAll('image')[0]);
-            console.log(formData)
+            // console.log(formData.getAll('image')[0]);
+            // console.log(formData)
             const header=await createToken();
             try{
                 if(window.location.hostname==='localhost'){
@@ -52,7 +52,7 @@ useEffect(()=>{
                     await axios.post('https://coordinote.us/api/yourpage/events/resizePFP',formData,{headers:{'Content-Type':'multipart/form-data',
             authorization:header.headers.Authorization}})
             .then(function (response){
-                console.log(response);
+                // console.log(response);
                 setFileUrl(response.data.imageUrl);
                 setImageIn(true);
             })
@@ -82,7 +82,7 @@ useEffect(()=>{
             if(window.location.hostname==='localhost'){
                 await axios.post(`http://localhost:3001/api/user/${uid}`,{picture:fileUrl},{headers:{'Content-Type':'application/json','Authorization':header.headers.Authorization}})
             .then(function (response){
-                console.log(response)
+                // console.log(response)
                 setFormSubmit(false)
                 change(true)
                 done(false)
@@ -96,7 +96,7 @@ useEffect(()=>{
             else{
             await axios.post(`https://coordinote.us/api/user/${uid}`,{picture:fileUrl},{headers:{'Content-Type':'application/json','Authorization':header.headers.Authorization}})
             .then(function (response){
-                console.log(response)
+                // console.log(response)
                 setFormSubmit(false)
                 change(true)
                 done(false)
@@ -124,9 +124,9 @@ else{
         <div>
                 <form onSubmit={formSubmit}>
                     <label className='login-label'>
-                        {'Event Image: '}
+                        {'Profile picture: '}
                         <input type='file' accept='image/png, image/jpeg, image/jpg' required className='login-input' id='imageInput' onChange={(e)=>{
-                            console.log(e)}}
+                            }}
                              />
                     </label>
                     <button type='submit'>Submit the image</button>

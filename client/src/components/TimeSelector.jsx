@@ -94,7 +94,7 @@ return (
                   setAnchors(newAnchors);
                   change({date:date,time:newAnchors})
                 }
-                console.log(value)
+                // console.log(value)
               }}
             />
             {arrayIncludes(anchors,slot.comparableTime) && (
@@ -106,7 +106,7 @@ return (
         </li>
         ))}        
       </ul>
-      {console.log(anchors)}
+      {/* {console.log(anchors)} */}
     </div>
   );
 }; 
