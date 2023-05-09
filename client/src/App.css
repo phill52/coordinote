@@ -49,6 +49,10 @@ body{
   background-size: 100% 2.5em; /* Set the spacing of the notebook lines */
 }
 
+span.cursor-pointer {
+  font-size:24px;
+}
+
 .currentDay{
   font-size: large;
 }
@@ -445,8 +449,16 @@ body{
   -ms-transform: rotate(-6deg);
   transform: rotate(-6deg);
 }
+.containEventPage{
+  display:block
+}
+.floatR{
+  float:right
+}
 
-
+.floatL{
+  float:left
+}
 .overlay {
   position: fixed;
   top: 0;

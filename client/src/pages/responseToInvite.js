@@ -277,9 +277,12 @@ useEffect(()=>{
         console.log(deleteTheEventWarn)
         if(deleteTheEventWarn){
             setDeleteMsg('Are you sure that you want to delete the event?')
+            setReloadIt(true);
+
         }
         else{
             setDeleteMsg('');
+            setReloadIt(true);
         }
     }formData()
 },[deleteTheEventWarn])
@@ -623,24 +626,25 @@ else {
     return(
         <div>
             <Link to={`/event/response/${id}`} >Put in your times</Link>
-            <div className='whiteBackground'>
-            <label className='homepageLabel'>
-                            Event Name
-                        <h1 className='makeBlack'>{eventData.name}</h1>
-                        </label>
+            <div className = 'containEventPage'>
+            <div className='postit-note floatL'>
+                            <h2 className='light-green-100'>Event Name</h2>
+                            <p>{eventData.name}</p>
+                            <h2 className='light-green-100'>Event Description</h2>
+                            <p>{eventData.description}</p>
+                            <h2 className='light-green-100'>Event Location</h2>
+                            <p>{eventData.location}</p>
+                        </div>
+                        
+                        <Calendar minDetail={'month'} tileDisabled={()=>{return true}} className='smallCal' value = {new Date()} tileClassName={({date})=>{return tileClassBuilder(date,eventData)}}></Calendar>
+                        
+                <div className='floatR'>
+                    <img src={`${eventData.image}`} alt={eventData.name} width={'350px'}></img>
+                </div>
+                        </div>
                         <br />
-                        <label className='homepageLabel'>
-                            Event Description
-                        <h2 className='makeBlack'>{eventData.description}</h2>
-                        </label>
                         <br />
-                        <label className='homepageLabel'>
-                            Event Location
-                        <p className='makeBlack'>{eventData.location}</p>
-                        </label>
                         <br />
-            </div>
-    <Calendar minDetail={'month'} tileDisabled={()=>{return true}} className='smallCal' value = {new Date()} tileClassName={({date})=>{return tileClassBuilder(date,eventData)}}></Calendar>
     {eventPgGrid}
     <Chat id={id} ></Chat>
     </div>)}
@@ -649,54 +653,56 @@ else {
         return(
             <div>
                 <Link to={`/event/response/${id}`} >Put in your times</Link>
-                <div className='whiteBackground'>
-                <label className='homepageLabel'>
-                                Event Name
-                            <h1 className='makeBlack'>{eventData.name}</h1>
-                            </label>
-                            <br />
-                            <label className='homepageLabel'>
-                                Event Description
-                            <h2 className='makeBlack'>{eventData.description}</h2>
-                            </label>
-                            <br />
-                            <label className='homepageLabel'>
-                                Event Location
-                            <p className='makeBlack'>{eventData.location}</p>
-                            </label>
-                            <br />
+                <div className = 'containEventPage'>
+            <div className='postit-note floatL'>
+                            <h2 className='light-green-100'>Event Name</h2>
+                            <p>{eventData.name}</p>
+                            <h2 className='light-green-100'>Event Description</h2>
+                            <p>{eventData.description}</p>
+                            <h2 className='light-green-100'>Event Location</h2>
+                            <p>{eventData.location}</p>
+                        </div>
+                        
+                        <Calendar minDetail={'month'} tileDisabled={()=>{return true}} className='smallCal' value = {new Date()} tileClassName={({date})=>{return tileClassBuilder(date,eventData)}}></Calendar>
+                        
+                <div className='floatR'>
+                    <img src={`${eventData.image}`} alt={eventData.name} width={'350px'}></img>
                 </div>
-        <Calendar minDetail={'month'} tileDisabled={()=>{return true}} className='smallCal' value = {new Date()} tileClassName={({date})=>{return tileClassBuilder(date,eventData)}}></Calendar>
+                        </div>
+                        <br />
+                        <br />
+                        <br />
         {eventPgGrid}
         <br />
+        <button className='App-link' onClick={()=>{setDeleteWarn(true)}}>Delete the event</button>
         <Chat id={id} ></Chat>
-        <button className='App-link' onClick={()=>{
-            console.log("i hit the button")
-            setDeleteWarn(true)}}>Delete the event</button>
         </div>)
     }
 else{
     return(
         <div>
             <Link onClick={()=>{setDeleteWarn(false)}} to={`/event/response/${id}`} >Put in your times</Link>
-            <div className='whiteBackground'>
-            <label className='homepageLabel'>
-                            Event Name
-                        <h1 className='makeBlack'>{eventData.name}</h1>
-                        </label>
+            <br />
+            <br />
+            <div className = 'containEventPage'>
+            <div className='postit-note floatL'>
+                            <h2 className='light-green-100'>Event Name</h2>
+                            <p>{eventData.name}</p>
+                            <h2 className='light-green-100'>Event Description</h2>
+                            <p>{eventData.description}</p>
+                            <h2 className='light-green-100'>Event Location</h2>
+                            <p>{eventData.location}</p>
+                        </div>
+                        
+                        <Calendar minDetail={'month'} tileDisabled={()=>{return true}} className='smallCal' value = {new Date()} tileClassName={({date})=>{return tileClassBuilder(date,eventData)}}></Calendar>
+                        
+                <div className='floatR'>
+                    <img src={`${eventData.image}`} alt={eventData.name} width={'350px'}></img>
+                </div>
+                        </div>
                         <br />
-                        <label className='homepageLabel'>
-                            Event Description
-                        <h2 className='makeBlack'>{eventData.description}</h2>
-                        </label>
                         <br />
-                        <label className='homepageLabel'>
-                            Event Location
-                        <p className='makeBlack'>{eventData.location}</p>
-                        </label>
                         <br />
-            </div>
-    <Calendar minDetail={'month'} tileDisabled={()=>{return true}} className='smallCal' value = {new Date()} tileClassName={({date})=>{return tileClassBuilder(date,eventData)}}></Calendar>
     {eventPgGrid}
     <br />
     <p>Are you sure you want to delete the event</p>

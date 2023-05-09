@@ -1,13 +1,12 @@
 import mongoCollections from '../config/mongoCollections.js';
 const users = mongoCollections.users;
 const events = mongoCollections.events;
-import userFunctions from './users.js'
 import validation from '../validation.js'
 import {ObjectId} from 'mongodb'
 const fn = validation.fn;
 
 const createEvent = async (eventName, domainDates, location, description, attendees, image, userId) => {
-    eventName = validation.checkEventName(eventName);
+    
     location = validation.checkLocation(location)
     domainDates = validation.checkDate(domainDates)
 
@@ -22,6 +21,7 @@ const createEvent = async (eventName, domainDates, location, description, attend
         creatorID:userId,
         chatLogs:[]
     }
+    console.log(newEvent)
     const insertEvent = await eventCollection.insertOne(newEvent);
     if(!insertEvent.acknowledged || !insertEvent.insertedId)
         throw "Unable to add event to events collection";
@@ -31,6 +31,7 @@ const createEvent = async (eventName, domainDates, location, description, attend
         {$push: {createdEvents:insertEvent.insertedId}}
     )
     if(updatedUser.modifiedCount < 1){
+        console.log(userId)
         throw "Unable to add this event to your account"
     }
     return await getEventById(insertEvent.insertedId)
@@ -96,7 +97,7 @@ const getEventById = async(eventId) => {
 
 const deleteEvent = async(eventId,userId) => {
     eventId=validation.checkId(eventId)
-    userId=validation.checkId(userId)
+    
     const eventCollection=await events();
     const userCollection=await users();
     let attendees=await getAttendees(eventId);
@@ -159,15 +160,12 @@ const getAttendeeById=async(eventId,attendeeId) => {
 
 //needs an entire attendee object (with attendee id and new availability)
 const addAttendee = async (eventId, newAttendee) => {
-    validation.checkId(eventId, 'eventId');
-
-    const user = await userFunctions.getUserByUID(newAttendee._id);
-    if (!user) throw `No user found with id ${newAttendee._id}.`;
-    console.log(user);
+    console.log(newAttendee)
+    eventId = validation.checkId(eventId);
     const eventCollection=await events();
     const updatedEvent=await eventCollection.updateOne(
         {_id:new ObjectId(eventId)},
-        {$push:{"attendees":{_id:new ObjectId(newAttendee._id), username: user.username, availability:newAttendee.availability}}}
+        {$push:{"attendees":{_id:new ObjectId(newAttendee._id),availability:newAttendee.availability}}}
     )
     if(!updatedEvent.modifiedCount){
         throw `Unable to add attendee ${newAttendee} to event ${eventId}`
@@ -195,7 +193,6 @@ const upsertAttendee=async(eventId,newAttendee) => {
             action='addAttendee'
         }
     }
-    console.log(action)
     if(action=='addAttendee'){
         attendee=newAttendee;
         return await addAttendee(eventId,newAttendee)

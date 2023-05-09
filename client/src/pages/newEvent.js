@@ -12,6 +12,7 @@ import { Button } from '@mui/material';
 import { formatDate } from 'react-calendar/dist/cjs/shared/dateFormatter';
 import axios from 'axios'
 import {createToken } from '../fire';
+import { checkString } from '../validate'; 
 
 const NewEvent= ()=>{
     const [dates,setDates]=useState(new Date());
@@ -168,8 +169,17 @@ catch(e){
 const handleSubmit = (event) =>{
     event.preventDefault();
     if((eventName!=='')&&(eventDescription!=='')&&(location!=='')&&(fileIsIn)){
-        setErrMsg('');
+        try{
+            checkString(eventName,'Event Name',1,40,true,true,true,true);
+            checkString(eventDescription,'Event Description',1,1000,true,true,true,true);
+            checkString(location,'Event Location',1,100,true,true,true,true);
+            setErrMsg('');
     setNameSet(true)
+        }
+        catch(e){
+            setErrMsg(e);
+        }
+        
     }
     else{
         setErrMsg('Error: all input parameters must be filled out');
@@ -266,6 +276,7 @@ useEffect(()=>{
         await axios.post('http://localhost:3001/api/yourpage/events/createEvent',{name:eventName,location:location,domainDates:domDates,description:eventDescription,image:fileUrl,attendees:[]},{headers:{'Content-Type':'application/json',
         authorization:header.headers.Authorization}})
         .then(function (response){
+            setEventId(response.data._id);
         })
         .catch(function (error){
         });}
@@ -273,6 +284,7 @@ useEffect(()=>{
             await axios.post('https://coordinote.us/api/yourpage/events/createEvent',{name:eventName,location:location,domainDates:domDates,description:eventDescription,image:fileUrl,attendees:[]},{headers:{'Content-Type':'application/json',
         authorization:header.headers.Authorization}})
         .then(function (response){
+            setEventId(response.data._id)
         })
         .catch(function (error){
         });
@@ -287,6 +299,10 @@ useEffect(()=>{
 async function handleFileInput(){
     if(inputTaken){
     if((document.querySelector('input[type="file"]').files.length!==0)){
+        let file=document.querySelector('input[type="file"]').files[0];
+        if((file.type==='image/jpg')||(file.type==='image/png')||(file.type==='image/jpeg')||(file.type==='image/heic')){
+
+        
 const formData = new FormData();
 formData.append("image",document.querySelector('input[type="file"]').files[0],document.querySelector('input[type="file"]').files[0].name)
 setFileIsIn(true);
@@ -314,6 +330,10 @@ authorization:header.headers.Authorization}})
 }
 catch(e){
 }
+        }
+    else{
+        setErrMsg('Error, file must be of type JPG, JPEG, or PNG.');
+    }
     }
     else{
         setErrMsg("Error, incorrect upload of image");
@@ -334,8 +354,19 @@ else{
         return(
             <div>
                 <h1 className='currentDay'>All Done!</h1>
+                <h2>Your event link is:</h2>
+                <h2 className='currentDay'>{`http://localhost:3000/event/${eventId}`}</h2>
             </div>
         )}
+        else{
+            return(
+                <div>
+                    <h1 className='currentDay'>All Done!</h1>
+                    <h2>Your event link is:</h2>
+                    <h2 className='currentDay'>{`https://coordinote.us/event/${eventId}`}</h2>
+                </div>
+            )
+        }
     }
     else{
     if(!nameSet){
@@ -463,13 +494,13 @@ else{
 else{
     return(<div>
         <div>
-        <div className='login-form'>
-            <h2 className='login-label'>Event Name</h2>
-        <p className='left'>{eventName}</p>
-        <h2 className='login-label'>Event Description</h2>
-        <p className='left'>{eventDescription}</p>
-        <h2 className='login-label'>Event Location</h2>
-        <p className='left'>{location}</p>
+        <div className='postit-note'>
+            <h2 className='light-green-100'>Event Name</h2>
+            <p>{eventName}</p>
+            <h2 className='light-green-100'>Event Description</h2>
+            <p>{eventDescription}</p>
+            <h2 className='light-green-100'>Event Location</h2>
+            <p>{location}</p>
         </div><div>
         <Calendar minDetail={'decade'} className='smallCal' tileDisabled={tileDisabled} value = {new Date()} onChange={setDates} tileClassName={tileClass} ></Calendar>
         </div>
