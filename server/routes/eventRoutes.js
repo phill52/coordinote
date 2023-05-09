@@ -113,7 +113,7 @@ const resizeInfo = [
   resizedImagePath
 ];
 //calls imagemagick directly from its executible 
-const convert = spawn('C:/Program Files/ImageMagick-7.1.1-Q16-HDRI/magick.exe', resizeInfo);
+const convert = spawn('magick', resizeInfo);
 
 convert.on('error', (err) => {
     console.log("hello!")
