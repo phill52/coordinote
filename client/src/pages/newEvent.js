@@ -351,7 +351,7 @@ else{
                 <form className='login-form' onSubmit={handleSubmit}>
                 <br />
                 <label className='login-label'>
-                    {'Event Name: '}
+                    {'Event Name: '} <br />
                 <input className="login-input" id='nameInput' onChange={(e)=>{setEventName(e.target.value)
                 }} placeholder='event name' required />
                 </label>

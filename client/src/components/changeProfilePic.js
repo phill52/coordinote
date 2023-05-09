@@ -124,7 +124,7 @@ else{
         <div>
                 <form onSubmit={formSubmit}>
                     <label className='login-label'>
-                        {'Event Image: '}
+                        {'Profile picture: '}
                         <input type='file' accept='image/png, image/jpeg, image/jpg' required className='login-input' id='imageInput' onChange={(e)=>{
                             console.log(e)}}
                              />
