@@ -112,7 +112,7 @@ router
         availability._id=uid;
 
         try {
-            console.dir(req.body,{depth:null});
+            // console.dir(req.body,{depth:null});
             updatedEvent=await events.upsertAttendee(eventId,availability);
         }
         catch(e){

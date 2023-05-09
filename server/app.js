@@ -82,7 +82,7 @@ app.use('/api/user/:id',async(req,res,next) => {
 
 app.use('/api/fireuser',async(req,res,next) => {
     console.log('/api/fireuser middleware')
-    console.log(req.headers)
+    // console.log(req.headers)
     res.header('Access-Control-Allow-Origin', '*');
     res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization, Custom-Header');
     next();

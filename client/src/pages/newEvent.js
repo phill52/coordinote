@@ -266,6 +266,7 @@ useEffect(()=>{
         await axios.post('http://localhost:3001/api/yourpage/events/createEvent',{name:eventName,location:location,domainDates:domDates,description:eventDescription,image:fileUrl,attendees:[]},{headers:{'Content-Type':'application/json',
         authorization:header.headers.Authorization}})
         .then(function (response){
+            // console.log(response)
         })
         .catch(function (error){
         });}
@@ -351,7 +352,7 @@ else{
                 <form className='login-form' onSubmit={handleSubmit}>
                 <br />
                 <label className='login-label'>
-                    {'Event Name: '}
+                    {'Event Name: '} <br />
                 <input className="login-input" id='nameInput' onChange={(e)=>{setEventName(e.target.value)
                 }} placeholder='event name' required />
                 </label>
@@ -394,7 +395,7 @@ else{
                     <div>
                         <div>
                         <div className='postit-note'>
-                            <h2 className='light-green-100'>Event Name</h2>
+                            <h1 className='light-green-100'>Event Name</h1>
                             <p>{eventName}</p>
                             <h2 className='light-green-100'>Event Description</h2>
                             <p>{eventDescription}</p>
@@ -449,7 +450,7 @@ else{
     if(clickedDay.length>0){
     return(<div>
         <div className='postit-note'>
-            <h2 className='light-green-100'>Event Name</h2>
+            <h1 className='light-green-100'>Event Name</h1>
             <p>{eventName}</p>
             <h2 className='light-green-100'>Event Description</h2>
             <p>{eventDescription}</p>
@@ -471,7 +472,7 @@ else{
     return(<div>
         <div>
         <div className='login-form'>
-            <h2 className='login-label'>Event Name</h2>
+            <h1 className='login-label'>Event Name</h1>
         <p className='left'>{eventName}</p>
         <h2 className='login-label'>Event Description</h2>
         <p className='left'>{eventDescription}</p>

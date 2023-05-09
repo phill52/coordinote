@@ -49,6 +49,12 @@ body{
   background-size: 100% 2.5em; /* Set the spacing of the notebook lines */
 }
 
+input.input-background {
+  background-color: rgb(222,222,222);
+  border: 1px solid;
+  border-color: black;
+}
+
 span.cursor-pointer {
   font-size:24px;
 }
@@ -249,7 +255,7 @@ span.cursor-pointer {
   border: 2px solid darkred !important;
 }
 .workpls{
-  background: orange;
+  background: rgb(255, 212, 131);
 }
 .react-calendar__month-view__weekdays {
   text-align: center;
@@ -294,11 +300,11 @@ span.cursor-pointer {
 
 
 .react-calendar__month-view__days__day--weekend {
-  color: #d10000;
+  color: #000000;
 }
 
 .react-calendar__month-view__days__day--neighboringMonth {
-  color: #757575;
+  color: #606060;
 }
 .react-calendar__tile:enabled:hover,
 .react-calendar__tile:enabled:focus {
@@ -362,9 +368,9 @@ span.cursor-pointer {
   font-weight: bold;
 }
 .titleText{
-  font-size: xx-large;
+  font-size: xxx-large;
   font-weight:bolder;
-  color: #F0A04B;
+  color: #F06200;
 }
 
 .calContain{
@@ -408,7 +414,7 @@ span.cursor-pointer {
   left: 0; /* Move the left button to the left edge of the container */
   top: 50%;
   transform: translateY(-50%);
-  color: #6FBC4B;
+  color: #008c33;
 }
 
 .button-right {
@@ -416,7 +422,7 @@ span.cursor-pointer {
   right: 0; /* Move the right button to the right edge of the container */
   top: 50%;
   transform: translateY(-50%);
-  color: #6FBC4B;
+  color: #008c33;
 }
 
 .button-left:disabled {

@@ -22,7 +22,7 @@ const MyEvents = ({invited}) => {
     async function formData(){
         try{
         const header=await createToken();
-        console.log(header.headers);
+        // console.log(header.headers);
         if(window.location.hostname==='localhost'){
         await axios.get(`http://localhost:3001/api/yourpage/events/myEvents`,{headers:{'Content-Type':'application/json','Authorization':header.headers.Authorization}})
         .then(function (response){
