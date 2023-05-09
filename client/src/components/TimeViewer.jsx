@@ -37,7 +37,7 @@ const TimeViewer = (props) => {
    // console.log('im in the generate function')
     while (startTime <= endTime) {
      // console.log('im in the loop')
-     console.log(startTime)
+    //  console.log(startTime)
       const formattedTime = formatAMPM(startTime);
       const insertedStartTime = new Date(startTime);
       let attendeesAvailable=[];
@@ -63,13 +63,13 @@ const TimeViewer = (props) => {
           }
       }}
       attendeesUnavailable = attendees.filter(attendee => !attendeesAvailable.includes(attendee));
-      console.log(attendeesAvailable);
+      // console.log(attendeesAvailable);
       const color = `rgb(255, 140, 0, ${attendeesAvailable.length/attendeeCount})`;
       slots.push({ time: formattedTime, comparableTime: insertedStartTime, attendeesAvailable: attendeesAvailable,
       attendeesUnavailable: attendeesUnavailable, color: color});
       startTime.setMinutes(startTime.getMinutes() + 30);
     }
-    console.log(slots);
+    // console.log(slots);
     return slots;
   }
 
@@ -109,7 +109,7 @@ const TimeViewer = (props) => {
               ${slot.comparableTime == checkedTime ? "viewer-select" : ""}`}
               style={{"backgroundColor":color}}
               onClick={() => {
-                console.log("UNAVAILABLE: ", slot.attendeesUnavailable)
+                // console.log("UNAVAILABLE: ", slot.attendeesUnavailable)
                 if (slot.comparableTime == checkedTime) {
                   setCheckedTime(null);
                   setAttendeesAtTime([]);
@@ -130,7 +130,7 @@ const TimeViewer = (props) => {
         <ul>
           Attendees Available at {formatAMPM(checkedTime)}:
           {attendeesAtTime.map((attendee) => {
-            console.log(attendee);
+            // console.log(attendee);
             return (
               <li key={attendee._id}>
                 {attendee.username}

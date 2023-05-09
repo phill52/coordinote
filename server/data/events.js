@@ -1,158 +1,230 @@
+import {ObjectId} from 'mongodb'
+import xss from 'xss'
+
 import mongoCollections from '../config/mongoCollections.js';
+import userFunctions from './users.js';
+import validation from '../validation.js'
+
 const users = mongoCollections.users;
 const events = mongoCollections.events;
-import userFunctions from './users.js'
-import validation from '../validation.js'
-import {ObjectId} from 'mongodb'
-const fn = validation.fn;
 
-const createEvent = async (eventName, domainDates, location, description, attendees, image, userId) => {
-    eventName = validation.checkEventName(eventName);
-    location = validation.checkLocation(location)
-    domainDates = validation.checkDate(domainDates)
+const createEvent = async function (eventName, location, description, domainDates, image, userId) {
+    // Validation
+    validation.checkNumOfArgs(arguments, 6);
+    validation.checkIsProper(eventName, 'string', 'eventName');
+    validation.checkString(eventName, 'eventName', 1, 40, true, true, true, true);
+    validation.checkIsProper(location, 'string', 'location');
+    validation.checkString(location, 'location', 1, 100, true, true, true, true);
+    validation.checkIsProper(description, 'string', 'description');
+    validation.checkString(description, 'description', 1, 1000, true, true, true, true);
+    validation.checkIsProper(domainDates, 'object', 'domainDates');
+    validation.checkDomainDates(domainDates);
+    validation.checkIsProper(image, 'string', 'image');
+    validation.checkImage(image);
+    validation.checkId(userId, 'userId');
 
-    const eventCollection=await events();
+    // Cleaning
+    eventName = xss(eventName).trim();
+    location = xss(location).trim();
+    description = xss(description).trim();
+    image = xss(image).trim();
+
+    const eventCollection = await events();
+    const userCollection = await users();
+
     let newEvent = {
-        name:eventName,
-        domainDates:domainDates,
-        location:location,
-        description,description,
-        attendees:attendees,
-        image:image,
-        creatorID:userId,
-        chatLogs:[]
+        name: eventName,
+        location: location,
+        description, description,
+        domainDates: domainDates,
+        attendees: [],
+        image: image,
+        creatorID: userId,
+        chatLogs: []
     }
+
+    // Add event to events collection
     const insertEvent = await eventCollection.insertOne(newEvent);
     if(!insertEvent.acknowledged || !insertEvent.insertedId)
-        throw "Unable to add event to events collection";
-    const userCollection = await users()
+        throw `Error: Could not insert event ${eventName} into database.`;
+
+    // Add event to corresponding user
     const updatedUser = await userCollection.updateOne(
-        {_id: userId},
-        {$push: {createdEvents:insertEvent.insertedId}}
-    )
-    if(updatedUser.modifiedCount < 1){
-        throw "Unable to add this event to your account"
-    }
-    return await getEventById(insertEvent.insertedId)
+        {_id: new ObjectId(userId)},
+        {$push: {createdEvents: insertEvent.insertedId}}
+    );
+
+    if(!updatedUser.acknowledged || !updatedUser.modifiedCount)
+        throw `Could not add event ${eventName} to user with id ${userId}.`
+
+    return await getEventById(insertEvent.insertedId);
 }
 
-const updateChatLogs = async (eventId,newChatLog) =>{
+const updateChatLogs = async function (eventId, chatLog) {
+    // Validation
+    validation.checkNumOfArgs(arguments, 2);
+    validation.checkIsProper(eventId, 'string', 'eventId');
+    validation.checkId(eventId, 'eventId');
+    validation.checkIsProper(chatLog, 'object', 'chatLog');
+    validation.checkArray(chatLog, 'chatLog', 'object');
+
+    // Cleaning
+    eventId = xss(eventId).trim();
+
     const eventCollection = await events();
-    console.log(eventId)
-    try{
-    const updatedEvent= await eventCollection.updateOne(
-        {_id:new ObjectId(eventId)},
-        {$set: {chatLogs:newChatLog}}
-    ) 
-    console.log(updatedEvent);
-    return await getEventById(eventId);
-    }
-catch(e){
-console.log('Error, not able to update chat');
-throw "Error"
 
-}
-}
+    const updatedEvent = await eventCollection.updateOne(
+        {_id: new ObjectId(eventId)},
+        {$set: {chatLogs: chatLog}}
+    );
+
+    if(!updatedEvent.acknowledged || !updatedEvent.modifiedCount)
+        throw `Could not update chat logs for event with id ${eventId}.`;
+
+    return await getEventById(eventId);
+};
 
 
 //replaces fields in event document with the ones pass in as parameters
-const updateEvent = async(eventId,newName,newDomainDates,newLocation,newDescription,newAttendees,newImage,creatorId) => {
-    eventId=validation.checkId(eventId)
-    // creatorId=validation.checkId(creatorId)
-    if(newName) newName=validation.checkEventName(newName)
-    if(newLocation) newLocation=validation.checkLocation(newLocation)
-    if(newAttendees) newAttendees=validation.checkAttendees(newAttendees)
-    if(newDomainDates) newDomainDates=validation.checkDate(newDomainDates)
-    const eventCollection=await events();
-    const oldEvent=await eventCollection.findOne({_id:new ObjectId(eventId)})
-    const editedEvent=await eventCollection.updateOne(
-        {_id:new ObjectId(eventId)},
+const updateEvent = async function (eventId, eventName, location, description, domainDates, attendees, image, creatorId) {
+    // Validation
+    validation.checkNumOfArgs(arguments, 8);
+    validation.checkIsProper(eventId, 'string', 'eventId');
+    validation.checkId(eventId, 'eventId');
+    if (eventName) {
+        validation.checkIsProper(eventName, 'string', 'eventName');
+        validation.checkString(eventName, 'eventName', 1, 40, true, true, true, true);
+    }
+    if (location) {
+        validation.checkIsProper(location, 'string', 'location');
+        validation.checkString(location, 'location', 1, 100, true, true, true, true);
+    }
+    if (description) {
+        validation.checkIsProper(description, 'string', 'description');
+        validation.checkString(description, 'description', 1, 1000, true, true, true, true);
+    }
+    if (domainDates) {
+        validation.checkIsProper(domainDates, 'object', 'domainDates');
+        validation.checkDomainDates(domainDates);
+    }
+    if (attendees) {
+        validation.checkIsProper(attendees, 'object', 'attendees');
+        validation.checkArray(attendees, 'attendees', 'object');
+    }
+    if (image) {
+        validation.checkIsProper(image, 'string', 'image');
+        validation.checkImage(image);
+    }
+    validation.checkId(creatorId, 'creatorId');
+
+    const eventCollection = await events();
+    const oldEvent = await eventCollection.findOne({_id: new ObjectId(eventId)})
+    const editedEvent = await eventCollection.updateOne(
+        {_id: new ObjectId(eventId)},
         {$set: {
-            "name":newName?newName:oldEvent.name,
-            "domainDates":newDomainDates?newDomainDates:oldEvent.domainDates, 
-            "location":newLocation?newLocation:oldEvent.location, 
-            "description":newDescription?newDescription:oldEvent.description,
-            "attendees":newAttendees?newAttendees:oldEvent.attendees,
-            "image":newImage?newAttendees:oldEvent.image,
-            "chatLogs":oldEvent.chatLogs
+            "name": eventName? eventName: oldEvent.name,
+            "domainDates": domainDates? domainDates: oldEvent.domainDates, 
+            "location": location? location: oldEvent.location, 
+            "description": description? description: oldEvent.description,
+            "attendees": attendees? attendees: oldEvent.attendees,
+            "image": image? attendees: oldEvent.image,
+            "chatLogs": oldEvent.chatLogs
         }}
     )
-    if(editedEvent.modifiedCount==0 && editedEvent.matchedCount==0){
-        // !(newName==oldEvent.name && newLocation==oldEvent.location &&
+    if(editedEvent.modifiedCount == 0 && editedEvent.matchedCount == 0){
+        // !(eventName==oldEvent.name && location==oldEvent.location &&
         //  JSON.stringify(newParticipants)==JSON.stringify(oldEvent.participants) && 
         //  newDate==oldEvent.date) ){
-        throw "Could not update event"
+        throw "Could not update event";
     }
     return await getEventById(eventId)
 }
 
-const getEventById = async(eventId) => {
-    eventId=validation.checkId(eventId);
-    const eventCollection=await events();
-    const event=await eventCollection.findOne({_id:new ObjectId(eventId)})
-    if(!event) throw `Could not get event with id of ${eventId}`
-    return event
+const getEventById = async function (eventId) {
+    // Validation
+    validation.checkNumOfArgs(arguments, 1);
+    validation.checkId(eventId, 'eventId');
+
+    const eventCollection = await events();
+
+    const event = await eventCollection.findOne({_id: new ObjectId(eventId)})
+    if(!event) throw `Could not get event with id of ${eventId}`;
+
+    return event;
 }
 
-const deleteEvent = async(eventId,userId) => {
-    eventId=validation.checkId(eventId)
-    userId=validation.checkId(userId)
-    const eventCollection=await events();
-    const userCollection=await users();
-    let attendees=await getAttendees(eventId);
-    const deleteEvent=await eventCollection.deleteOne({_id:new ObjectId(eventId)})
-    if(!deleteEvent.acknowledged || !deleteEvent.deletedCount) {
-        throw "Unable to delete event"
-    }
-    const updatedUser=await userCollection.updateOne(
-        {_id:new ObjectId(userId)},
+const deleteEvent = async function (eventId, userId) {
+    // Validation
+    validation.checkNumOfArgs(arguments, 2)
+    validation.checkId(eventId)
+    validation.checkId(userId)
+
+    const eventCollection = await events();
+    const userCollection = await users();
+
+    let attendees = await getAttendees(eventId);
+    const deleteEvent = await eventCollection.deleteOne({_id: new ObjectId(eventId)});
+    if(!deleteEvent.acknowledged || !deleteEvent.deletedCount)
+        throw "Error: Could not delete event.";
+
+    const updatedUser = await userCollection.updateOne(
+        {_id: new ObjectId(userId)},
         {$pull: {"createdEvents": new ObjectId(eventId)}}
-    )
+    );
     if(!updatedUser.acknowledged || !updatedUser.modifiedCount) {
         throw "Event not removed from user"
     }
-    for(let x=0;x<attendees.length;x++){
-        let updatedAttendee=await userCollection.updateOne(
-            {_id:new ObjectId(attendees[x]._id)},
+    for(let x=0; x<attendees.length; x++){
+        let updatedAttendee = await userCollection.updateOne(
+            {_id: new ObjectId(attendees[x]._id)},
             {$pull: {"attendedEvents": new ObjectId(eventId)}}
         )
         if(!updatedAttendee.acknowledged || !updatedAttendee.modifiedCount) {
-            throw "Event not removed from attendee"
+            throw "Event not removed from attendee";
         }
     }
-    return {deleted:true}
+    return {deleted: true}
 }
 
-const getAttendees=async(eventId) => {
-    eventId=validation.checkId(eventId);
-    const event=await getEventById(eventId);
+const getAttendees = async function getAttendees(eventId) {
+    // Validation
+    validation.checkNumOfArgs(arguments, 1);
+    validation.checkId(eventId);
+
+    const event = await getEventById(eventId);
+    for (let attendee of event.attendees) {
+        attendee._id = attendee._id.toString();
+    }
     return event.attendees;
 }
 
-const getIndex = async (id1,arr) =>{
-    let index=-1;
-    console.log(arr)
-    for(let x=0;x<arr.length;x++){
-        console.log(arr[x]);
-        if(arr[x]._id.toString()===(id1.toString())){
-            index=x;
+const getIndex = async function (id1, arr) {
+    validation.checkNumOfArgs(arguments, 2);
+    validation.checkId(id1);
+    validation.checkArray(arr, 'arr', 'object');
+
+    let index = -1;
+
+    for(let x = 0; x < arr.length; x++){
+        if(arr[x]._id.toString() === id1.toString()){
+            index = x;
         }
     }
     return index;
 }
 
-const getAttendeeById=async(eventId,attendeeId) => {
-    eventId=validation.checkId(eventId);
-    attendeeId=validation.checkId(attendeeId);
-    const eventCollection=await events();
-    const attendee=await eventCollection.findOne(
-        {_id:new ObjectId(eventId)},
-        {'attendees':{$elemMatch:{_id:new ObjectId(attendeeId)}}}
+const getAttendeeById = async(eventId, attendeeId) => {
+    validation.checkId(eventId);
+    validation.checkId(attendeeId);
+
+    const eventCollection = await events();
+    const attendee = await eventCollection.findOne(
+        {_id: new ObjectId(eventId)},
+        {'attendees': {$elemMatch: {_id: new ObjectId(attendeeId)}}}
     )
-    console.log(attendee.attendees[0]);
-    console.log('i dont like to work')
-    let index=await getIndex(attendeeId,attendee.attendees);
-    console.log(index);
+
+    let index = await getIndex(attendeeId,attendee.attendees);
+
     if(index===-1) throw `Unable to find attendee ${attendeeId} in event ${eventId}`
     return attendee.attendees[index];
 }
@@ -161,22 +233,25 @@ const getAttendeeById=async(eventId,attendeeId) => {
 const addAttendee = async (eventId, newAttendee) => {
     validation.checkId(eventId, 'eventId');
 
-    const user = await userFunctions.getUserByUID(newAttendee._id);
+    const user = await userFunctions.getUserByMongoId(newAttendee._id);
     if (!user) throw `No user found with id ${newAttendee._id}.`;
-    console.log(user);
+
     const eventCollection=await events();
     const updatedEvent=await eventCollection.updateOne(
         {_id:new ObjectId(eventId)},
         {$push:{"attendees":{_id:new ObjectId(newAttendee._id), username: user.username, availability:newAttendee.availability}}}
-    )
+    );
+
     if(!updatedEvent.modifiedCount){
         throw `Unable to add attendee ${newAttendee} to event ${eventId}`
     }
+
     const userCollection=await users();
     const updatedUser = await userCollection.updateOne(
         {_id:new ObjectId(newAttendee._id)},
         {$push: {attendedEvents:new ObjectId(eventId)}}
-    )
+    );
+
     if(updatedUser.modifiedCount<1){
         throw "Unable to add this event to your account"
     }
@@ -185,6 +260,8 @@ const addAttendee = async (eventId, newAttendee) => {
 }
 //if the attendee does not currently exist for that event, add it. If it does, update its availability
 const upsertAttendee=async(eventId,newAttendee) => {
+    validation.checkId(eventId);
+    validation.checkNotNull(newAttendee)
     let attendee=undefined; let action=undefined;
     try{
         attendee=await getAttendeeById(eventId,newAttendee._id)
@@ -195,7 +272,7 @@ const upsertAttendee=async(eventId,newAttendee) => {
             action='addAttendee'
         }
     }
-    console.log(action)
+
     if(action=='addAttendee'){
         attendee=newAttendee;
         return await addAttendee(eventId,newAttendee)
@@ -207,8 +284,8 @@ const upsertAttendee=async(eventId,newAttendee) => {
 }
 //removes attendee with a certain id from an event
 const removeAttendee=async(eventId,attendeeId) => {
-    eventId=validation.checkId(eventId);
-    attendeeId=validation.checkId(attendeeId);
+    validation.checkId(eventId);
+    validation.checkId(attendeeId);
     const eventCollection=await events();
     const updatedEvent=await eventCollection.updateOne(
         {_id:new ObjectId(eventId)},
@@ -221,6 +298,8 @@ const removeAttendee=async(eventId,attendeeId) => {
 }
 
 function unwindStartToEnd(start,end){       //given a starting date and ending date, return a range of half hour increments
+    validation.checkNotNull(start);
+    validation.checkNotNull(end);
     let startDate=new Date(start);
     let endDate=new Date(end);
     let dateArr=[]
@@ -233,7 +312,8 @@ function unwindStartToEnd(start,end){       //given a starting date and ending d
     return dateArr;
 }
 //Takes array of attendees. Returns array of date objects when the most attendees can meet
-function findCommonDates(attendees){        
+function findCommonDates(attendees){ 
+    validation.checkNotNull(attendees);       
     let datesObj={}
     for(let attendee of attendees){     //for each attendee
         for(let availableDate of attendee.availability){       //get their availability
@@ -267,13 +347,14 @@ function findCommonDates(attendees){
 }
 
 const getEventDates=async(eventId) => {
-    eventId=validation.checkId(eventId);
+    validation.checkId(eventId);
     const event=await getEventById(eventId);
     return event.dates;
 }
 
 const updateEventDates=async(eventId,dates) => {
-    eventId=validation.checkId(eventId);
+    validation.checkId(eventId);
+    validation.checkNotNull(dates);
     const eventCollection=await events();
     const updatedEvent=await eventCollection.updateOne(
         {_id:new ObjectId(eventId)},
@@ -286,8 +367,9 @@ const updateEventDates=async(eventId,dates) => {
 }
 
 const updateAttendeeAvailability=async(eventId,attendeeId,newAvailability) => {
-    eventId=validation.checkId(eventId)
-    attendeeId=validation.checkId(attendeeId)
+    validation.checkId(eventId)
+    validation.checkId(attendeeId)
+    validation.checkNotNull(newAvailability)
     const eventCollection=await events();
     const updatedEvent=await eventCollection.updateOne(
         {_id:new ObjectId(eventId)},
@@ -305,8 +387,8 @@ const updateAttendeeAvailability=async(eventId,attendeeId,newAvailability) => {
 
 //gets a single attendee's availability for one event. Possibly redundant
 const getAttendeeAvailability=async(eventId,attendeeId) => {
-    eventId=validation.checkId(eventId);
-    attendeeId=validation.checkId(attendeeId);
+    validation.checkId(eventId);
+    validation.checkId(attendeeId);
     const eventCollection=await events();
     const availability=await eventCollection.aggregate([
         {$match:{_id:new ObjectId(eventId)}},
@@ -318,8 +400,8 @@ const getAttendeeAvailability=async(eventId,attendeeId) => {
 }
 //pushes the availability object to the attendeeId availability array. Possibly redundant
 const addAttendeeAvailabilityNewDay=async(eventId,attendeeId,availability) => { 
-    eventId=validation.checkId(eventId);
-    attendeeId=validation.checkId(attendeeId);
+    validation.checkId(eventId);
+    validation.checkId(attendeeId);
     const eventCollection=await events();
     const updatedUser=await eventCollection.updateOne(
         {_id:new ObjectId(eventId)},
@@ -333,7 +415,8 @@ const addAttendeeAvailabilityNewDay=async(eventId,attendeeId,availability) => {
 }
 //adds a date object (date, start time, and end time) to the event. Possibly redundant
 const addEventDate=async(eventId,newDate) => {
-    eventId=validation.checkId(eventId);
+    validation.checkId(eventId);
+    validation.checkNotNull(newDate);
     const eventCollection=await events();
     const updatedEvent=await eventCollection.updateOne(
         {_id:new ObjectId(eventId)},
@@ -346,7 +429,8 @@ const addEventDate=async(eventId,newDate) => {
 }
 //will remove anything under domainDates that matches dateToRemove. Possibly redundant
 const removeEventDate=async(eventId,dateToRemove) => {      
-    eventId=validation.checkId(eventId);
+    validation.checkId(eventId);
+    validation.checkNotNull(dateToRemove);
     const eventCollection=await events();
     const updatedEvent=await eventCollection.updateOne(
         {_id:new ObjectId(eventId)},

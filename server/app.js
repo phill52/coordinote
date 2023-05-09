@@ -62,29 +62,34 @@ app.use(            //authentication middleware
 })*/
 
 app.use('/api/yourpage/events/imageTest',async(req,res,next)=>{
+    console.log('/api/yourpage/events/imageTest middleware')
     res.header('Access-Control-Allow-Origin', '*');
     res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization, Custom-Header');
     next();
 })
 
 app.use('/api/yourpage/events/createEvent',async(req,res,next) => {
+    console.log('/api/yourpage/events/createEvent middleware')
     next();
 })
 
 app.use('/api/user/:id',async(req,res,next) => {
+    console.log('/api/user/:id middleware')
     res.header('Access-Control-Allow-Origin', '*');
     res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization, Custom-Header');
     next();
 })
 
 app.use('/api/fireuser',async(req,res,next) => {
-    console.log(req.headers)
+    console.log('/api/fireuser middleware')
+    // console.log(req.headers)
     res.header('Access-Control-Allow-Origin', '*');
     res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization, Custom-Header');
     next();
 })
 
 app.use('/api/yourpage/events/:eventId',async(req,res,next) => {
+    console.log('/api/yourpage/events/:eventId middleware')
     // if(!req.session.user){
     //     return res.redirect('/')
     // }
@@ -127,6 +132,7 @@ app.use('/api/yourpage/events/:eventId',async(req,res,next) => {
 })
 
 app.use('/api/yourpage/events/myEvents/:userId',async (req,res,next)=>{
+    console.log('/api/yourpage/events/myEvents/:userId middleware')
     //console.dir(req.headers,{depth:null})
     //console.log(req.body)
     //console.log('im in the app');

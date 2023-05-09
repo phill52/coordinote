@@ -50,13 +50,13 @@ const TimeSelectorTwoAnchors = (props) => {
       slots.push({ time: formattedTime, comparableTime: insertedStartTime});
       startTime.setMinutes(startTime.getMinutes() + 30);
     }
-    console.log(slots);
+    // console.log(slots);
     return slots;
   }
   useEffect(()=>{
     async function formData(){
       setAnchors(value);
-      console.log(value);
+      // console.log(value);
     }formData()
   },[value])
   useEffect(() => { //initialize time slots useEffect
@@ -95,7 +95,7 @@ return (
               onClick={() => {
                 if(anchors.length<2){
                 if (arrayIncludes(anchors,slot.comparableTime)) {
-                  console.log('im in')
+                  // console.log('im in')
                   let newAnchors = anchors.filter((anchor) => (!datesEqual(anchor,slot.comparableTime)));
                   setAnchors(newAnchors);
                   change({date:date,time:newAnchors})
@@ -112,7 +112,7 @@ return (
                 setAnchors(newAnchors);
                 change({date:date,time:newAnchors});
               }
-                console.log(value)
+                // console.log(value)
               }}
             />
             {arrayIncludes(anchors,slot.comparableTime) && (
@@ -124,7 +124,7 @@ return (
         </li>
         ))}        
       </ul>
-      {console.log(anchors)}
+      {/* {console.log(anchors)} */}
     </div>
   );
 }; 

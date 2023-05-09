@@ -9,7 +9,6 @@ const Header = () => {
   const [open, setOpen] = useState(false);
   const signOut = () => {
     auth.signOut()
-    window.location.reload(false)
   };
 
   if (currentUser&&loadingMongo){
@@ -19,7 +18,7 @@ const Header = () => {
       </header>
     )
   }
-  console.log("MONGO USER", mongoUser)
+  console.log("MONGO USER2", mongoUser)
   const closeMenu = () => {
     setOpen(false);
   };
@@ -49,7 +48,7 @@ const Header = () => {
               <Link to={`/user/${mongoUser._id}`} onClick={closeMenu}>
                 Profile
               </Link>
-              <a onClick={signOut}>Sign Out</a>
+              <Link to="/" onClick={signOut}>Sign Out</Link>
             </div>
           </div>
         )}
@@ -60,6 +59,7 @@ const Header = () => {
       <header className='header'>
         <Link to='/' className='text-3xl transition duration-300 transform hover:scale-110'>CoordiNote</Link>
         <Link to='/login'>Login</Link>
+        <Link to='/signup'>Sign Up</Link>
       </header>
     )
   }

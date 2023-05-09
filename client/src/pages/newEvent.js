@@ -266,6 +266,7 @@ useEffect(()=>{
         await axios.post('http://localhost:3001/api/yourpage/events/createEvent',{name:eventName,location:location,domainDates:domDates,description:eventDescription,image:fileUrl,attendees:[]},{headers:{'Content-Type':'application/json',
         authorization:header.headers.Authorization}})
         .then(function (response){
+            // console.log(response)
         })
         .catch(function (error){
         });}
@@ -287,6 +288,10 @@ useEffect(()=>{
 async function handleFileInput(){
     if(inputTaken){
     if((document.querySelector('input[type="file"]').files.length!==0)){
+        let file=document.querySelector('input[type="file"]').files[0];
+        if((file.type==='image/jpg')||(file.type==='image/png')||(file.type==='image/jpeg')||(file.type==='image/heic')){
+
+        
 const formData = new FormData();
 formData.append("image",document.querySelector('input[type="file"]').files[0],document.querySelector('input[type="file"]').files[0].name)
 setFileIsIn(true);
@@ -313,6 +318,10 @@ authorization:header.headers.Authorization}})
 }
 catch(e){
 }
+        }
+    else{
+        setErrMsg('Error, file must be of type JPG, JPEG, or PNG.');
+    }
     }
     else{
         setErrMsg("Error, incorrect upload of image");
@@ -343,7 +352,7 @@ else{
                 <form className='login-form' onSubmit={handleSubmit}>
                 <br />
                 <label className='login-label'>
-                    {'Event Name: '}
+                    {'Event Name: '} <br />
                 <input className="login-input" id='nameInput' onChange={(e)=>{setEventName(e.target.value)
                 }} placeholder='event name' required />
                 </label>
@@ -386,7 +395,7 @@ else{
                     <div>
                         <div>
                         <div className='postit-note'>
-                            <h2 className='light-green-100'>Event Name</h2>
+                            <h1 className='light-green-100'>Event Name</h1>
                             <p>{eventName}</p>
                             <h2 className='light-green-100'>Event Description</h2>
                             <p>{eventDescription}</p>
@@ -415,6 +424,9 @@ else{
                                     if(arrIndex===(clickedDay.length-2)){
                                         setLastReached(true);
                                     }
+                                    setArrIndex(arrIndex + 1);
+                                    setCurDate(clickedDay[arrIndex + 1]);
+
                                 }}
                                 disabled={arrIndex === (clickedDay.length-1)} // Disable the button if arrIndex is the last element
                                 >
@@ -438,7 +450,7 @@ else{
     if(clickedDay.length>0){
     return(<div>
         <div className='postit-note'>
-            <h2 className='light-green-100'>Event Name</h2>
+            <h1 className='light-green-100'>Event Name</h1>
             <p>{eventName}</p>
             <h2 className='light-green-100'>Event Description</h2>
             <p>{eventDescription}</p>
@@ -460,7 +472,7 @@ else{
     return(<div>
         <div>
         <div className='login-form'>
-            <h2 className='login-label'>Event Name</h2>
+            <h1 className='login-label'>Event Name</h1>
         <p className='left'>{eventName}</p>
         <h2 className='login-label'>Event Description</h2>
         <p className='left'>{eventDescription}</p>
