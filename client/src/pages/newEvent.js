@@ -266,6 +266,7 @@ useEffect(()=>{
         await axios.post('http://localhost:3001/api/yourpage/events/createEvent',{name:eventName,location:location,domainDates:domDates,description:eventDescription,image:fileUrl,attendees:[]},{headers:{'Content-Type':'application/json',
         authorization:header.headers.Authorization}})
         .then(function (response){
+            // console.log(response)
         })
         .catch(function (error){
         });}

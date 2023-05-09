@@ -233,7 +233,7 @@ useEffect(()=>{
     async function formData(){
         if(!error){
         let times;
-        if(datesAndTimes[arrIndex].time.length===0){
+        if(datesAndTimes && datesAndTimes[arrIndex] && datesAndTimes[arrIndex].time.length===0){
             times=[];
         }
         else{
@@ -709,11 +709,11 @@ else {
                             <br />
                             <label className='homepageLabel'>
                                 <form className='updateEventForm' onSubmit={onUpdateEvent}>
-                                    <label for='newName'>New Name: </label>
+                                    <label htmlFor='newName'>New Name: </label>
                                     <input className='input-background' name='newName' id='newName' variant='outlined' placeholder='New name...'></input>&nbsp;
-                                    <label for='newDescription'>New Description: </label>
+                                    <label htmlFor='newDescription'>New Description: </label>
                                     <input className='input-background' name='newDescription' id='newDescription' variant='outlined' placeholder='New description...'></input>&nbsp;
-                                    <label for='newLocation'>New Location: </label>
+                                    <label htmlFor='newLocation'>New Location: </label>
                                     <input className='input-background' name='newLocation' id='newLocation' variant='outlined' placeholder='New location...'></input>&nbsp;
                                     <br />
                                     <button type='submit'>UPDATE EVENT</button>

@@ -28,7 +28,7 @@ const Header = () => {
   return (
     <header className='header'>
         <Link to='/' className='text-3xl transition duration-300 transform hover:scale-110 font-bold'>CoordiNote</Link>
-          <span className="material-symbols-outlined" className='cursor-pointer' onClick={()=>setOpen(a=>!a)}>
+          <span class="material-symbols-outlined" className='cursor-pointer' onClick={()=>setOpen(a=>!a)}>
             menu
           </span>
           {open && (
