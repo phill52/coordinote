@@ -392,8 +392,7 @@ else{
         let tmpDte=new Date(rangedate[1]);
         tmpDte.setDate(tmpDte.getDate()-1);
             return(
-                    <div>
-                        <div>
+                    <div className='centered-container'>
                         <div className='postit-note'>
                             <h1 className='light-green-100'>Event Name</h1>
                             <p>{eventName}</p>
@@ -403,7 +402,6 @@ else{
                             <p>{location}</p>
                         </div>
                                 <Calendar minDetail={'decade'} tileDisabled={disableAll} className='smallCal' value = {new Date()} tileClassName={tileClass} ></Calendar>
-                            </div>
                             <br />
                             <h1 className='currentDay'>{clickedDay[arrIndex].toDateString()}</h1>
                             <div className="button-date-container">
@@ -448,7 +446,7 @@ else{
 }
 else{
     if(clickedDay.length>0){
-    return(<div>
+    return(<div className='centered-container'>
         <div className='postit-note'>
             <h1 className='light-green-100'>Event Name</h1>
             <p>{eventName}</p>
@@ -469,18 +467,17 @@ else{
     </div>);
 }
 else{
-    return(<div>
+    return(<div className='centered-container'>
+            <div className='postit-note'>
+                <h1 className='light-green-100'>Event Name</h1>
+                <p>{eventName}</p>
+                <h2 className='light-green-100'>Event Description</h2>
+                <p>{eventDescription}</p>
+                <h2 className='light-green-100'>Event Location</h2>
+                <p>{location}</p>
+            </div>
         <div>
-        <div className='login-form'>
-            <h1 className='login-label'>Event Name</h1>
-        <p className='left'>{eventName}</p>
-        <h2 className='login-label'>Event Description</h2>
-        <p className='left'>{eventDescription}</p>
-        <h2 className='login-label'>Event Location</h2>
-        <p className='left'>{location}</p>
-        </div><div>
         <Calendar minDetail={'decade'} className='smallCal' tileDisabled={tileDisabled} value = {new Date()} onChange={setDates} tileClassName={tileClass} ></Calendar>
-        </div>
         </div>
         <br />
         

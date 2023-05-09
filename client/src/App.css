@@ -445,10 +445,12 @@ span.cursor-pointer {
   background-color: #fefabc;
   border: 1px solid #ffcc66;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  font-size: 24px;
+  font-size: 1.25rem;
   padding: 20px;
   position: relative;
-  width: 250px;
+  width: 15rem;
+  margin-top: 1.5rem;
+  margin-bottom: 1.5rem;
   -webkit-transform: rotate(-6deg);
   -moz-transform: rotate(-6deg);
   -o-transform: rotate(-6deg);
@@ -498,4 +500,12 @@ span.cursor-pointer {
   font-size: 24px;
   cursor: pointer;
   float: right;
+}
+
+.centered-page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
 }
