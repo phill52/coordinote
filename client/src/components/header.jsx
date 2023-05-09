@@ -49,7 +49,7 @@ const Header = () => {
               <Link to={`/user/${mongoUser._id}`} onClick={closeMenu}>
                 Profile
               </Link>
-              <button onClick={signOut}>Sign Out</button>
+              <a onClick={signOut}>Sign Out</a>
             </div>
           </div>
         )}

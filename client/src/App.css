@@ -449,32 +449,27 @@ body{
 
 .overlay {
   position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(0, 0, 0, 0.5);
-  z-index: 100;
+  transition: opacity;
 }
 
 .side-menu {
   position: fixed;
   top: 0;
-  right: -300px;
-  width: 300px;
+  right: -18rem;
+  width: 18rem;
   height: 100%;
   background-color: #f9f9f9;
   box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2);
   padding: 1rem;
   z-index: 200;
-  transition: right 0.3s;
+  transition: right 0.3s ease;
 }
 
 .side-menu.open {
   right: 0;
 }
 
-.side-menu a,
+.side-menu a, Link,
 .side-menu button {
   display: block;
   padding: 12px 0;
@@ -482,8 +477,9 @@ body{
   color: black;
 }
 
-.side-menu a:hover {
+.side-menu a, Link:hover {
   background-color: #f1f1f1;
+  color: black;
 }
 
 .close-button {
