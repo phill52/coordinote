@@ -28,7 +28,7 @@ const disableAll = ({dates}) =>{
 }
 return(
     <div className='centered-container'>
-        <h1 className='titleText'>Welcome to Coordinote</h1>
+        <h1 className='titleText pb-10'>Welcome to Coordinote</h1>
         <h2 className='font-bold text-l dark-green-100 pb-5'>A scheduling platform to plan your events</h2>
         <h2 className='font-bold light-green-100 pb-2.5'>How it works</h2>
         <h3 className='text-center pb-4'>Enter a name, brief description, location, and add an image for your event</h3>

@@ -580,7 +580,7 @@ else{
          <h1>{curDate.toDateString()}</h1>
          <button onClick={()=>{setArrIndex(arrIndex-1)
         setCurDate(new Date(eventData.domainDates[arrIndex-1].date))
-        }}>Previous</button>
+        }}>Previous&nbsp;</button>
          {/* {console.log(curDate)} */}
          {tSelect}
          <p>{errMsg}</p>
@@ -596,7 +596,7 @@ else{
          <h1>{curDate.toDateString()}</h1>
          <button onClick={()=>{setArrIndex(arrIndex-1)
         setCurDate(new Date(eventData.domainDates[arrIndex-1].date))
-        }}>Previous</button>
+        }}>Previous&nbsp;</button>
         <button onClick={()=>{setArrIndex(arrIndex+1)
                 setDaysSet(daysSet+1)
         setCurDate(new Date(eventData.domainDates[arrIndex+1].date))}}>Next</button>
@@ -631,7 +631,7 @@ else{
          <h1>{curDate.toDateString()}</h1>
          <button onClick={()=>{setArrIndex(arrIndex-1)
         setCurDate(new Date(eventData.domainDates[arrIndex-1].date))
-        }}>Previous</button>
+        }}>Previous&nbsp;</button>
          {/* {console.log(curDate)} */}
          {tSelect}
          <p>{errMsg}</p>
@@ -647,7 +647,7 @@ else{
          <h1>{curDate.toDateString()}</h1>
          <button onClick={()=>{setArrIndex(arrIndex-1)
         setCurDate(new Date(eventData.domainDates[arrIndex-1].date))
-        }}>Previous</button>
+        }}>Previous&nbsp;</button>
         <button onClick={()=>{setArrIndex(arrIndex+1)
         setCurDate(new Date(eventData.domainDates[arrIndex+1].date))}}>Next</button>
          {/* {console.log(curDate)} */}
@@ -747,6 +747,18 @@ else{
                         <p className='makeBlack'>{eventData.location}</p>
                         </label>
                         <br />
+                        <label className='homepageLabel'>
+                                <form className='updateEventForm' onSubmit={onUpdateEvent}>
+                                    <label for='newName'>New Name: </label>
+                                    <input className='input-background' name='newName' id='newName' variant='outlined' placeholder='New name...'></input>&nbsp;
+                                    <label for='newDescription'>New Description: </label>
+                                    <input className='input-background' name='newDescription' id='newDescription' variant='outlined' placeholder='New description...'></input>&nbsp;
+                                    <label for='newLocation'>New Location: </label>
+                                    <input className='input-background' name='newLocation' id='newLocation' variant='outlined' placeholder='New location...'></input>&nbsp;
+                                    <br />
+                                    <button type='submit'>UPDATE EVENT</button>
+                                </form>
+                            </label>
             </div>
     <Calendar minDetail={'month'} tileDisabled={()=>{return true}} className='smallCal' value = {new Date()} tileClassName={({date})=>{return tileClassBuilder(date,eventData)}}></Calendar>
     {eventPgGrid}

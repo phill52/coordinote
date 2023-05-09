@@ -85,6 +85,7 @@ function Chat(){
                   id='message'
                   variant='outlined'
                   label='Message'
+                  className='input-background'
                   placeholder='New message...'
                 />
               </div>

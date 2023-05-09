@@ -19,7 +19,7 @@ const Header = () => {
       </header>
     )
   }
-  console.log("MONGO USER", mongoUser)
+  console.log("MONGO USER2", mongoUser)
   const closeMenu = () => {
     setOpen(false);
   };
@@ -28,7 +28,7 @@ const Header = () => {
   return (
     <header className='header'>
         <Link to='/' className='text-3xl transition duration-300 transform hover:scale-110 font-bold'>CoordiNote</Link>
-          <span class="material-symbols-outlined" className='cursor-pointer' onClick={()=>setOpen(a=>!a)}>
+          <span className="material-symbols-outlined" className='cursor-pointer' onClick={()=>setOpen(a=>!a)}>
             menu
           </span>
           {open && (

@@ -76,7 +76,7 @@ const Profile = () => {
       <div>
     <p>{userData.username}</p>
     <img src={userData.picture} alt="profile picture" /> 
-    {console.log('im here 2')}
+    {/* {console.log('im here 2')} */}
     <ChangeProfilePic uid={id} change={setForceChange} done={setChangePicture} />
     <button onClick={()=>{setChangePicture(false)}}>Go Back</button>
     </div>

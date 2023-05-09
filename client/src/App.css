@@ -51,6 +51,8 @@ body{
 
 input.input-background {
   background-color: rgb(222,222,222);
+  border: 1px solid;
+  border-color: black;
 }
 
 span.cursor-pointer {
