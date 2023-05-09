@@ -36,7 +36,7 @@ useEffect(()=>{
             const header=await createToken();
             try{
                 if(window.location.hostname==='localhost'){
-            await axios.post('http://localhost:3001/api/yourpage/events/imageTest',formData,{headers:{'Content-Type':'multipart/form-data',
+            await axios.post('http://localhost:3001/api/yourpage/events/resizePFP',formData,{headers:{'Content-Type':'multipart/form-data',
             authorization:header.headers.Authorization}})
             .then(function (response){
                 console.log(response);
@@ -49,7 +49,7 @@ useEffect(()=>{
             console.log('WHY WONT I WORK')
                 }
                 else{
-                    await axios.post('https://coordinote.us/api/yourpage/events/imageTest',formData,{headers:{'Content-Type':'multipart/form-data',
+                    await axios.post('https://coordinote.us/api/yourpage/events/resizePFP',formData,{headers:{'Content-Type':'multipart/form-data',
             authorization:header.headers.Authorization}})
             .then(function (response){
                 // console.log(response);

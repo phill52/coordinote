@@ -5,29 +5,19 @@ import events from '../data/events.js'
 import validation from '../validation.js'
 import aws from 'aws-sdk'
 import multer from 'multer'
-import multerS3 from 'multer-s3'
 import dotenv from 'dotenv';
-dotenv.config({path:'.env'})
+import {spawn} from 'child_process'
+import fs from 'fs';
+
+
+dotenv.config({path:'../.env'})
 aws.config.update({
     secretAccessKey: process.env.AWS_secretkey,
     accessKeyId: process.env.AWS_keyid,
     region: process.env.AWS_region 
 });
 const s3 = new aws.S3();
-const upload = multer({
-    storage: multerS3({
-        s3: s3,
-        bucket: 'coordinote',
-        acl: 'public-read',
-        metadata: function (req, file, cb) {
-            cb(null, {fieldName: file.fieldname});
-        },
-        key: function (req, file, cb) {
-            cb(null, Date.now().toString())
-        },
-        contentType: multerS3.AUTO_CONTENT_TYPE,
-    })
-})
+const upload = multer({ dest: 'uploads/' });
 
 
 
@@ -96,17 +86,126 @@ router
     })
 router
     .post('/imageTest',upload.single('image'),  async (req, res) => {
-        console.log('/imageTest post')
-        if (req.file) {
-            return res.status(200).json({ imageUrl: req.file.location });
-        }
-    }, (error, req, res, next) => {
-        console.log(error)
-        console.log('error in imagetest')
-        return res.status(400).json({ error: error.message })
-        });
+        try {
+            // Read the uploaded file from the local filesystem
+            const imagePath = req.file.path;
+            console.log(imagePath)
+        //the path where the image will be put 
+const resizedImagePath = `uploads/${Date.now().toString()}.jpg`;
+//resize the image to 200x200
+const resizeInfo = [
+  imagePath,
+  '-resize',
+  '1920x1080',
+  resizedImagePath
+];
+//calls imagemagick directly from its executible 
+const convert = spawn('magick', resizeInfo);
 
+convert.on('error', (err) => {
+    console.log("hello!")
+    res.status(500).json('I am code that hates Jeremy')
+});
+
+convert.on('exit', (code) => {
+  if (code === 0) {
+    console.log('IT WORKED');
+    //read from the file, get the image 
+    const outputBuffer = fs.readFileSync(resizedImagePath);
+    console.log(outputBuffer)
+    //upload it to S3
+s3.upload({Bucket:'coordinote',Key:Date.now().toString(),Body:outputBuffer,ContentType:'image/jpg',ACL:'public-read'},(e,data)=>{
+    if(e){
+        //upload failure
+        console.error(e);
+        res.status(500).json({Error:"not uploaded to S3"});
+    }
+    else{
+        //upload succeeess!
+        console.log(data)
+        res.status(200).json({imageUrl:data.Location});
+        fs.unlinkSync(req.file.path);
+        fs.unlinkSync(resizedImagePath)
+
+    }
+})
+  } else {
+    //imagemagick failure
+    res.status(500).json({Error:"ImageMagick had an error :("})
+    console.error('ImageMagick command exited with error code:', code);
+  }
+
+return;
+})
+          } catch (err) {
+            //catch any errors, just in case
+            console.error(err);
+            return res.status(500).json({ error: 'Server error' });
+          }
         
+        })
+
+        router
+    .post('/resizePFP',upload.single('image'),  async (req, res) => {
+        try {
+            // Read the uploaded file from the local filesystem
+            const imagePath = req.file.path;
+            console.log(imagePath)
+        //the path where the image will be put 
+const resizedImagePath = `uploads/${Date.now().toString()}.jpg`;
+//resize the image to 200x200
+const resizeInfo = [
+  imagePath,
+  '-resize',
+  '500x500',
+  resizedImagePath
+];
+//calls imagemagick directly from its executible 
+const convert = spawn('magick', resizeInfo);
+
+convert.on('error', (err) => {
+    console.log("hello!")
+    res.status(500).json('I am code that hates Jeremy')
+});
+
+convert.on('exit', (code) => {
+  if (code === 0) {
+    console.log('IT WORKED');
+    //read from the file, get the image 
+    const outputBuffer = fs.readFileSync(resizedImagePath);
+    console.log(outputBuffer)
+    //upload it to S3
+s3.upload({Bucket:'coordinote',Key:Date.now().toString(),Body:outputBuffer,ContentType:'image/jpg',ACL:'public-read'},(e,data)=>{
+    if(e){
+        //upload failure
+        console.error(e);
+        res.status(500).json({Error:"not uploaded to S3"});
+    }
+    else{
+        //upload succeeess!
+        console.log(data)
+        res.status(200).json({imageUrl:data.Location});
+        fs.unlinkSync(req.file.path);
+        fs.unlinkSync(resizedImagePath)
+
+    }
+})
+  } else {
+    //imagemagick failure
+    res.status(500).json({Error:"ImageMagick had an error :("})
+    console.error('ImageMagick command exited with error code:', code);
+  }
+
+return;
+})
+          } catch (err) {
+            //catch any errors, just in case
+            console.error(err);
+            return res.status(500).json({ error: 'Server error' });
+          }
+        
+        })
+
 
 router
     .route('/createEvent')
