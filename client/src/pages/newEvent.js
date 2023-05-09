@@ -297,6 +297,7 @@ await axios.post('http://localhost:3001/api/yourpage/events/imageTest',formData,
 authorization:header.headers.Authorization}})
 .then(function (response){
     setFileUrl(response.data.imageUrl);
+    console.log(response.data.imageUrl)
 })
 .catch(function (error){
 });

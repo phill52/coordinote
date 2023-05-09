@@ -274,6 +274,7 @@ useEffect(()=>{
 
 useEffect(()=>{
     async function formData(){
+        console.log(deleteTheEventWarn)
         if(deleteTheEventWarn){
             setDeleteMsg('Are you sure that you want to delete the event?')
         }
@@ -669,13 +670,15 @@ else {
         {eventPgGrid}
         <br />
         <Chat id={id} ></Chat>
-        <button className='App-link' onClick={()=>{setDeleteWarn(true)}}>Delete the event</button>
+        <button className='App-link' onClick={()=>{
+            console.log("i hit the button")
+            setDeleteWarn(true)}}>Delete the event</button>
         </div>)
     }
 else{
     return(
         <div>
-            <Link onClick={setDeleteWarn(false)} to={`/event/response/${id}`} >Put in your times</Link>
+            <Link onClick={()=>{setDeleteWarn(false)}} to={`/event/response/${id}`} >Put in your times</Link>
             <div className='whiteBackground'>
             <label className='homepageLabel'>
                             Event Name
