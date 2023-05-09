@@ -5,11 +5,9 @@ import events from '../data/events.js'
 import validation from '../validation.js'
 import aws from 'aws-sdk'
 import multer from 'multer'
-import multerS3 from 'multer-s3'
 import dotenv from 'dotenv';
-import {exec,spawn} from 'child_process'
+import {spawn} from 'child_process'
 import fs from 'fs';
-import { stderr, stdout } from 'process'
 
 
 dotenv.config({path:'../.env'})
@@ -19,7 +17,6 @@ aws.config.update({
     region: process.env.AWS_region 
 });
 const s3 = new aws.S3();
-const storage = multer.memoryStorage();
 const upload = multer({ dest: 'uploads/' });
 
 
