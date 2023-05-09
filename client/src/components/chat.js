@@ -7,7 +7,7 @@ import AuthContext from '../AuthContext';
 function Chat(){
     const {mongoUser} = React.useContext(AuthContext);
 
-    console.log(mongoUser);
+    // console.log(mongoUser);
     const {id} = useParams();
     const [state, setState] = useState({message: '', name: mongoUser.username, room: id});
     const [chat, setChat] = useState([]);
@@ -24,9 +24,9 @@ function Chat(){
   
     useEffect(() => {
       socketRef.current.on('message', function ({name, message}) {
-        console.log(chat)
-        console.log('The server has sent some data to all clients in the room');
-        console.log('hello?')
+        // console.log(chat)
+        // console.log('The server has sent some data to all clients in the room');
+        // console.log('hello?')
         setChat([{name, message},...chat]);
       });
       socketRef.current.on('user_join', function (newChat) {
@@ -45,8 +45,8 @@ function Chat(){
   
     const onMessageSubmit = (e) => {
       let msgEle = document.getElementById('message');
-      console.log(id)
-      console.log([msgEle.name], msgEle.value);
+      // console.log(id)
+      // console.log([msgEle.name], msgEle.value);
       if(msgEle.value.trim()) {
         setState({...state, [msgEle.name]: msgEle.value});
         socketRef.current.emit('message', {
@@ -62,8 +62,8 @@ function Chat(){
     };
   
     const renderChat = () => {
-      console.log('In render chat');
-      console.log(chat);
+      // console.log('In render chat');
+      // console.log(chat);
       return chat.map(({name, message}, index) => (
         <div key={index}>
           <h2>
@@ -79,11 +79,14 @@ function Chat(){
           <form onSubmit={onMessageSubmit}>
               <h1>Messenger</h1>
               <div>
+                <label htmlFor='message'></label>
                 <input
                   name='message'
                   id='message'
                   variant='outlined'
                   label='Message'
+                  className='input-background'
+                  placeholder='New message...'
                 />
               </div>
               <button>Send Message</button>

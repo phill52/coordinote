@@ -18,7 +18,7 @@ const Header = () => {
       </header>
     )
   }
-  console.log("MONGO USER", mongoUser)
+  console.log("MONGO USER2", mongoUser)
   const closeMenu = () => {
     setOpen(false);
   };

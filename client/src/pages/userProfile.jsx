@@ -64,7 +64,7 @@ const Profile = () => {
     return (
       <div>   
         <p>{userData.username}</p>
-        <img src={userData.picture}/> 
+        <img src={userData.picture} alt="profile picture"/> 
         {console.log(isMyPage)}
         
         {isMyPage && <button onClick={()=>{setChangePicture(true)}}>Change Profile Picture</button>}
@@ -75,8 +75,8 @@ const Profile = () => {
     return(
       <div>
     <p>{userData.username}</p>
-    <img src={userData.picture}/> 
-    {console.log('im here 2')}
+    <img src={userData.picture} alt="profile picture" /> 
+    {/* {console.log('im here 2')} */}
     <ChangeProfilePic uid={id} change={setForceChange} done={setChangePicture} />
     <button onClick={()=>{setChangePicture(false)}}>Go Back</button>
     </div>
