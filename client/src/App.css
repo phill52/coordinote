@@ -255,7 +255,7 @@ span.cursor-pointer {
   border: 2px solid darkred !important;
 }
 .workpls{
-  background: orange;
+  background: rgb(255, 212, 131);
 }
 .react-calendar__month-view__weekdays {
   text-align: center;
@@ -304,7 +304,7 @@ span.cursor-pointer {
 }
 
 .react-calendar__month-view__days__day--neighboringMonth {
-  color: #757575;
+  color: #606060;
 }
 .react-calendar__tile:enabled:hover,
 .react-calendar__tile:enabled:focus {
