@@ -526,14 +526,6 @@ else{
                 <p>{location}</p>
             </div>
         <div>
-        <div className='postit-note'>
-            <h2 className='light-green-100'>Event Name</h2>
-            <p>{eventName}</p>
-            <h2 className='light-green-100'>Event Description</h2>
-            <p>{eventDescription}</p>
-            <h2 className='light-green-100'>Event Location</h2>
-            <p>{location}</p>
-        </div><div>
         <Calendar minDetail={'decade'} className='smallCal' tileDisabled={tileDisabled} value = {new Date()} onChange={setDates} tileClassName={tileClass} ></Calendar>
         </div>
         <br />
