@@ -58,4 +58,5 @@ const checkDomainDates = function checkDomainDates(domainDates) {
       if (new Date(domainDate.time.start) > new Date(domainDate.time.end)) throw `Error: start must be before end.`;
   }
 }
+
 export { validatePassword, validateEmail, checkString, checkDomainDates};

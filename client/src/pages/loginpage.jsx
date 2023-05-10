@@ -48,7 +48,6 @@ const LoginPage = () => {
     // Backend people now send email and password to server for authentication and do something.
     signInWithEmailAndPassword(auth, email, password)
       .then((userCredentials)=> {
-        console.log(userCredentials.user.accessToken);
         fetch('/login', {
           method: 'POST',
           headers: {
@@ -56,7 +55,6 @@ const LoginPage = () => {
             'Content-Type': 'application/json'
           }
         })
-        console.log('logged in');
         setCurrentUser(userCredentials.user);
         setIsBadLogin(false);
       }).
@@ -64,11 +62,9 @@ const LoginPage = () => {
         var errorCode = error.code;
         var errorMessage = error.message;
         setIsBadLogin(true);
-        console.log(errorCode, errorMessage);
       })
 
     
-    console.log('logged in i guess?');
   };
 
   return (
