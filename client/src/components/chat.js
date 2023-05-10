@@ -30,7 +30,7 @@ function Chat(){
         setChat([{name, message},...chat]);
       });
       socketRef.current.on('user_join', function (newChat) {
-        setChat(newChat);
+        setChat(newChat.reverse());
       });
   
       return () => {
