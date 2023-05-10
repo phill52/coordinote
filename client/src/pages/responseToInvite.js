@@ -498,7 +498,7 @@ const onUpdateEvent = async(e) => {
         url=`http://localhost:3001/api/yourpage/events/${eventData._id}`
     }
     else{
-        url=`http://coordionote.us/api/yourpage/events/${eventData._id}`
+        url=`https://coordionote.us/api/yourpage/events/${eventData._id}`
     }
     try{
         const header=await createToken();
@@ -671,7 +671,7 @@ else {
             <Link to={`/event/response/${id}`} >Put in your times</Link>
             <div className = 'containEventPage'>
             <div className='postit-note floatL'>
-                            <h2 className='light-green-100'>Event Name</h2>
+                            <h1 className='light-green-100'>Event Name</h1>
                             <p>{eventData.name}</p>
                             <h2 className='light-green-100'>Event Description</h2>
                             <p>{eventData.description}</p>
@@ -696,9 +696,10 @@ else {
         return(
             <div>
                 <Link to={`/event/response/${id}`} >Put in your times</Link>
+                <div>Event invite link: {window.location.href}</div>
                 <div className = 'containEventPage'>
             <div className='postit-note floatL'>
-                            <h2 className='light-green-100'>Event Name</h2>
+                            <h1 className='light-green-100'>Event Name</h1>
                             <p>{eventData.name}</p>
                             <h2 className='light-green-100'>Event Description</h2>
                             <p>{eventData.description}</p>
@@ -747,7 +748,7 @@ else{
             <br />
             <div className = 'containEventPage'>
             <div className='postit-note floatL'>
-                            <h2 className='light-green-100'>Event Name</h2>
+                            <h1 className='light-green-100'>Event Name</h1>
                             <p>{eventData.name}</p>
                             <h2 className='light-green-100'>Event Description</h2>
                             <p>{eventData.description}</p>

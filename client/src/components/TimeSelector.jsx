@@ -40,13 +40,13 @@ const TimeSelector = (props) => {
       slots.push({ time: formattedTime, comparableTime: insertedStartTime});
       startTime.setMinutes(startTime.getMinutes() + 30);
     }
-    console.log(slots);
+    // console.log(slots);
     return slots;
   }
   useEffect(()=>{
     async function formData(){
       setAnchors(value);
-      console.log(value);
+      // console.log(value);
     }formData()
   },[value])
   useEffect(() => { //initialize time slots useEffect
