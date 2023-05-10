@@ -1,7 +1,7 @@
 import React from 'react';
 import { useState } from 'react';
 import LoginInput from '../components/logininput';
-import { validateEmail, validatePassword } from '../validate';
+import { validateEmail, validatePassword, checkString } from '../validate';
 import { auth, createToken } from '../fire';
 import { createUserWithEmailAndPassword, sendEmailVerification } from 'firebase/auth';
 import axios from 'axios';
@@ -58,6 +58,14 @@ const SignupPage = () => {
       setEmailError('');
     }
 
+    try {
+      checkString(username, 'username', 6, 32, true, true, false, false);
+      setUsernameError('');
+    } catch (e) { 
+      setUsernameError('Must be 6-32 characters, alphanumeric, and no spaces.');
+      validation = false;
+    }
+
     if (!validatePassword(password)) {
       setPasswordError('Must be 6-20 characters, one number, one lowercase, one uppercase, and one special character.');
       validation = false;
@@ -75,27 +83,31 @@ const SignupPage = () => {
       };
       try {
         if(window.location.hostname==='localhost'){
-        const response = await axios.post('http://localhost:3001/api/checkUsername', body);
-        return response;
+          const response = await axios.post('http://localhost:3001/api/checkUsername', body);
+          // console.log(response);
+          return response;
         }
         else{
           const response = await axios.post('https://coordinote.us/api/checkUsername', body);
-        return response;
+          return response;
         }
       } catch {
-        console.log("error with server");
+        // console.log("error with server");
       }
     };
-    checkUsername().then((response) => {
-      if (response.data==false) {
-        setUsernameError('Username is already taken');
-        validation = false;
-        return;
-      } else {
-        setUsernameError('');
-      }
-    });
-    
+  
+    const response = await checkUsername();
+  
+    if (response.data==false) {
+      setUsernameError('Username is already taken');
+      validation = false;
+      return;
+    } else {
+      setUsernameError('');
+    }
+  
+    if (!validation) return;
+
     createUserWithEmailAndPassword(auth, email, password)
       .then((userCredential) => {
         setIsBadSignup(false);
@@ -103,9 +115,11 @@ const SignupPage = () => {
         userId = userCredential.user.uid;
 
         sendEmailVerification(userCredential.user).then(() => {
-          console.log('Email sent');
+          // console.log('Email sent');
         }).catch((error) => {
-          console.error('Error sending email verification:', error);
+          setIsBadSignup(true);
+          setBadSignupMessage('Server Error');
+          // console.error('Error sending email verification:', error);
         });
 
         const serverSubmit= async () => {
@@ -123,8 +137,10 @@ const SignupPage = () => {
               return response;
             }
           } catch(e) {
-            console.log(e);
-            console.log("error with server");
+            // console.log(e);
+            // console.log("error with server");
+            setIsBadSignup(true);
+            setBadSignupMessage('Server Error');
           }
         }
     
@@ -136,9 +152,9 @@ const SignupPage = () => {
         setIsBadSignup(true);
         switch (errorCode) {
           case 'auth/email-already-in-use':
-            setBadSignupMessage('Email already in use.');
+            setBadSignupMessage('Server Error');
         }
-        console.log(errorCode, errorMessage);
+        // console.log(errorCode, errorMessage);
       }
     );
       

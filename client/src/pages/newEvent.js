@@ -264,7 +264,7 @@ const disableAll = ({date,view})=>{
 }
 useEffect(()=>{
     async function fetchData(){
-        console.log(valid)
+        // console.log(valid)
         if((dateTimeLock)&&(valid)){
         let tempObj={...output};
         setOutput({name:eventName,location:location,domainDates:datesAndTimes,description:eventDescription,image:fileInput});
@@ -335,7 +335,7 @@ await axios.post('http://localhost:3001/api/yourpage/events/imageTest',formData,
 authorization:header.headers.Authorization}})
 .then(function (response){
     setFileUrl(response.data.imageUrl);
-    console.log(response.data.imageUrl)
+    // console.log(response.data.imageUrl)
 })
 .catch(function (error){
 });
@@ -476,7 +476,7 @@ else{
                                 &#9654; {/* Right triangle */}
                                 </button>
                             </div>
-                            {console.log("is last page reached?",lastPageReached) }
+                            {/* {console.log("is last page reached?",lastPageReached) } */}
                             {Tselect}
                             <br />
                             <br />

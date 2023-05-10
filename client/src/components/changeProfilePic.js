@@ -15,10 +15,10 @@ const formSubmit = (e) =>{
     let file=document.getElementById('imageInput').files[0];
     if((file.type==='image/jpg')||(file.type==='image/png')||(file.type==='image/jpeg')||(file.type==='image/heic')){
         setFormSubmit(true);
-        console.log('hello')
+        // console.log('hello')
     }
     else{
-        console.log(file.type)
+        // console.log(file.type)
         setErrMsg('Error, only jpgs, pngs, and jpegs allowed');
     }
 }
@@ -39,14 +39,14 @@ useEffect(()=>{
             await axios.post('http://localhost:3001/api/yourpage/events/resizePFP',formData,{headers:{'Content-Type':'multipart/form-data',
             authorization:header.headers.Authorization}})
             .then(function (response){
-                console.log(response);
+                // console.log(response);
                 setFileUrl(response.data.imageUrl);
                 setImageIn(true);
             })
             .catch(function (error){
                 console.log(error);
             });
-            console.log('WHY WONT I WORK')
+            // console.log('WHY WONT I WORK')
                 }
                 else{
                     await axios.post('https://coordinote.us/api/yourpage/events/resizePFP',formData,{headers:{'Content-Type':'multipart/form-data',
@@ -59,7 +59,7 @@ useEffect(()=>{
             .catch(function (error){
                 console.log(error);
             });
-            console.log('WHY WONT I WORK')
+            // console.log('WHY WONT I WORK')
                 }
             }
             catch(e){
@@ -68,7 +68,7 @@ useEffect(()=>{
                 }
                 else{
                     setErrMsg("Error, incorrect upload of image");
-                    console.log('im here')
+                    // console.log('im here')
                     setFormSubmit(false)
                 }}
                 

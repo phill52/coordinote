@@ -184,7 +184,7 @@ var unless = function(paths, middleware) {
     }
 };
 // Initialize Firebase, unless for unprotected routes
-const exclude = ['/api/signup', '/api/users/:id'];
+const exclude = ['/api/signup', '/api/users/:id', '/api/checkUsername'];
 app.use(unless(exclude, decodeIDToken));
 
 const getAuthToken = (req, res, next) => {
