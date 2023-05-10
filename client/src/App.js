@@ -85,7 +85,7 @@ function App() {
   };
 
   const UnloggedRoute = ({Component}) => {
-    console.log(currentUser)
+    // console.log(currentUser)
     if (currentUser===null) {
       return Component;
     } else {

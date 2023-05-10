@@ -58,8 +58,8 @@ const Header = () => {
     return (
       <header className='header'>
         <Link to='/' className='text-3xl transition duration-300 transform hover:scale-110'>CoordiNote</Link>
-        <Link to='/login'>Login</Link>
-        <Link to='/signup'>Sign Up</Link>
+        <Link className='text-2xl' to='/login'>Login</Link>
+        <Link className='text-2xl' to='/signup'>Sign Up</Link>
       </header>
     )
   }
