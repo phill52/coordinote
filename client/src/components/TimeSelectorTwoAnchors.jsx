@@ -93,7 +93,7 @@ return (
               `}
               
               onClick={() => {
-                console.log(anchors.length)
+                // console.log(anchors.length)
                 if(anchors.length<2){
                   
                 if (arrayIncludes(anchors,slot.comparableTime)) {

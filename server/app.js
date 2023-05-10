@@ -205,7 +205,7 @@ const createUser = async (req, res) => {
             email: email,
             password: password,
         });
-        console.log(user);
+        // console.log(user);
         return res.status(200).send(user);
     } catch (error) {
         console.log(error);
@@ -259,11 +259,11 @@ let io = new Server(server);
 
 
 io.on('connection', async (socket) => {
-    console.log('new client connected', socket.id);
+    // console.log('new client connected', socket.id);
   
     socket.on('user_join', async (name, room) => {
-      console.log('A user joined their name is ' + name);
-      console.log('The user joined room ' + room);
+    //   console.log('A user joined their name is ' + name);
+    //   console.log('The user joined room ' + room);
       socket.join(room);
       // socket.broadcast.emit('user_join', name);
       let evnt = await events.getEventById(room);
@@ -272,14 +272,14 @@ io.on('connection', async (socket) => {
     });
   
     socket.on('message', async ({name, message, room}) => {
-      console.log(name, message, room, socket.id);
+    //   console.log(name, message, room, socket.id);
       let evnt = await events.getEventById(room);
       let tempArr= evnt.chatLogs;
       tempArr=[...tempArr,{name:name, message:message}];
       let noErr=true;
       try{
       await events.updateChatLogs(room,tempArr);
-      console.log('hi')
+    //   console.log('hi')
       }
       catch(e){
         noErr=false
@@ -287,7 +287,7 @@ io.on('connection', async (socket) => {
       if(noErr){
 
       io.to(room).emit('message', {name:name, message:message});
-      console.log('no error')
+    //   console.log('no error')
       }
       else{
         io.to(room).emit('message',{name,message})
