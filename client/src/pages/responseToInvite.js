@@ -498,7 +498,7 @@ const onUpdateEvent = async(e) => {
         url=`http://localhost:3001/api/yourpage/events/${eventData._id}`
     }
     else{
-        url=`https://coordionote.us/api/yourpage/events/${eventData._id}`
+        url=`https://coordinote.us/api/yourpage/events/${eventData._id}`
     }
     try{
         const header=await createToken();

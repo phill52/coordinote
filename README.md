@@ -7,6 +7,33 @@ Phillip Anerine, Aughdon Breslin, Daniel Craig, Jeremy Krugman
 ## Deployment: localhost
 
 - Ensure `node` and `npm` are installed and up to date on your computer, and download the repository.
+- For Image Magick, ensure that you have it installed. If you are running the server on Windows (Powershell, CMD), download and install Image Magick through this link before starting the express server: https://imagemagick.org/script/download.php#windows. Download and install the file linked under the first link under 'version'
+Once you have this installed, restart your computer. We have had better luck with getting it to work on windows. We've tried with Linux, but it's complicated and does not work well with the other two. Effectively, Image Magick is OS dependent.
+If you have a mac, install Image Magick with 'brew install imagemagick'
+- You will need to install the node modules in the top level directory. Navigate to `coordinote/` and run `npm i`
+
+For this next bullet, "I" will refer to Daniel
+- For the client, I needed to change his package.json in the coordinote/client direcotry to include this:
+  "options": {
+    "allowedHosts": [
+      "localhost",
+      ".localhost"
+    ],
+    "proxy":"https://coordinote.us"
+  },
+  here, the proxy is inside of the options key. I need to do this to get my client to start. If I don't, I get some error with allowedHosts[0] being undefined when I start my react client. I had to change my client package.json options key to what is shown above for it to work. I think I was the only one in the group to need to make this change. You may not need to do it. You may need to change your client package.json to have
+  
+    "options": {
+    "allowedHosts": [
+      "localhost",
+      ".localhost"
+    ]
+  },
+    "proxy":"https://coordinote.us",
+
+  instead, where the proxy key is outside of the options key. You may need to make this change.
+
+
 - In one terminal, navigate into the `coordinote/server/` directory. 
   - To install all of the modules and dependencies, type `npm i`
   - From here, typing in `npm run dev` runs the server with the ability to automatically reload when changes are made to the server files, and typing `npm start` runs the server without this ability.
