@@ -8,7 +8,7 @@ Phillip Anerine, Aughdon Breslin, Daniel Craig, Jeremy Krugman
 
 - Ensure `node` and `npm` are installed and up to date on your computer, and download the repository.
 - For Image Magick, ensure that you have it installed. If you are running the server on Windows (Powershell, CMD), download and install Image Magick through this link before starting the express server: https://imagemagick.org/script/download.php#windows. Download and install the file linked under the first link under 'version'
-Once you have this installed, restart your computer. We have had better luck with getting it to work on windows.
+Once you have this installed, restart your computer. We have had better luck with getting it to work on windows. We've tried with Linux, but it's complicated and does not work well with the other two. Effectively, Image Magick is OS dependent.
 If you have a mac, install Image Magick with 'brew install imagemagick'
 - You will need to install the node modules in the top level directory. Navigate to `coordinote/` and run `npm i`
 
