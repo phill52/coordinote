@@ -84,7 +84,7 @@ return (
               
               onClick={() => {
                 if (arrayIncludes(anchors,slot.comparableTime)) {
-                  console.log('im in')
+                  // console.log('im in')
                   let newAnchors = anchors.filter((anchor) => (!datesEqual(anchor,slot.comparableTime)));
                   setAnchors(newAnchors);
                   change({date:date,time:newAnchors})

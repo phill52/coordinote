@@ -32,9 +32,9 @@ const Profile = () => {
         setLoading(false);
         setErr(false);
         setUserData(data.data)
-        console.log("MONGO USER", mongoUser)
+        // console.log("MONGO USER", mongoUser)
         if (mongoUser && mongoUser._id === id) {
-          console.log("IS MY PAGE")
+          // console.log("IS MY PAGE")
           setIsMyPage(true);
         }
       } catch(e){
@@ -65,7 +65,7 @@ const Profile = () => {
       <div>   
         <p>{userData.username}</p>
         <img src={userData.picture} alt="profile picture"/> 
-        {console.log(isMyPage)}
+        {/* {console.log(isMyPage)} */}
         
         {isMyPage && <button onClick={()=>{setChangePicture(true)}}>Change Profile Picture</button>}
       </div>

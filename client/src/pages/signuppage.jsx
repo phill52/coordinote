@@ -84,7 +84,7 @@ const SignupPage = () => {
       try {
         if(window.location.hostname==='localhost'){
           const response = await axios.post('http://localhost:3001/api/checkUsername', body);
-          console.log(response);
+          // console.log(response);
           return response;
         }
         else{
@@ -92,7 +92,7 @@ const SignupPage = () => {
           return response;
         }
       } catch {
-        console.log("error with server");
+        // console.log("error with server");
       }
     };
   
@@ -115,9 +115,11 @@ const SignupPage = () => {
         userId = userCredential.user.uid;
 
         sendEmailVerification(userCredential.user).then(() => {
-          console.log('Email sent');
+          // console.log('Email sent');
         }).catch((error) => {
-          console.error('Error sending email verification:', error);
+          setIsBadSignup(true);
+          setBadSignupMessage('Server Error');
+          // console.error('Error sending email verification:', error);
         });
 
         const serverSubmit= async () => {
@@ -135,8 +137,10 @@ const SignupPage = () => {
               return response;
             }
           } catch(e) {
-            console.log(e);
-            console.log("error with server");
+            // console.log(e);
+            // console.log("error with server");
+            setIsBadSignup(true);
+            setBadSignupMessage('Server Error');
           }
         }
     
@@ -148,9 +152,9 @@ const SignupPage = () => {
         setIsBadSignup(true);
         switch (errorCode) {
           case 'auth/email-already-in-use':
-            setBadSignupMessage('Email already in use.');
+            setBadSignupMessage('Server Error');
         }
-        console.log(errorCode, errorMessage);
+        // console.log(errorCode, errorMessage);
       }
     );
       
