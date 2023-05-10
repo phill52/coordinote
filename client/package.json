@@ -6,9 +6,9 @@
     "allowedHosts": [
       "localhost",
       ".localhost"
-    ]
+    ],
+    "proxy":"https://coordinote.us"
   },
-  "proxy": "https://coordinote.us",
   "dependencies": {
     "@emotion/react": "^11.10.6",
     "@emotion/styled": "^11.10.6",

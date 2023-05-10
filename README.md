@@ -7,6 +7,10 @@ Phillip Anerine, Aughdon Breslin, Daniel Craig, Jeremy Krugman
 ## Deployment: localhost
 
 - Ensure `node` and `npm` are installed and up to date on your computer, and download the repository.
+- For Image Magick, ensure that you have it installed. If you are running the server on Windows (Powershell, CMD), download and install Image Magick through this link before starting the express server: https://imagemagick.org/script/download.php#windows. Download and install the file linked under the first link under 'version'
+Once you have this installed, restart your computer.
+If you have a mac, install Image Magick with 'brew install imagemagick'
+- You will need to install the node modules in the top level directory. Navigate to `coordinote/` and run `npm i`
 - In one terminal, navigate into the `coordinote/server/` directory. 
   - To install all of the modules and dependencies, type `npm i`
   - From here, typing in `npm run dev` runs the server with the ability to automatically reload when changes are made to the server files, and typing `npm start` runs the server without this ability.

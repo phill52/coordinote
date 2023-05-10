@@ -39,7 +39,7 @@ useEffect(()=>{
             await axios.post('http://localhost:3001/api/yourpage/events/resizePFP',formData,{headers:{'Content-Type':'multipart/form-data',
             authorization:header.headers.Authorization}})
             .then(function (response){
-                console.log(response);
+                // console.log(response);
                 setFileUrl(response.data.imageUrl);
                 setImageIn(true);
             })

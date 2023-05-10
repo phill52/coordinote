@@ -378,6 +378,7 @@ else{
                 <h1 className='currentDay'>All Done!</h1>
                 <h2>Your event link is:</h2>
                 <h2 className='currentDay'>{`http://localhost:3000/event/${eventId}`}</h2>
+                <a className='currentDay' href={`http://localhost:3000/event/${eventId}`}>{`http://localhost:3000/event/${eventId}`}</a>
             </div>
         )}
         else{
@@ -386,6 +387,7 @@ else{
                     <h1 className='currentDay'>All Done!</h1>
                     <h2>Your event link is:</h2>
                     <h2 className='currentDay'>{`https://coordinote.us/event/${eventId}`}</h2>
+                    <a className='currentDay' href={`https://coordinote.us/event/${eventId}`}>{`https://coordinote.us/event/${eventId}`}</a>
                 </div>
             )
         }
