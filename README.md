@@ -4,6 +4,10 @@
 
 Phillip Anerine, Aughdon Breslin, Daniel Craig, Jeremy Krugman
 
+## Technical Implementation Plan
+
+https://docs.google.com/document/d/1IjeVFe2e6kq9_AgV3biKKoSTCDuSre9Hpmp-gY29WVI/edit?usp=sharing
+
 ## Deployment: localhost
 
 - Ensure `node` and `npm` are installed and up to date on your computer, and download the repository.
