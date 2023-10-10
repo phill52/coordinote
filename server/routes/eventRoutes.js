@@ -8,7 +8,7 @@ import multer from 'multer'
 import dotenv from 'dotenv';
 import {spawn} from 'child_process'
 import fs from 'fs';
-
+import sharp from 'sharp';
 
 dotenv.config({path:'../.env'})
 aws.config.update({
@@ -84,127 +84,75 @@ router
         // console.log(userEvents)
         return res.status(200).json(userEvents)
     })
-router
-    .post('/imageTest',upload.single('image'),  async (req, res) => {
+
+    // Your existing imports...
+    
+    router.post('/imageTest', upload.single('image'), async (req, res) => {
         try {
-            // Read the uploaded file from the local filesystem
             const imagePath = req.file.path;
-            // console.log(imagePath)
-        //the path where the image will be put 
-const resizedImagePath = `uploads/${Date.now().toString()}.jpg`;
-//resize the image to 200x200
-const resizeInfo = [
-  imagePath,
-  '-resize',
-  '1920x1080',
-  resizedImagePath
-];
-//calls imagemagick directly from its executible 
-const convert = spawn('magick', resizeInfo);
-
-convert.on('error', (err) => {
-    // console.log("hello!")
-    res.status(500).json({Error:'I am code that hates Jeremy'})
-});
-
-convert.on('exit', (code) => {
-  if (code === 0) {
-    // console.log('IT WORKED');
-    //read from the file, get the image 
-    const outputBuffer = fs.readFileSync(resizedImagePath);
-    // console.log(outputBuffer)
-    //upload it to S3
-s3.upload({Bucket:'coordinote',Key:Date.now().toString(),Body:outputBuffer,ContentType:'image/jpg',ACL:'public-read'},(e,data)=>{
-    if(e){
-        //upload failure
-        console.error(e);
-        res.status(500).json({Error:"not uploaded to S3"});
-    }
-    else{
-        //upload succeeess!
-        // console.log(data)
-        res.status(200).json({imageUrl:data.Location});
-        fs.unlinkSync(req.file.path);
-        fs.unlinkSync(resizedImagePath)
-
-    }
-})
-  } else {
-    //imagemagick failure
-    res.status(500).json({Error:"ImageMagick had an error :("})
-    console.error('ImageMagick command exited with error code:', code);
-  }
-
-return;
-})
-          } catch (err) {
-            //catch any errors, just in case
+            const resizedImagePath = `uploads/${Date.now().toString()}.jpg`;
+    
+            // Use sharp to resize the image
+            await sharp(imagePath).resize(1920, 1080).toFile(resizedImagePath);
+    
+            const outputBuffer = fs.readFileSync(resizedImagePath);
+            
+            s3.upload({
+                Bucket: 'coordinote',
+                Key: Date.now().toString(),
+                Body: outputBuffer,
+                ContentType: 'image/jpg',
+                ACL: 'public-read'
+            }, (e, data) => {
+                if (e) {
+                    console.error(e);
+                    res.status(500).json({Error: "not uploaded to S3"});
+                } else {
+                    res.status(200).json({imageUrl: data.Location});
+                    fs.unlinkSync(req.file.path);
+                    fs.unlinkSync(resizedImagePath);
+                }
+            });
+    
+        } catch (err) {
             console.error(err);
             return res.status(500).json({ error: 'Server error' });
-          }
-        
-        })
-
-        router
-    .post('/resizePFP',upload.single('image'),  async (req, res) => {
+        }
+    });
+    
+    router.post('/resizePFP', upload.single('image'), async (req, res) => {
         try {
-            // Read the uploaded file from the local filesystem
             const imagePath = req.file.path;
-            // console.log(imagePath)
-        //the path where the image will be put 
-const resizedImagePath = `uploads/${Date.now().toString()}.jpg`;
-//resize the image to 200x200
-const resizeInfo = [
-  imagePath,
-  '-resize',
-  '500x500',
-  resizedImagePath
-];
-//calls imagemagick directly from its executible 
-const convert = spawn('magick', resizeInfo);
-
-convert.on('error', (err) => {
-    // console.log("hello!")
-    res.status(500).json('I am code that hates Jeremy')
-});
-
-convert.on('exit', (code) => {
-  if (code === 0) {
-    // console.log('IT WORKED');
-    //read from the file, get the image 
-    const outputBuffer = fs.readFileSync(resizedImagePath);
-    // console.log(outputBuffer)
-    //upload it to S3
-s3.upload({Bucket:'coordinote',Key:Date.now().toString(),Body:outputBuffer,ContentType:'image/jpg',ACL:'public-read'},(e,data)=>{
-    if(e){
-        //upload failure
-        console.error(e);
-        res.status(500).json({Error:"not uploaded to S3"});
-    }
-    else{
-        //upload succeeess!
-        // console.log(data)
-        res.status(200).json({imageUrl:data.Location});
-        fs.unlinkSync(req.file.path);
-        fs.unlinkSync(resizedImagePath)
-
-    }
-})
-  } else {
-    //imagemagick failure
-    res.status(500).json({Error:"ImageMagick had an error :("})
-    console.error('ImageMagick command exited with error code:', code);
-  }
-
-return;
-})
-          } catch (err) {
-            //catch any errors, just in case
+            const resizedImagePath = `uploads/${Date.now().toString()}.jpg`;
+    
+            // Use sharp to resize the image
+            await sharp(imagePath).resize(500, 500).toFile(resizedImagePath);
+    
+            const outputBuffer = fs.readFileSync(resizedImagePath);
+            
+            s3.upload({
+                Bucket: 'coordinote',
+                Key: Date.now().toString(),
+                Body: outputBuffer,
+                ContentType: 'image/jpg',
+                ACL: 'public-read'
+            }, (e, data) => {
+                if (e) {
+                    console.error(e);
+                    res.status(500).json({Error: "not uploaded to S3"});
+                } else {
+                    res.status(200).json({imageUrl: data.Location});
+                    fs.unlinkSync(req.file.path);
+                    fs.unlinkSync(resizedImagePath);
+                }
+            });
+    
+        } catch (err) {
             console.error(err);
             return res.status(500).json({ error: 'Server error' });
-          }
-        
-        })
+        }
+    });
+    
 
 
 router
